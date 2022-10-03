@@ -696,7 +696,7 @@ class BatchWriter:
             )
             header.extend([':LABEL'] if node else [':END_ID', ':TYPE'])
 
-            with open(hdr_path, 'w') as f:
+            with open(hdr_path, 'w', encoding="utf-8") as f:
 
                 # concatenate with delimiter
                 f.write(self.delim.join(header))
@@ -830,7 +830,8 @@ class BatchWriter:
         path = os.path.join(self.outdir, f'{label}-part{idx:03d}.csv')
         logger.info(f'Writing {len(lines)} entries to `{path}`.')
 
-        with open(path, 'w') as fp:
+        with open(path, 'w', encoding = 'utf-8') as fp:
+
             # concatenate with delimiter
             fp.write(os.linesep.join(lines))
 
@@ -852,7 +853,7 @@ class BatchWriter:
         file_path = os.path.join(self.outdir, 'neo4j-admin-import-call.sh')
         logger.info(f'Writing neo4j-admin import call to `{file_path}`.')
 
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w', encoding = 'utf-8') as f:
 
             f.write(self.compile_call())
 
