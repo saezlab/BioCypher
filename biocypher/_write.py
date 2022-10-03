@@ -148,6 +148,7 @@ class BatchWriter:
         skip_bad_relationships: bool = False,
         skip_duplicate_nodes: bool = False,
         batch_size: int | None = None,
+        wipe: bool = True,
     ):
         """
         Export data into CSV for *neo4j-admin* import.
@@ -176,6 +177,9 @@ class BatchWriter:
             batch_size:
                 Number of records in one CSV. Override here the value defined
                 in the config.
+            wipe:
+                Add the `--force` switch to the command line call, resulting
+                the overwrite of pre-existing database contents.
 
         Attributes:
             seen_node_ids:
@@ -204,8 +208,8 @@ class BatchWriter:
 
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
-
         self.schema = schema
+        self.wipe = wipe
         self.bl_adapter = bl_adapter
         self.set_outdir(dirname)
         self.reset()
@@ -886,6 +890,7 @@ class BatchWriter:
                 '--skip-duplicate-nodes='
                 f'{str(self.skip_duplicate_nodes).lower()}',
             ] +
+            (['--force=true'] if self.wipe else []) +
             self.call['node'] +
             self.call['edge']
         )
