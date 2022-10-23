@@ -79,6 +79,9 @@ class VersionNode:
         self._setup()
 
     def _setup(self):
+        """
+        Populates the data structures of this instance.
+        """
 
         self.update_state()
         self.update_schema()
@@ -86,14 +89,20 @@ class VersionNode:
 
         if self.out_of_sync:
 
-            self.sync()
+            self._sync()
 
-    def sync(self):
+    def _sync(self):
+        """
+        Makes sure this instance and the meta graph are in agreement.
+        """
 
-        self.new_state()
-        self.new_node()
+        self._new_state()
+        self._new_version()
 
-    def new_state(self):
+    def _new_state(self):
+        """
+        Create a new state that reflects the current schema.
+        """
 
         self._state = {
             'id': self.node_id,
@@ -104,7 +113,10 @@ class VersionNode:
             'leaves': self._serialize(self.leaves),
         }
 
-    def new_node(self):
+    def _new_version(self):
+        """
+        Create a new version node in the database that reflects this instance.
+        """
 
         if self.offline:
 
