@@ -12,6 +12,7 @@
 from typing import Literal, TYPE_CHECKING
 from datetime import datetime
 import copy
+import json
 
 import yaml
 
@@ -74,9 +75,6 @@ class VersionNode:
         self.bcy_driver = bcy_driver
 
         self.node_id = self._timestamp
-        self.graph_state = (
-            self._get_graph_state() if not self.offline else None
-        )
         self.update_state()
         self.update_schema()
         self.update_leaves()
@@ -154,6 +152,34 @@ class VersionNode:
         else:
 
             self._node_id = node_id
+
+    @property
+    def properties(self) -> dict:
+        """
+        Node properties for database storage.
+        """
+
+        props = self.state.copy()
+        props['schema'] = self._serialize(self.schema)
+        props['leaves'] = self._serialize(self.leaves)
+
+        return props
+
+    @staticmethod
+    def _serialize(obj) -> str:
+        """
+        Serialize an object for storage as string.
+        """
+
+        return json.dumps(obj, separators = (',', ':'), indent = None)
+
+    @staticmethod
+    def _deserialize(s: str) -> list | dict:
+        """
+        Restore an object from stored string.
+        """
+
+        return json.loads(s)
 
     def update_state(self):
         """
