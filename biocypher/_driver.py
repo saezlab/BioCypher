@@ -92,9 +92,6 @@ class Driver(neo4j_utils.Driver):
             wipe:
                 Wipe the database after connection, ensuring the data is
                 loaded into an empty database.
-            increment_version:
-                Whether to increase version number automatically and create a
-                new BioCypher version node in the graph.
             schema_config:
                 Path to a custom database schema configuration file.
             delimiter:
@@ -139,11 +136,6 @@ class Driver(neo4j_utils.Driver):
 
         # likely this will be refactored soon
         self._create_constraints()
-
-        if increment_version:
-
-            # set new current version node
-            self.update_meta_graph()
 
         self.bl_adapter = None
         self.batch_writer = None
