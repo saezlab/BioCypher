@@ -18,7 +18,7 @@ import yaml
 
 from . import _misc
 from . import _config as config
-from .create import BioCypherEdge, BioCypherNode
+from ._create import BioCypherEdge, BioCypherNode
 from ._logger import logger
 
 if TYPE_CHECKING:
@@ -50,7 +50,6 @@ class VersionNode:
             node_label: str = 'BioCypher',
             node_id: str | None = None,
             bcy_driver: 'Driver' = None,
-            node_id: str | None = None,
     ):
         """
         Create a node with schema and version information.
@@ -131,7 +130,7 @@ class VersionNode:
         Makes sure the meta graph has the same structure as the leaves.
         """
 
-        if offline:
+        if self.offline:
 
             return
 
@@ -146,7 +145,7 @@ class VersionNode:
                 node_label = 'MetaNode',
                 properties = params,
             )
-            for entity, params in self.leaves.items()
+            for entity, params in self._leaves.items()
         ]
 
         self.bcy_driver.add_biocypher_nodes(meta_nodes)
@@ -158,7 +157,7 @@ class VersionNode:
                 target_id = entity,
                 relationship_label = 'CONTAINS',
             )
-            for entity in self.db_meta.leaves.keys()
+            for entity in self._leaves.keys()
         ]
 
         self.bcy_driver.add_biocypher_edges(contains)
