@@ -11,6 +11,7 @@
 
 from typing import Literal, TYPE_CHECKING
 from datetime import datetime
+import copy
 
 import yaml
 
@@ -76,6 +77,7 @@ class VersionNode:
         self.graph_state = (
             self._get_graph_state() if not self.offline else None
         )
+        self.update_state()
         self.update_schema()
         self.update_leaves()
 
@@ -153,33 +155,61 @@ class VersionNode:
 
             self._node_id = node_id
 
-    def _get_graph_state(self):
+    def update_state(self):
         """
-        Current graph state if available, otherwise create a new one.
+        Set the state using metadata in the database or initialize new state.
+
+        Attributes:
+            state:
+                Variables defining the graph state.
+        """
+
+        state = self.state_from_db()
+
+        self._state = {}
+
+        if state:
+
+            self._state['previous'] = state['id']
+
+    @property
+    def state(self) -> dict:
+        """
+        Protects the state from side effects and unintended overwrites.
+        """
+
+        return copy.deepcopy(self._state)
+
+    def state_from_db(self) -> dict:
+        """
+        Fetch the current state (metadata) from the database if available.
 
         Check in active DBMS connection for existence of VersionNodes,
         return the most recent VersionNode as representation of the
-        graph state. If no VersionNode found, assume blank graph state
-        and initialise.
+        graph state.
+
+        Returns:
+            All data from the latest version node.
         """
 
-        logger.info('Getting graph state.')
+        if not self.offline:
 
-        result, summary = self.bcy_driver.query(
-            'MATCH (meta:BioCypher)'
-            'WHERE NOT (meta)-[:PRECEDES]->(:BioCypher)'
-            'RETURN meta',
-        )
+            logger.info('Getting graph state.')
 
-        # if result is empty, initialise
-        if not result:
-            logger.info('No existing graph found, initialising.')
-            return {'id': self.node_id}
-        # else, pass on graph state
-        else:
-            version = result[0]['meta']['id']
-            logger.info(f'Found graph state at {version}.')
-            return result[0]['meta']
+            result, summary = self.bcy_driver.query(
+                'MATCH (meta:BioCypher)'
+                'WHERE NOT (meta)-[:PRECEDES]->(:BioCypher)'
+                'RETURN meta',
+            )
+
+            if result:
+
+                version = result[0]['meta']['id']
+                logger.info(f'Found graph state at {version}.')
+                return result[0]['meta']
+
+        logger.info('No existing metadata found.')
+        return {}
 
     def update_schema(
         self,
@@ -206,11 +236,19 @@ class VersionNode:
 
         from_config = _misc.if_none(from_config, self.from_config)
 
-        self.schema = {} if from_config else self.schema_from_db()
+        self._schema = {} if from_config else self.schema_from_db()
 
-        if not self.schema:
+        if not self._schema:
 
-            self.schema = self.schema_from_config(config_file = config_file)
+            self._schema = self.schema_from_config(config_file = config_file)
+
+    @property
+    def schema(self) -> dict:
+        """
+        Protects the schema from side effects and unintended overwrites.
+        """
+
+        return copy.deepcopy(self._schema)
 
     def schema_from_db(self) -> dict:
         """
@@ -246,8 +284,6 @@ class VersionNode:
         else:
 
             schema = config.module_data('schema_config')
-            print('Raw schema:')
-            print(schema)
 
         return schema
 
@@ -266,10 +302,19 @@ class VersionNode:
 
         Attributes:
             leaves:
-                Leaves in the database schema.
+                Leaves in the database schema plus virtual leaves created
+                by ``find_leaves``.
         """
 
-        self.leaves = self.find_leaves(schema = schema or self.schema)
+        self._leaves = self.find_leaves(schema = schema or self._schema)
+
+    @property
+    def leaves(self) -> dict:
+        """
+        Protects the leaves from side effects and unintended overwrites.
+        """
+
+        return copy.deepcopy(self._leaves)
 
     @classmethod
     def find_leaves(cls, schema: dict) -> dict:
@@ -285,6 +330,7 @@ class VersionNode:
         """
 
         leaves = {}
+        schema = copy.deepcopy(schema)
 
         # first pass: get parent leaves with direct representation in ontology
         leaves = {
@@ -337,6 +383,8 @@ class VersionNode:
                 d1[key] = d0[key]
 
 
+        schema = copy.deepcopy(schema)
+
         for k, v in schema.items():
 
             # k is not an entity or present in the ontology
@@ -364,7 +412,9 @@ class VersionNode:
         """
         Create virtual leaves for multiple sources or preferred IDs.
 
-        If we create virtual leaves, label_in_input always has to be a list.
+        Args:
+            key:
+
         """
 
         leaves = {}
