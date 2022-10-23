@@ -90,7 +90,7 @@ class VersionNode:
         Returns primary node identifier.
 
         Returns:
-            str: node_id
+            The id of the database node.
         """
         return self.node_id
 
@@ -99,17 +99,16 @@ class VersionNode:
         Returns primary node label.
 
         Returns:
-            str: node_label
+            The label of the database node.
         """
         return self.node_label
 
     def get_dict(self) -> dict:
         """
-        Return dict of id, labels, and properties.
+        Node data for database insertion.
 
         Returns:
-            dict: node_id and node_label as top-level key-value pairs,
-            properties as second-level dict.
+            Data directly suitable for creation of a node in the database.
         """
         return {
             'node_id': self.node_id,
@@ -247,6 +246,8 @@ class VersionNode:
         else:
 
             schema = config.module_data('schema_config')
+            print('Raw schema:')
+            print(schema)
 
         return schema
 
@@ -270,8 +271,8 @@ class VersionNode:
 
         self.leaves = self.find_leaves(schema = schema or self.schema)
 
-    @staticmethod
-    def find_leaves(schema: dict) -> dict:
+    @classmethod
+    def find_leaves(cls, schema: dict) -> dict:
         """
         Leaves from schema.
 
@@ -293,35 +294,38 @@ class VersionNode:
         }
 
         # second pass: "vertical" inheritance
-        schema = self._vertical_property_inheritance(schema)
+        schema = cls._vertical_property_inheritance(schema = schema)
 
         # create leaves for all straight descendants (no multiple identifiers
         # or sources) -> explicit children
         # TODO do we need to order children by depth from real leaves?
         leaves.update({k: v for k, v in schema.items() if 'is_a' in v})
 
-        # "horizontal" inheritance: create siblings for multiple identifiers
-        # or sources -> virtual leaves or implicit children
-        mi_leaves = {}
-        ms_leaves = {}
-
-        for k, v in d.items():
+        for k, v in schema.items():
 
             # k is not an entity
             if 'represented_as' not in v:
                 continue
 
-            if isinstance(v.get('preferred_id'), list):
-                mi_leaves = self._horizontal_inheritance_pid(k, v)
-                leaves.update(mi_leaves)
+            for key in ('preferred_id', 'source'):
 
-            elif isinstance(v.get('source'), list):
-                ms_leaves = self._horizontal_inheritance_source(k, v)
-                leaves.update(ms_leaves)
+                # "horizontal" inheritance: create siblings
+                # for multiple identifiers
+                # or sources -> virtual leaves or implicit children
+                if isinstance(v.get(key), list):
+
+                    leaves.update(
+                        cls._horizontal_inheritance(
+                            key = k,
+                            value = v,
+                            by = key,
+                        )
+                    )
 
         return leaves
 
-    def _vertical_property_inheritance(self, schema: dict) -> dict:
+    @staticmethod
+    def _vertical_property_inheritance(schema: dict) -> dict:
         """
         Inherit properties from parents to children.
         """
@@ -346,13 +350,13 @@ class VersionNode:
                 # get direct ancestor
                 parent = _misc.first(v['is_a'])
                 # update properties of child
-                copy_key(self.schema[parent], v, 'properties')
-                copy_key(self.schema[parent], v, 'exclude_properties')
+                copy_key(schema[parent], v, 'properties')
+                copy_key(schema[parent], v, 'exclude_properties')
 
         return schema
 
+    @staticmethod
     def _horizontal_inheritance(
-            self,
             key: str,
             value: dict,
             by: Literal['source', 'preferred_id'],
@@ -394,27 +398,29 @@ class VersionNode:
 
         return leaves
 
-    def _horizontal_inheritance_pid(self, key, value):
+    @classmethod
+    def _horizontal_inheritance_pid(cls, key: str, value: dict) -> dict:
         """
         Create virtual leaves for multiple preferred id types or sources.
 
         If we create virtual leaves, label_in_input always has to be a list.
         """
 
-        return self._horizontal_inheritance(
+        return cls._horizontal_inheritance(
             key = key,
             value = value,
             by = 'preferred_id',
         )
 
-    def _horizontal_inheritance_source(self, key, value):
+    @classmethod
+    def _horizontal_inheritance_source(cls, key: str, value: dict) -> dict:
         """
         Create virtual leaves for multiple sources.
 
         If we create virtual leaves, label_in_input always has to be a list.
         """
 
-        return self._horizontal_inheritance(
+        return cls._horizontal_inheritance(
             key = key,
             value = value,
             by = 'source',
