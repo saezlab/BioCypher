@@ -9,7 +9,7 @@
 # Distributed under GPLv3 license, see the file `LICENSE`.
 #
 
-from typing import Literal
+from typing import Literal, TYPE_CHECKING
 from datetime import datetime
 
 import yaml
