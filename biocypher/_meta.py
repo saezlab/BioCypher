@@ -77,7 +77,7 @@ class VersionNode:
             self._get_graph_state() if not self.offline else None
         )
         self.update_schema()
-        self.leaves = self._get_leaves()
+        self.update_leaves()
 
         self.properties = {
             'graph_state': self.graph_state,
@@ -182,7 +182,7 @@ class VersionNode:
             logger.info(f'Found graph state at {version}.')
             return result[0]['meta']
 
-    def read_schema(
+    def update_schema(
         self,
         from_config: bool | None = None,
         config_file: str | None = None,
