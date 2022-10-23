@@ -18,6 +18,7 @@ import yaml
 
 from . import _misc
 from . import _config as config
+from .create import BioCypherEdge, BioCypherNode
 from ._logger import logger
 
 if TYPE_CHECKING:
@@ -47,7 +48,9 @@ class VersionNode:
             from_config: bool = False,
             config_file: str = None,
             node_label: str = 'BioCypher',
+            node_id: str | None = None,
             bcy_driver: 'Driver' = None,
+            node_id: str | None = None,
     ):
         """
         Create a node with schema and version information.
@@ -73,17 +76,117 @@ class VersionNode:
         self.config_file = config_file
         self.node_label = node_label
         self.bcy_driver = bcy_driver
+        self.node_id = node_id or f'v{self._timestamp}'
+        self._setup()
 
-        self.node_id = self._timestamp
+    def _setup(self):
+
         self.update_state()
         self.update_schema()
         self.update_leaves()
 
-        self.properties = {
-            'graph_state': self.graph_state,
-            'schema': self.schema,
-            'leaves': self.leaves,
+        if self.out_of_sync:
+
+            self.sync()
+
+    def sync(self):
+
+        self.new_state()
+        self.new_node()
+
+    def new_state(self):
+
+        self._state = {
+            'id': self.node_id,
+            'previous': self._state.get('id', 'none'),
+            'created': self._timestamp,
+            'updated': self._timestamp,
+            'schema': self._serialize(self.schema),
+            'leaves': self._serialize(self.leaves),
         }
+
+    def new_node(self):
+
+        if self.offline:
+
+            return
+
+        logger.info('Updating biocypher meta graph.')
+        # add version node
+        self.bcy_driver.add_biocypher_nodes(self)
+
+        if self._state.get('previous', 'none') != 'none':
+
+            precedes = BioCypherEdge(
+                self._state['previous'],
+                self.node_id,
+                'PRECEDES',
+            )
+            self.bcy_driver.add_biocypher_edges(precedes)
+
+        self.sync_meta()
+
+    def sync_meta(self):
+        """
+        Makes sure the meta graph has the same structure as the leaves.
+        """
+
+        if offline:
+
+            return
+
+        self.bcy_driver.query('MATCH ()-[r:CONTAINS]-() DELETE r')
+        self.bcy_driver.query('MATCH (n:MetaNode) DETACH DELETE n')
+
+        # add structure nodes
+        # leaves of the hierarchy specified in schema yaml
+        meta_nodes = [
+            BioCypherNode(
+                node_id = entity,
+                node_label = 'MetaNode',
+                properties = params,
+            )
+            for entity, params in self.leaves.items()
+        ]
+
+        self.bcy_driver.add_biocypher_nodes(meta_nodes)
+
+        # connect structure nodes to version node
+        contains = [
+            BioCypherEdge(
+                source_id = self._state['id'],
+                target_id = entity,
+                relationship_label = 'CONTAINS',
+            )
+            for entity in self.db_meta.leaves.keys()
+        ]
+
+        self.bcy_driver.add_biocypher_edges(contains)
+
+        # add graph structure between MetaNodes
+        meta_rel = [
+            BioCypherEdge(
+                mn.node_id,
+                mn.properties.get(side),
+                f'IS_{side.upper()}_OF'
+            )
+            for mn in meta_nodes
+            for side in ('source', 'target')
+            if mn.properties.get(side)
+        ]
+
+        self.bcy_driver.add_biocypher_edges(meta_rel)
+
+    @property
+    def out_of_sync(self):
+        """
+        The current schema or leaves don't match the latest existing node.
+        """
+
+        return (
+            self._state.get('schema') != self._serialize(self.schema) or
+            self._state.get('leaves') != self._serialize(self.leaves)
+        )
 
     def get_id(self) -> str:
         """
@@ -129,7 +232,7 @@ class VersionNode:
         """
 
         now = datetime.now()
-        return now.strftime('v%Y%m%d-%H%M%S')
+        return now.strftime('%Y%m%d-%H%M%S')
 
     @property
     def node_id(self):
@@ -190,13 +293,7 @@ class VersionNode:
                 Variables defining the graph state.
         """
 
-        state = self.state_from_db()
-
-        self._state = {}
-
-        if state:
-
-            self._state['previous'] = state['id']
+        self._state = self.state_from_db()
 
     @property
     def state(self) -> dict:
@@ -218,13 +315,13 @@ class VersionNode:
             All data from the latest version node.
         """
 
-        if not self.offline:
+        if self.bcy_driver and not self.offline:
 
             logger.info('Getting graph state.')
 
             result, summary = self.bcy_driver.query(
-                'MATCH (meta:BioCypher)'
-                'WHERE NOT (meta)-[:PRECEDES]->(:BioCypher)'
+                f'MATCH (meta:{self.node_label})'
+                f'WHERE NOT (meta)-[:PRECEDES]->(:{self.node_label})'
                 'RETURN meta',
             )
 
@@ -262,7 +359,12 @@ class VersionNode:
 
         from_config = _misc.if_none(from_config, self.from_config)
 
-        self._schema = {} if from_config else self.schema_from_db()
+        self._schema = (
+            {}
+                if from_config else
+            self.schema_from_db() or
+            self.schema_from_state()
+        )
 
         if not self._schema:
 
@@ -289,6 +391,13 @@ class VersionNode:
         )
 
         return {r['src'].pop('id'): r['src'] for r in res[0]}
+
+    def schema_from_state(self) -> dict:
+        """
+        Extract the schema from the state of previously existing node.
+        """
+
+        return self._deserialize(self._state.get('schema', '{}'))
 
     def schema_from_config(self, config_file: str | None = None) -> dict:
         """
