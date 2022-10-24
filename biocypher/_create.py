@@ -63,6 +63,8 @@ class BioCypherEntity:
 
     def _process_str_props(self):
 
+        return
+
         self.properties = {
             k:
             _RELFCR.sub(' ', ', '.join(_misc.to_list(v))).replace('"', "'")
@@ -109,6 +111,7 @@ class BioCypherNode(BioCypherEntity):
 
         Replace unwanted characters in properties.
         """
+
         self.entity = 'node'
         self.properties['id'] = self.node_id
         self.properties['preferred_id'] = self.preferred_id or None
