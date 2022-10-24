@@ -155,6 +155,7 @@ class VersionNode:
             BioCypherNode(
                 node_id = entity,
                 node_label = 'MetaNode',
+                preferred_id = params['preferred_id'],
                 properties = params,
             )
             for entity, params in self._leaves.items()
@@ -169,7 +170,7 @@ class VersionNode:
                 target_id = entity,
                 relationship_label = 'CONTAINS',
             )
-            for entity in self._leaves.keys()
+            for entity in self.leaves.keys()
         ]
 
         self.bcy_driver.add_biocypher_edges(contains)
@@ -191,13 +192,10 @@ class VersionNode:
     @property
     def out_of_sync(self):
         """
-        The current schema or leaves don't match the latest existing node.
+        The current leaves don't match the latest existing node.
         """
 
-        return (
-            self._state.get('schema') != self._serialize(self.schema) or
-            self._state.get('leaves') != self._serialize(self.leaves)
-        )
+        return self._state.get('leaves') != self._serialize(self.leaves)
 
     def get_id(self) -> str:
         """
@@ -285,7 +283,7 @@ class VersionNode:
         Serialize an object for storage as string.
         """
 
-        return json.dumps(obj, separators = (',', ':'), indent = None)
+        return json.dumps(obj, separators = (',', ':'), sort_keys = True)
 
     @staticmethod
     def _deserialize(s: str) -> list | dict:
