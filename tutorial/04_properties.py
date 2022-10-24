@@ -1,4 +1,4 @@
-from data_generator import EntrezProtein, RandomPropertyProtein
+from tutorial.data_generator import EntrezProtein, RandomPropertyProtein
 
 import biocypher
 

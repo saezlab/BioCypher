@@ -1,4 +1,4 @@
-from data_generator import Protein, EntrezProtein
+from tutorial.data_generator import Protein, EntrezProtein
 
 import biocypher
 

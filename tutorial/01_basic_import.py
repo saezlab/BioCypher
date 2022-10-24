@@ -1,4 +1,4 @@
-from data_generator import Protein
+from tutorial.data_generator import Protein
 
 import biocypher
 

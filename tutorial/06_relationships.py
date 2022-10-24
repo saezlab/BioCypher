@@ -1,4 +1,4 @@
-from data_generator import (
+from tutorial.data_generator import (
     EntrezProtein,
     InteractionGenerator,
     RandomPropertyProtein,
