@@ -1,8 +1,9 @@
 # Installation
 ## Install as a dependency
 BioCypher is in development; if you want to use it in your project, please use
-the install from github command for your package management system. We recommend
-Poetry, you can get it [here](https://python-poetry.org/docs/#installation). We
+the *install-from-github* command of your package management system. We
+recommend Poetry, you can get it
+[here](https://python-poetry.org/docs/#installation). We
 will provide a pip package in the future. You can install BioCypher as a
 dependency as follows:
 
