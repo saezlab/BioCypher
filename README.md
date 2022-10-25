@@ -19,7 +19,6 @@ Exemplary usage of BioCypher to build a graph database is shown in the
 directory, the example script for building a local database using the adapter
 is located in the
 [scripts](https://github.com/saezlab/pypath/blob/master/scripts/) directory.
-The documentation can be found at https://saezlab.github.io/BioCypher/.
 
 ### Note for contributors
 
