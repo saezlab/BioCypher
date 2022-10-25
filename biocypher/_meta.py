@@ -85,7 +85,6 @@ class VersionNode:
 
         self.update_state()
         self.update_schema()
-        self.update_leaves()
 
         if self.out_of_sync:
 
@@ -110,7 +109,6 @@ class VersionNode:
             'created': self._timestamp,
             'updated': self._timestamp,
             'schema': self._serialize(self.schema),
-            'leaves': self._serialize(self.leaves),
         }
 
     def _new_version(self):
@@ -139,7 +137,7 @@ class VersionNode:
 
     def sync_meta(self):
         """
-        Makes sure the meta graph has the same structure as the leaves.
+        Makes sure the meta graph has the same structure as the schema.
         """
 
         if self.offline:
@@ -158,7 +156,7 @@ class VersionNode:
                 preferred_id = params['preferred_id'],
                 properties = params,
             )
-            for entity, params in self._leaves.items()
+            for entity, params in self._schema.items()
         ]
 
         self.bcy_driver.add_biocypher_nodes(meta_nodes)
@@ -170,7 +168,7 @@ class VersionNode:
                 target_id = entity,
                 relationship_label = 'CONTAINS',
             )
-            for entity in self.leaves.keys()
+            for entity in self.schema.keys()
         ]
 
         self.bcy_driver.add_biocypher_edges(contains)
@@ -192,10 +190,10 @@ class VersionNode:
     @property
     def out_of_sync(self):
         """
-        The current leaves don't match the latest existing node.
+        The current schema doesn't match the latest existing node.
         """
 
-        return self._state.get('leaves') != self._serialize(self.leaves)
+        return self._state.get('schema') != self._serialize(self.schema)
 
     def get_id(self) -> str:
         """
@@ -273,7 +271,6 @@ class VersionNode:
 
         props = self.state.copy()
         props['schema'] = self._serialize(self.schema)
-        props['leaves'] = self._serialize(self.leaves)
 
         return props
 
@@ -378,6 +375,7 @@ class VersionNode:
         if not self._schema:
 
             self._schema = self.schema_from_config(config_file = config_file)
+            self._schema = self.find_leaves(schema = self._schema)
 
     @property
     def schema(self) -> dict:
@@ -430,35 +428,6 @@ class VersionNode:
             schema = config.module_data('schema_config')
 
         return schema
-
-    def update_leaves(self, schema: dict | None = None) -> dict:
-        """
-        Leaves of the schema.
-
-        Get leaves of the tree hierarchy from the data structure dict
-        contained in the `schema_config.yaml`. Creates virtual leaves
-        (as children) from entries that provide more than one preferred
-        id type (and corresponding inputs).
-
-        Args:
-            schema:
-                Data structure as loaded by ``update_schema``.
-
-        Attributes:
-            leaves:
-                Leaves in the database schema plus virtual leaves created
-                by ``find_leaves``.
-        """
-
-        self._leaves = self.find_leaves(schema = schema or self._schema)
-
-    @property
-    def leaves(self) -> dict:
-        """
-        Protects the leaves from side effects and unintended overwrites.
-        """
-
-        return copy.deepcopy(self._leaves)
 
     @classmethod
     def find_leaves(cls, schema: dict) -> dict:
