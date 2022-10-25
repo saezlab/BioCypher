@@ -9,9 +9,8 @@ overview, usage notes, and a tutorial, read the docs
 
 ## Usage
 
-BioCypher is currently in prototype stage. To use it locally, please clone the
-repository and use it as a local dependency or as a git submodule of your 
-project. 
+BioCypher is currently in prototype stage. Installation instructions can be 
+found [here](https://saezlab.github.io/BioCypher/installation.html)
 
 Exemplary usage of BioCypher to build a graph database is shown in the
 [PyPath](https://github.com/saezlab/pypath) repository. The example
