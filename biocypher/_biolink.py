@@ -35,7 +35,7 @@ class BiolinkAdapter:
     """
     Performs various functions to integrate the Biolink ontology.
 
-    Stores schema mappings to allow (reverse) translation of terms and
+    Stores model mappings to allow (reverse) translation of terms and
     queries.
 
     Todo:
@@ -45,7 +45,7 @@ class BiolinkAdapter:
     def __init__(
         self,
         schema: dict,
-        schema: Literal['biocypher', 'biolink'] | str | dict | None = None,
+        model: Literal['biocypher', 'biolink'] | str | dict | None = None,
     ):
         """
         Args:
@@ -53,15 +53,15 @@ class BiolinkAdapter:
                 A dictionary representing the constituents of the graph
                 to be built. These are the "schema" of the ontology
                 hierarchy tree.
-            schema:
-                Either a label referring to a built-in schema, or a path
-                to a YAML file with the schema. If not provided, the default
-                built-in schema will be used.
+            model:
+                Either a label referring to a built-in model, or a path
+                to a YAML file with the model. If not provided, the default
+                built-in model will be used.
         """
 
         self.schema = schema
-        self.schema = schema
-        self.schema_name = None
+        self.model = model
+        self.model_name = None
         self.biolink_schema = None
 
         # mapping functionality for translating terms and queries
@@ -73,49 +73,49 @@ class BiolinkAdapter:
         self.main()
 
     def main(self):
-        # select with schema to use
-        self.set_schema()
+        # select with model to use
+        self.set_model()
         # initialise biolink toolkit
         self.init_toolkit()
         # translate schema
         self.translate_schema_to_biolink()
 
-    def set_schema(self):
+    def set_model(self):
 
-        schemata_builtin = {
+        modelta_builtin = {
             'biocypher': 'biocypher-biolink-model',
             'biolink': 'biolink-model',
         }
 
-        self.schema = self.schema or 'biocypher'
+        self.model = self.model or 'biocypher'
 
-        self.schema_name = (
-            self.schema if isinstance(self.schema, str) else 'custom'
+        self.model_name = (
+            self.model if isinstance(self.model, str) else 'custom'
         )
 
-        if self.schema in schemata_builtin:
+        if self.model in modelta_builtin:
 
-            label = schemata_builtin[self.schema]
-            self.schema = module_data_path(label)
+            label = modelta_builtin[self.model]
+            self.model = module_data_path(label)
 
     def init_toolkit(self):
         """ """
 
         # TODO explain: isn't schma_yaml automatically at least
-        # 'biocypher' after running set_schema? How would we get default?
+        # 'biocypher' after running set_model? How would we get default?
         # - yes it is, we should default to biocypher, isn't it?
         logger.info(
-            f'Creating BioLink model toolkit from `{self.schema_name}` model.',
+            f'Creating BioLink model toolkit from `{self.model_name}` model.',
         )
 
         self.toolkit = (
-            bmt.Toolkit(self.schema) if self.schema else bmt.Toolkit()
+            bmt.Toolkit(self.model) if self.model else bmt.Toolkit()
         )
 
     def translate_schema_to_biolink(self):
         """
         Translates the schema (direct constituents of the graph) given
-        in the `schema_config.yaml` to Biolink-conforming nomenclature.
+        in the `model_config.yaml` to Biolink-conforming nomenclature.
         Simultaneously get the structure in the form of the parents of
         each leaf.
 
