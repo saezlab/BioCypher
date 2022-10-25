@@ -44,14 +44,14 @@ class BiolinkAdapter:
 
     def __init__(
         self,
-        leaves: dict,
+        schema: dict,
         schema: Literal['biocypher', 'biolink'] | str | dict | None = None,
     ):
         """
         Args:
-            leaves:
+            schema:
                 A dictionary representing the constituents of the graph
-                to be built. These are the "leaves" of the ontology
+                to be built. These are the "schema" of the ontology
                 hierarchy tree.
             schema:
                 Either a label referring to a built-in schema, or a path
@@ -59,10 +59,10 @@ class BiolinkAdapter:
                 built-in schema will be used.
         """
 
-        self.leaves = leaves
+        self.schema = schema
         self.schema = schema
         self.schema_name = None
-        self.biolink_leaves = None
+        self.biolink_schema = None
 
         # mapping functionality for translating terms and queries
         self.mappings = {}
@@ -77,8 +77,8 @@ class BiolinkAdapter:
         self.set_schema()
         # initialise biolink toolkit
         self.init_toolkit()
-        # translate leaves
-        self.translate_leaves_to_biolink()
+        # translate schema
+        self.translate_schema_to_biolink()
 
     def set_schema(self):
 
@@ -112,14 +112,14 @@ class BiolinkAdapter:
             bmt.Toolkit(self.schema) if self.schema else bmt.Toolkit()
         )
 
-    def translate_leaves_to_biolink(self):
+    def translate_schema_to_biolink(self):
         """
-        Translates the leaves (direct constituents of the graph) given
+        Translates the schema (direct constituents of the graph) given
         in the `schema_config.yaml` to Biolink-conforming nomenclature.
         Simultaneously get the structure in the form of the parents of
         each leaf.
 
-        Additionally adds child leaves for each leaf that has multiple
+        Additionally adds child schema for each leaf that has multiple
         identifiers.
 
         TODO: where do we use sentence case, which is the
@@ -127,12 +127,12 @@ class BiolinkAdapter:
         we switch to pascal case?
         """
 
-        logger.info('Translating BioCypher config leaves to Biolink.')
+        logger.info('Translating BioCypher config schema to Biolink.')
 
-        self.biolink_leaves = {}
+        self.biolink_schema = {}
 
         # ontology parents first
-        for entity, values in self.leaves.items():
+        for entity, values in self.schema.items():
 
             entity_biolink_class = self.toolkit.get_element(
                 entity,
@@ -156,22 +156,22 @@ class BiolinkAdapter:
                 self._add_translation_mappings(input_label, bc_name)
 
                 # create dict of biolink class definition and biolink
-                # ancestors, add to biolink leaves
-                self.biolink_leaves[entity] = {
+                # ancestors, add to biolink schema
+                self.biolink_schema[entity] = {
                     'class_definition': entity_biolink_class,
                     'ancestors': ancestors,
                 }
 
         # secondly check explicit children
-        for entity, values in self.leaves.items():
+        for entity, values in self.schema.items():
 
             if values.get('is_a') and not values.get('virtual'):
 
                 # build class definition for explicit child
                 self._build_biolink_class(entity, values)
 
-        # lastly check virtual leaves (implicit children)
-        for entity, values in self.leaves.items():
+        # lastly check virtual schema (implicit children)
+        for entity, values in self.schema.items():
 
             if values.get('virtual'):
 
@@ -269,8 +269,8 @@ class BiolinkAdapter:
 
         while parents:
             parent = parents.pop(0)
-            if self.biolink_leaves.get(parent):
-                ancestors += self.biolink_leaves.get(parent).get('ancestors')
+            if self.biolink_schema.get(parent):
+                ancestors += self.biolink_schema.get(parent).get('ancestors')
                 break
             elif self.toolkit.get_ancestors(parent):
                 bla = _misc.to_list(
@@ -294,7 +294,7 @@ class BiolinkAdapter:
         # create class definition
         se = ClassDefinition(entity)
         se.is_a = parent
-        self.biolink_leaves[entity] = {
+        self.biolink_schema[entity] = {
             'class_definition': se,
             'ancestors': ancestors,
         }
@@ -320,8 +320,8 @@ class BiolinkAdapter:
 
         while parents:
             parent = parents.pop(0)
-            if self.biolink_leaves.get(parent):
-                ancestors += self.biolink_leaves.get(parent).get('ancestors')
+            if self.biolink_schema.get(parent):
+                ancestors += self.biolink_schema.get(parent).get('ancestors')
                 break
             elif self.toolkit.get_ancestors(parent):
                 bla = _misc.to_list(
@@ -345,7 +345,7 @@ class BiolinkAdapter:
         # create class definition
         se = ClassDefinition(entity)
         se.is_a = parent
-        self.biolink_leaves[entity] = {
+        self.biolink_schema[entity] = {
             'class_definition': se,
             'ancestors': ancestors,
         }
