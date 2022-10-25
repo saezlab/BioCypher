@@ -18,7 +18,7 @@ import yaml
 
 from . import _misc
 from . import _config as config
-from ._create import BioCypherEdge, BioCypherNode
+from ._create import Edge, Node
 from ._logger import logger
 
 if TYPE_CHECKING:
@@ -32,9 +32,9 @@ class VersionNode:
     """
     Versioning and graph structure information meta node.
 
-    Similar to BioCypherNode but fixes label to ":BioCypher" and sets
+    Similar to Node but fixes label to ":BioCypher" and sets
     version by using the current date and time (meaning it overrides both
-    mandatory args from BioCypherNode).
+    mandatory args from Node).
 
     Is created upon establishment of connection with the database and remains
     fixed for each BioCypher "session" (ie, the entire duration from starting
@@ -126,7 +126,7 @@ class VersionNode:
 
         if self._state.get('previous', 'none') != 'none':
 
-            precedes = BioCypherEdge(
+            precedes = Edge(
                 self._state['previous'],
                 self.node_id,
                 'PRECEDES',
@@ -150,7 +150,7 @@ class VersionNode:
         # add structure nodes
         # leaves of the hierarchy specified in schema yaml
         meta_nodes = [
-            BioCypherNode(
+            Node(
                 node_id = entity,
                 node_label = 'MetaNode',
                 preferred_id = params['preferred_id'],
@@ -163,7 +163,7 @@ class VersionNode:
 
         # connect structure nodes to version node
         contains = [
-            BioCypherEdge(
+            Edge(
                 source_id = self._state['id'],
                 target_id = entity,
                 relationship_label = 'CONTAINS',
@@ -175,7 +175,7 @@ class VersionNode:
 
         # add graph structure between MetaNodes
         meta_rel = [
-            BioCypherEdge(
+            Edge(
                 mn.node_id,
                 mn.properties.get(side),
                 f'IS_{side.upper()}_OF'

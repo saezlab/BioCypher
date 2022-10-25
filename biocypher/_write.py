@@ -84,7 +84,7 @@ import glob
 
 import biocypher._misc as _misc
 from biocypher._config import config as _config
-from ._create import BC_TYPES, BioCypherEdge, BioCypherNode, BioCypherRelAsNode
+from ._create import BC_TYPES, Edge, Node, RelAsNode
 
 __all__ = ['BatchWriter', 'ENTITIES']
 
@@ -394,7 +394,7 @@ class BatchWriter:
     def _property_types(
             self,
             label: str,
-            instance: BioCypherNode | BioCypherEdge | None = None,
+            instance: Node | Edge | None = None,
             what: ENTITIES = 'node',
         ):
 
@@ -412,7 +412,7 @@ class BatchWriter:
 
             if what == 'node':
                 # add id and preferred id to properties; these are
-                # created in node creation (`_create.BioCypherNode`)
+                # created in node creation (`_create.Node`)
                 propt.update({'id': 'str', 'preferred_id': 'str'})
 
         elif instance:
@@ -486,7 +486,7 @@ class BatchWriter:
 
     def _write_records(
             self,
-            entities: Iterable[BioCypherNode] | Iterable[BioCypherEdge],
+            entities: Iterable[Node] | Iterable[Edge],
             batch_size: int | None = None,
         ) -> bool:
         """
@@ -500,7 +500,7 @@ class BatchWriter:
         Args:
             entities:
                 An iterable of nodes or edges, each represented by a
-                :py:class:`BioCypherNode`` or :py:class:``BioCypherEdge``
+                :py:class:`Node`` or :py:class:``Edge``
                 instance.
             batch_size:
                 Override instance or config level value.
@@ -614,7 +614,7 @@ class BatchWriter:
         return True
 
     @staticmethod
-    def _what(entity: BioCypherNode | BioCypherEdge) -> ENTITIES:
+    def _what(entity: Node | Edge) -> ENTITIES:
 
         return re.sub('^BioCypher', '', entity.__class__.__name__).lower()
 
@@ -674,7 +674,7 @@ class BatchWriter:
 
     def _compile_batch(
         self,
-        entities: Iterable[BioCypherNode] | Iterable[BioCypherEdge],
+        entities: Iterable[Node] | Iterable[Edge],
         label: str,
         labels: str,
     ) -> bool:
@@ -684,7 +684,7 @@ class BatchWriter:
         Args:
             entities:
                 Iterable of nodes or edges, each represented as a
-                ``BioCypherNode`` or ``BioCypherEdge`` instance.
+                ``Node`` or ``Edge`` instance.
             label:
                 Label or type of the nodes or edges.
             labels:

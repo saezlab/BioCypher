@@ -33,7 +33,7 @@ import neo4j_utils
 from . import _misc
 from ._write import BatchWriter, ENTITIES
 from ._config import config as _config
-from ._create import BC_TYPES, BioCypherEdge, BioCypherNode
+from ._create import BC_TYPES, Edge, Node
 from ._meta import VersionNode
 from ._translate import Translator
 from ._biolink import BiolinkAdapter
@@ -282,7 +282,7 @@ class Driver(neo4j_utils.Driver):
         Translate nodes and write them into the database.
 
         Generic node adder method to add any kind of input to the
-        graph via the :class:`biocypher.create.BioCypherNode` class. Employs
+        graph via the :class:`biocypher.create.Node` class. Employs
         translation functionality and calls the :meth:`add_biocypher_nodes()`
         method.
 
@@ -321,7 +321,7 @@ class Driver(neo4j_utils.Driver):
         Translate edges and write them into the database.
 
         Generic edge adder method to add any kind of input to the graph
-        via the :class:`biocypher.create.BioCypherEdge` class. Employs
+        via the :class:`biocypher.create.Edge` class. Employs
         translation functionality and calls the
         :meth:`add_biocypher_edges()` method.
 
@@ -350,7 +350,7 @@ class Driver(neo4j_utils.Driver):
 
     def add_biocypher_nodes(
             self,
-            nodes: Iterable[BioCypherNode],
+            nodes: Iterable[Node],
             explain: bool = False,
             profile: bool = False,
     ) -> bool:
@@ -358,12 +358,12 @@ class Driver(neo4j_utils.Driver):
         Write nodes into the database.
 
         Accepts a node type handoff class
-        (:class:`biocypher.create.BioCypherNode`) with id,
+        (:class:`biocypher.create.Node`) with id,
         label, and a dict of properties (passing on the type of
         property, ie, ``int``, ``str``, ...).
 
         The dict retrieved by the
-        :meth:`biocypher.create.BioCypherNode.get_dict()` method is
+        :meth:`biocypher.create.Node.get_dict()` method is
         passed into Neo4j as a map of maps, explicitly encoding node id
         and label, and adding all other properties from the 'properties'
         key of the dict. The merge is performed via APOC, matching only
@@ -372,7 +372,7 @@ class Driver(neo4j_utils.Driver):
 
         Args:
             nodes:
-                An iterable of :class:`biocypher.create.BioCypherNode` objects.
+                An iterable of :class:`biocypher.create.Node` objects.
             explain:
                 Call ``EXPLAIN`` on the CYPHER query.
             profile:
@@ -418,7 +418,7 @@ class Driver(neo4j_utils.Driver):
 
     def add_biocypher_edges(
             self,
-            edges: Iterable[BioCypherEdge],
+            edges: Iterable[Edge],
             explain: bool = False,
             profile: bool = False,
     ) -> bool:
@@ -426,7 +426,7 @@ class Driver(neo4j_utils.Driver):
         Write edges into the database.
 
         Accepts an edge type handoff class
-        (:class:`biocypher.create.BioCypherEdge`) with source
+        (:class:`biocypher.create.Edge`) with source
         and target ids, label, and a dict of properties (passing on the
         type of property, ie, int, string ...).
 
@@ -436,7 +436,7 @@ class Driver(neo4j_utils.Driver):
         to interaction partners).
 
         The dict retrieved by the
-        :meth:`biocypher.create.BioCypherEdge.get_dict()` method is
+        :meth:`biocypher.create.Edge.get_dict()` method is
         passed into Neo4j as a map of maps, explicitly encoding source
         and target ids and the relationship label, and adding all edge
         properties from the 'properties' key of the dict. The merge is
@@ -446,7 +446,7 @@ class Driver(neo4j_utils.Driver):
 
         Args:
             edges:
-                An iterable of :class:`biocypher.create.BioCypherEdge` objects.
+                An iterable of :class:`biocypher.create.Edge` objects.
             explain:
                 Call ``EXPLAIN`` on the CYPHER query.
             profile:

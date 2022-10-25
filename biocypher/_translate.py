@@ -44,7 +44,7 @@ import collections
 from more_itertools import peekable
 
 from . import _misc
-from ._create import BC_TYPES, BioCypherEdge, BioCypherNode, BioCypherRelAsNode
+from ._create import BC_TYPES, Edge, Node, RelAsNode
 
 __all__ = ['Translator']
 
@@ -131,9 +131,9 @@ class Translator:
             _type: str,
             props: dict,
             _id: str = None,
-        ) -> BioCypherEdge | BioCypherRelAsNode | None:
+        ) -> Edge | RelAsNode | None:
         """
-        Creates one BioCypherEdge.
+        Creates one Edge.
 
         Args:
             source:
@@ -180,7 +180,7 @@ class Translator:
 
             edge_label = self.schema[bl_type].get('label_as_edge') or bl_type
 
-            return BioCypherEdge(
+            return Edge(
                 source_id = source,
                 target_id = target,
                 relationship_label = edge_label,
@@ -194,7 +194,7 @@ class Translator:
             bl_type: str,
             props: dict,
             _id: str | None = None,
-        ) -> BioCypherRelAsNode:
+        ) -> RelAsNode:
         """
         Create node representation of a record represented by edge by default.
 
@@ -226,7 +226,7 @@ class Translator:
             # source target concat
             node_id = f'{src}_{tar}_{props_str}'
 
-        n = BioCypherNode(
+        n = Node(
             node_id = node_id,
             node_label = bl_type,
             properties = props,
@@ -245,19 +245,19 @@ class Translator:
             reltype1 = props.get('src_role') or 'IS_PART_OF'
             reltype2 = props.get('tar_role') or 'IS_PART_OF'
 
-        e_s = BioCypherEdge(
+        e_s = Edge(
             source_id = source,
             target_id = node_id,
             relationship_label = reltype1,
         )
 
-        e_t = BioCypherEdge(
+        e_t = Edge(
             source_id = target,
             target_id = node_id,
             relationship_label = reltype2,
         )
 
-        yield BioCypherRelAsNode(n, e_s, e_t)
+        yield RelAsNode(n, e_s, e_t)
 
 
     def node(
@@ -265,9 +265,9 @@ class Translator:
             _id: str,
             _type: str,
             props: dict,
-        ) -> BioCypherNode | None:
+        ) -> Node | None:
         """
-        Creates one BioCypherNode.
+        Creates one Node.
 
         Args:
             _id:
@@ -295,7 +295,7 @@ class Translator:
             filtered_props = self._filter_props(bl_type, props)
             preferred_id = self._get_preferred_id(bl_type)
 
-            return BioCypherNode(
+            return Node(
                 node_id = _id,
                 node_label = bl_type,
                 preferred_id = preferred_id,
