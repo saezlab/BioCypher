@@ -1,3 +1,4 @@
+(tutorial)=
 # BioCypher Tutorial - Basics
 The main purpose of BioCypher is to facilitate the pre-processing of biomedical
 data to save development time in the maintainance of curated knowledge graphs
