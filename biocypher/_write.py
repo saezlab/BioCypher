@@ -84,7 +84,7 @@ import glob
 
 import biocypher._misc as _misc
 from biocypher._config import config as _config
-from ._create import BC_TYPES, Edge, Node, RelAsNode
+from ._entity import BC_TYPES, Edge, Node, RelAsNode
 
 __all__ = ['BatchWriter', 'ENTITIES']
 
@@ -412,7 +412,7 @@ class BatchWriter:
 
             if what == 'node':
                 # add id and preferred id to properties; these are
-                # created in node creation (`_create.Node`)
+                # created in node creation (`_entity.Node`)
                 propt.update({'id': 'str', 'preferred_id': 'str'})
 
         elif instance:

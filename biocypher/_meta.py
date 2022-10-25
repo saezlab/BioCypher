@@ -18,7 +18,7 @@ import yaml
 
 from . import _misc
 from . import _config as config
-from ._create import Edge, Node
+from ._entity import Edge, Node
 from ._logger import logger
 
 if TYPE_CHECKING:

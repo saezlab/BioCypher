@@ -44,7 +44,7 @@ import collections
 from more_itertools import peekable
 
 from . import _misc
-from ._create import BC_TYPES, Edge, Node, RelAsNode
+from ._entity import BC_TYPES, Edge, Node, RelAsNode
 
 __all__ = ['Translator']
 

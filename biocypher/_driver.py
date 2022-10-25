@@ -33,7 +33,7 @@ import neo4j_utils
 from . import _misc
 from ._write import BatchWriter, ENTITIES
 from ._config import config as _config
-from ._create import BC_TYPES, Edge, Node
+from ._entity import BC_TYPES, Edge, Node
 from ._meta import VersionNode
 from ._translate import Translator
 from ._biolink import BiolinkAdapter
@@ -232,7 +232,7 @@ class Driver(neo4j_utils.Driver):
             items:
                 Nodes and edges to be added to the database; can be anything
                 suitable for :py:class:``Translator.translate``, or the
-                objects from :py:mod:``biocypher._create``.
+                objects from :py:mod:``biocypher._entity``.
         """
 
         for it in self.translator.translate(items):
@@ -537,7 +537,7 @@ class Driver(neo4j_utils.Driver):
                 Nodes and edges to be written in BioCypher-compatible CSV
                 format; can be anything suitable for
                 :py:class:``Translator.translate``, or the objects from
-                :py:mod:``biocypher._create``.
+                :py:mod:``biocypher._entity``.
             dirname:
                 Directory for CSV output files.
             db_name:

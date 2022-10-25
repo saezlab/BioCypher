@@ -10,7 +10,7 @@
 #
 
 """
-Create a property graph database for biomedical research applications.
+Intermediate objects that facilitate conversion of data sources to biocypher.
 
 Transforms ordered collections of biomedical entities and relationships
 to BioCypher objects that represent property graph nodes and edges.
