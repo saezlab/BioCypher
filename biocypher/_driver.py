@@ -121,9 +121,9 @@ class Driver(neo4j_utils.Driver):
         # representation and returns if found, else creates new
         # one
         self.db_meta = VersionNode(
-            from_config=offline or wipe,
+            from_config=self.offline or wipe,
             config_file=user_schema_config_path,
-            offline=offline,
+            offline=self.offline,
             bcy_driver=self,
         )
 
@@ -148,7 +148,7 @@ class Driver(neo4j_utils.Driver):
 
     def _update_translator(self):
 
-        self.translator = Translator(leaves=self.db_meta.leaves)
+        self.translator = Translator(leaves=self.db_meta.schema)
 
     def _reset_insert_buffer(self):
         """
@@ -208,7 +208,7 @@ class Driver(neo4j_utils.Driver):
         logger.info('Creating constraints for node types in config.')
 
         # get structure
-        for leaf in self.db_meta.leaves.items():
+        for leaf in self.db_meta.schema.items():
 
             if leaf[1]['represented_as'] == 'node':
 
@@ -578,7 +578,7 @@ class Driver(neo4j_utils.Driver):
         if not self.batch_writer:
 
             self.batch_writer = BatchWriter(
-                leaves=self.db_meta.leaves,
+                leaves=self.db_meta.schema,
                 bl_adapter=self.bl_adapter,
                 delimiter=self.csv_delim,
                 array_delimiter=self.csv_adelim,
@@ -601,7 +601,7 @@ class Driver(neo4j_utils.Driver):
                 An instance of :class:`biocypher.adapter.BioLinkAdapter`.
         """
         if not self.bl_adapter:
-            self.bl_adapter = BiolinkAdapter(leaves=self.db_meta.leaves)
+            self.bl_adapter = BiolinkAdapter(leaves=self.db_meta.schema)
 
     def get_import_call(self) -> str:
         """
