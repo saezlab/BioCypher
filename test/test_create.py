@@ -4,9 +4,9 @@ from hypothesis import strategies as st
 import pytest
 
 from biocypher._create import (
-    BioCypherEdge,
-    BioCypherNode,
-    BioCypherRelAsNode,
+    Edge,
+    Node,
+    RelAsNode,
 )
 from biocypher._meta import VersionNode
 
@@ -21,44 +21,44 @@ def version_node():
 
 
 def test_version_node(version_node):
-    assert version_node.get_label() == "BioCypher"
+    assert version_node.label == "BioCypher"
 
 
 def test_virtual_leaves_node(version_node):
-    assert "wikipathways.pathway" in version_node.leaves
+    assert "wikipathways.pathway" in version_node.schema
 
 
 def test_getting_properties_via_config(version_node):
-    assert "name" in version_node.leaves["protein"].get("properties").keys()
+    assert "name" in version_node.schema["protein"].get("properties").keys()
 
 
-@given(st.builds(BioCypherNode))
+@given(st.builds(Node))
 def test_node(node):
-    assert isinstance(node.get_id(), str)
-    assert isinstance(node.get_label(), str)
-    assert isinstance(node.get_properties(), dict)
-    assert isinstance(node.get_dict(), dict)
+    assert isinstance(node.id, str)
+    assert isinstance(node.label, str)
+    assert isinstance(node.props, dict)
+    assert isinstance(node._asdict(), dict)
 
-    assert "id" in node.get_properties().keys()
+    assert "id" in node.props
 
 
-@given(st.builds(BioCypherEdge))
+@given(st.builds(Edge))
 def test_edge(edge):
-    assert isinstance(edge.get_id(), str) or edge.get_id() == None
-    assert isinstance(edge.get_source_id(), str)
-    assert isinstance(edge.get_target_id(), str)
-    assert isinstance(edge.get_label(), str)
-    assert isinstance(edge.get_properties(), dict)
-    assert isinstance(edge.get_dict(), dict)
+    assert isinstance(edge.id, str) or edge.id == None
+    assert isinstance(edge.source, str)
+    assert isinstance(edge.target, str)
+    assert isinstance(edge.label, str)
+    assert isinstance(edge.props, dict)
+    assert isinstance(edge._asdict(), dict)
 
 
-@given(st.builds(BioCypherRelAsNode))
+@given(st.builds(RelAsNode))
 def test_rel_as_node(rel_as_node):
-    assert isinstance(rel_as_node.get_node(), BioCypherNode)
-    assert isinstance(rel_as_node.get_source_edge(), BioCypherEdge)
-    assert isinstance(rel_as_node.get_target_edge(), BioCypherEdge)
+    assert isinstance(rel_as_node.node, Node)
+    assert isinstance(rel_as_node.source, Edge)
+    assert isinstance(rel_as_node.target, Edge)
 
 
 def test_rel_as_node_invalid_node():
     with pytest.raises(TypeError):
-        BioCypherRelAsNode("str", 1, 2.5122)
+        RelAsNode("str", 1, 2.5122)

@@ -137,7 +137,7 @@ class BatchWriter:
 
     def __init__(
         self,
-        leaves: dict,
+        schema: dict,
         bl_adapter: 'BiolinkAdapter',
         delimiter: str | None = None,
         array_delimiter: str | None = None,
@@ -152,7 +152,7 @@ class BatchWriter:
         Export data into CSV for *neo4j-admin* import.
 
         Args:
-            leaves:
+            schema:
                 The BioCypher graph schema (from :py:class:`VersionNode`).
             bl_adapter:
                 Instance of :py:class:`BiolinkAdapter` to enable translation
@@ -204,7 +204,7 @@ class BatchWriter:
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
 
-        self.leaves = leaves
+        self.schema = schema
         self.bl_adapter = bl_adapter
         self.set_outdir(dirname)
         self.reset()
@@ -400,7 +400,7 @@ class BatchWriter:
 
         propt = {}
         # get properties from config if present
-        from_conf = self.bl_adapter.leaves.get(label, {}).get('properties')
+        from_conf = self.bl_adapter.schema.get(label, {}).get('properties')
 
         if what != 'node' and not from_conf:
 
@@ -419,7 +419,7 @@ class BatchWriter:
 
             propt = {
                 k: v.__class__.__name__
-                for k, v in instance.get_properties()
+                for k, v in instance.props
                 if k is not None  # why would be a key here None?
             }
 
@@ -427,10 +427,10 @@ class BatchWriter:
 
     def _lae_proptypes(self, label: str) -> dict[str, str] | None:
         """
-        Looks up property types for label as edge leaves.
+        Looks up property types for label as edge schema.
         """
 
-        for leave in self.bl_adapter.leaves.values():
+        for leave in self.bl_adapter.schema.values():
 
             if (
                 isinstance(leave, dict) and
@@ -536,7 +536,7 @@ class BatchWriter:
             what = self._what(e)
             node = what == 'node'
 
-            if not node and not (e.source_id and e.target_id):
+            if not node and not (e.source and e.target):
 
                 logger.error(
                     'Edge must have source and target node. '
@@ -544,9 +544,9 @@ class BatchWriter:
                 )
                 continue
 
-            _id = e.get_id() if node else f'{e.source_id} -> {e.target_id}'
+            _id = e.id if node else f'{e.source} -> {e.target}'
             self.seen[what][_id] += 1
-            label = e.get_label()
+            label = e.label
 
             # check for duplicates
             if self.seen[what][_id] > 1:
@@ -568,7 +568,7 @@ class BatchWriter:
                     # write_single_node_list_to_file) TODO if it occurs, ask
                     # user to select desired properties and restart the process
                     all_labels = (
-                        self.bl_adapter.biolink_leaves.
+                        self.bl_adapter.biolink_schema.
                         get(label, {}).
                         get('ancestors')
                     ) or (label,)
@@ -718,20 +718,20 @@ class BatchWriter:
         for e in entities:
             # check for deviations in properties
             # edge properties
-            props = e.get_properties()
+            props = e.props
             ptypes = self.property_types[what][label]
             missing = set(ptypes.keys()) - set(props.keys())
             excess = set(props.keys()) - set(ptypes.keys())
             e_display = (
                 f'ID `{e.node_id}`'
                     if node else
-                f'endpoint IDs `{e.source_id}-{e.target_id}`'
+                f'endpoint IDs `{e.source}-{e.target}`'
             )
 
             if missing:
 
                 logger.error(
-                    f'One `{e.get_label()}` {what} with {e_display} is '
+                    f'One `{e.label}` {what} with {e_display} is '
                     f'missing the following properties: {", ".join(missing)}.'
                 )
                 return False
@@ -739,23 +739,23 @@ class BatchWriter:
             if excess:
 
                 logger.error(
-                    f'One `{e.get_label()}` node with {e_display} has t'
+                    f'One `{e.label}` node with {e_display} has t'
                     f'he following unexpected properties: {", ".join(excess)}.'
                 )
                 return False
 
-            line = [e.node_id if node else e.source_id]
+            line = [e.node if node else e.source]
             # this is not guaranteed to be order preserving
             # though it will work fine in cpython
             line.extend(
                 self._proc_prop(props.get(prop), py_type)
                 for prop, py_type in ptypes.items()
             )
-            line.append(labels if node else e.target_id)
+            line.append(labels if node else e.target)
 
             if not node:
 
-                line.append(e.get_label())
+                line.append(e.label)
 
             lines.append(self.delim.join(line))
 
@@ -780,7 +780,7 @@ class BatchWriter:
         if not lines: return
 
         # translate label to PascalCase
-        label = self.bl_adapter.name_sentence_to_pascal(label)
+        label = _misc.cc(label)
 
         # list files in self.outdir
         files = glob.glob(os.path.join(self.outdir, f'{label}-part*.csv'))

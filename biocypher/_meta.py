@@ -47,8 +47,8 @@ class VersionNode:
             offline: bool = False,
             from_config: bool = False,
             config_file: str = None,
-            node_label: str = 'BioCypher',
-            node_id: str | None = None,
+            label: str = 'BioCypher',
+            id: str | None = None,
             bcy_driver: 'Driver' = None,
     ):
         """
@@ -62,7 +62,7 @@ class VersionNode:
                 node in the database.
             config_file:
                 Path to config file.
-            node_label:
+            label:
                 Label of the version node.
             bcy_driver:
                 A driver instance that supports the connection and already
@@ -73,9 +73,9 @@ class VersionNode:
         self.offline = offline or getattr(bcy_driver, 'offline', True)
         self.from_config = from_config
         self.config_file = config_file
-        self.node_label = node_label
+        self.label = label
         self.bcy_driver = bcy_driver
-        self.node_id = node_id or f'v{self._timestamp}'
+        self.id = id or f'v{self._timestamp}'
         self._setup()
 
     def _setup(self):
@@ -104,7 +104,7 @@ class VersionNode:
         """
 
         self._state = {
-            'id': self.node_id,
+            'id': self.id,
             'previous': self._state.get('id', 'none'),
             'created': self._timestamp,
             'updated': self._timestamp,
@@ -127,9 +127,9 @@ class VersionNode:
         if self._state.get('previous', 'none') != 'none':
 
             precedes = Edge(
-                self._state['previous'],
-                self.node_id,
-                'PRECEDES',
+                source = self._state['previous'],
+                target = self.id,
+                label = 'PRECEDES',
             )
             self.bcy_driver.add_biocypher_edges(precedes)
 
@@ -151,10 +151,10 @@ class VersionNode:
         # leaves of the hierarchy specified in schema yaml
         meta_nodes = [
             Node(
-                node_id = entity,
-                node_label = 'MetaNode',
-                preferred_id = params['preferred_id'],
-                properties = params,
+                id = entity,
+                label = 'MetaNode',
+                id_type = params['preferred_id'],
+                props = params,
             )
             for entity, params in self._schema.items()
         ]
@@ -164,9 +164,9 @@ class VersionNode:
         # connect structure nodes to version node
         contains = [
             Edge(
-                source_id = self._state['id'],
-                target_id = entity,
-                relationship_label = 'CONTAINS',
+                source = self._state['id'],
+                target = entity,
+                label = 'CONTAINS',
             )
             for entity in self.schema.keys()
         ]
@@ -176,13 +176,13 @@ class VersionNode:
         # add graph structure between MetaNodes
         meta_rel = [
             Edge(
-                mn.node_id,
-                mn.properties.get(side),
-                f'IS_{side.upper()}_OF'
+                source = mn.id,
+                target = mn.props.get(side),
+                label = f'IS_{side.upper()}_OF'
             )
             for mn in meta_nodes
             for side in ('source', 'target')
-            if mn.properties.get(side)
+            if mn.props.get(side)
         ]
 
         self.bcy_driver.add_biocypher_edges(meta_rel)
@@ -195,25 +195,7 @@ class VersionNode:
 
         return self._state.get('schema') != self._serialize(self.schema)
 
-    def get_id(self) -> str:
-        """
-        Returns primary node identifier.
-
-        Returns:
-            The id of the database node.
-        """
-        return self.node_id
-
-    def get_label(self) -> str:
-        """
-        Returns primary node label.
-
-        Returns:
-            The label of the database node.
-        """
-        return self.node_label
-
-    def get_dict(self) -> dict:
+    def _asdict(self) -> dict:
         """
         Node data for database insertion.
 
@@ -221,9 +203,9 @@ class VersionNode:
             Data directly suitable for creation of a node in the database.
         """
         return {
-            'node_id': self.node_id,
-            'node_label': self.node_label,
-            'properties': self.properties,
+            'id': self.id,
+            'label': self.label,
+            'props': self.props,
         }
 
     @property
@@ -242,29 +224,29 @@ class VersionNode:
         return now.strftime('%Y%m%d-%H%M%S')
 
     @property
-    def node_id(self):
+    def id(self):
         """
         Unique ID of the current session.
         """
 
-        return self._node_id
+        return self._id
 
-    @node_id.setter
-    def node_id(self, node_id: str) -> str:
+    @id.setter
+    def id(self, id: str) -> str:
         """
         Unique ID of the current session.
         """
 
-        if hasattr(self, '_node_id'):
+        if hasattr(self, '_id'):
 
             raise TypeError('Changing `node_id` is not supported.')
 
         else:
 
-            self._node_id = node_id
+            self._id = id
 
     @property
-    def properties(self) -> dict:
+    def props(self) -> dict:
         """
         Node properties for database storage.
         """
@@ -326,8 +308,8 @@ class VersionNode:
             logger.info('Getting graph state.')
 
             result, summary = self.bcy_driver.query(
-                f'MATCH (meta:{self.node_label})'
-                f'WHERE NOT (meta)-[:PRECEDES]->(:{self.node_label})'
+                f'MATCH (meta:{self.label})'
+                f'WHERE NOT (meta)-[:PRECEDES]->(:{self.label})'
                 'RETURN meta',
             )
 

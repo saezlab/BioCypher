@@ -187,8 +187,8 @@ class Edge(
 
     Has source and target ids, label, property dict; ids and label (in
     the Neo4j sense of a label, ie, the entity descriptor after the
-    colon, such as ":TARGETS") are non-optional and called source_id,
-    target_id, and relationship_label to avoid confusion with properties
+    colon, such as ":TARGETS") are non-optional and called source,
+    target, and label to avoid confusion with properties
     called "label", which usually denotes the human-readable form.
     Relationship labels are written in UPPERCASE and as verbs, as per
     Neo4j consensus.

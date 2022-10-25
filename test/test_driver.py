@@ -1,7 +1,7 @@
 import neo4j
 import pytest
 
-from biocypher._create import BioCypherEdge, BioCypherNode, BioCypherRelAsNode
+from biocypher._create import Edge, Node, RelAsNode
 from biocypher._driver import Driver
 
 
@@ -17,7 +17,7 @@ def driver():
         user_schema_config_path="biocypher/_config/test_schema_config.yaml",
     )
     # create single node in case of empty DB for testing?
-    # d.add_biocypher_nodes(BioCypherNode("TestID", "Test"))
+    # d.add_biocypher_nodes(Node("TestID", "Test"))
     yield d
 
     # teardown
@@ -84,7 +84,7 @@ def test_add_invalid_biocypher_node(driver):
 
 def test_add_single_biocypher_node(driver):
     # neo4j database needs to be running!
-    n = BioCypherNode(node_id="test_id1", node_label="Test")
+    n = Node(node_id="test_id1", node_label="Test")
     driver.add_biocypher_nodes(n)
     r, summary = driver.query(
         "MATCH (n:Test) " "WITH n, n.id AS id " "RETURN id "
@@ -94,8 +94,8 @@ def test_add_single_biocypher_node(driver):
 
 def test_add_biocypher_node_list(driver):
     # neo4j database needs to be running!
-    n1 = BioCypherNode(node_id="test_id1", node_label="Test")
-    n2 = BioCypherNode(node_id="test_id2", node_label="Test")
+    n1 = Node(node_id="test_id1", node_label="Test")
+    n2 = Node(node_id="test_id2", node_label="Test")
     driver.add_biocypher_nodes([n1, n2])
     r, summary = driver.query(
         "MATCH (n:Test) " "WITH n, n.id AS id " "RETURN id "
@@ -108,7 +108,7 @@ def test_add_biocypher_node_generator(driver):
     # generator
     def gen(nodes):
         for g in nodes:
-            yield BioCypherNode(g[0], g[1])
+            yield Node(g[0], g[1])
 
     g = gen([("test_id1", "Test"), ("test_id2", "Test")])
 
@@ -120,17 +120,17 @@ def test_add_biocypher_node_generator(driver):
 
 
 def test_add_specific_id_node(driver):
-    n = BioCypherNode(node_id="CHAT", node_label="Gene", preferred_id="hgnc")
+    n = Node(id="CHAT", label="Gene", id_type="hgnc")
     driver.add_biocypher_nodes(n)
 
     r, summary = driver.query("MATCH (n:Gene) " "RETURN n")
 
     assert r[0]["n"].get("id") == "CHAT"
-    assert r[0]["n"].get("preferred_id") == "hgnc"
+    assert r[0]["n"].get("id_type") == "hgnc"
 
 
 def test_add_generic_id_node(driver):
-    n = BioCypherNode(node_id="CHAT", node_label="Gene", preferred_id="HGNC")
+    n = Node(id="CHAT", label="Gene", id_type="HGNC")
     driver.add_biocypher_nodes(n)
 
     r, summary = driver.query("MATCH (n:Gene) " "RETURN n")
@@ -146,11 +146,11 @@ def test_add_invalid_biocypher_edge(driver):
 
 def test_add_single_biocypher_edge_explicit_node_creation(driver):
     # neo4j database needs to be running!
-    n1 = BioCypherNode("src", "Test")
-    n2 = BioCypherNode("tar", "Test")
+    n1 = Node("src", "Test")
+    n2 = Node("tar", "Test")
     driver.add_biocypher_nodes([n1, n2])
 
-    e = BioCypherEdge("src", "tar", "Test")
+    e = Edge("src", "tar", "Test")
     driver.add_biocypher_edges(e)
     r, summary = driver.query(
         "MATCH (n1)-[r:Test]->(n2) "
@@ -169,7 +169,7 @@ def test_add_single_biocypher_edge_missing_nodes(driver):
     # merging on non-existing nodes creates them without labels; what is
     # the desired behaviour here? do we only want to MATCH?
 
-    e = BioCypherEdge("src", "tar", "Test")
+    e = Edge("src", "tar", "Test")
     driver.add_biocypher_edges(e)
     r, summary = driver.query(
         "MATCH (n1)-[r:Test]->(n2) "
@@ -185,14 +185,14 @@ def test_add_single_biocypher_edge_missing_nodes(driver):
 
 def test_add_biocypher_edge_list(driver):
     # neo4j database needs to be running!
-    n1 = BioCypherNode("src", "Test")
-    n2 = BioCypherNode("tar1", "Test")
-    n3 = BioCypherNode("tar2", "Test")
+    n1 = Node("src", "Test")
+    n2 = Node("tar1", "Test")
+    n3 = Node("tar2", "Test")
     driver.add_biocypher_nodes([n1, n2, n3])
 
     # edge list
-    e1 = BioCypherEdge("src", "tar1", "Test1")
-    e2 = BioCypherEdge("src", "tar2", "Test2")
+    e1 = Edge("src", "tar1", "Test1")
+    e2 = Edge("src", "tar2", "Test2")
     driver.add_biocypher_edges([e1, e2])
     r, summary = driver.query(
         "MATCH (n3)<-[r2:Test2]-(n1)-[r1:Test1]->(n2) "
@@ -211,21 +211,19 @@ def test_add_biocypher_edge_list(driver):
 
 def test_add_biocypher_edge_generator(driver):
     # neo4j database needs to be running!
-    n1 = BioCypherNode("src", "Test")
-    n2 = BioCypherNode("tar1", "Test")
-    n3 = BioCypherNode("tar2", "Test")
+    n1 = Node("src", "Test")
+    n2 = Node("tar1", "Test")
+    n3 = Node("tar2", "Test")
     driver.add_biocypher_nodes([n1, n2, n3])
 
     # generator
     def gen(edges):
         for e in edges:
-            yield BioCypherEdge(
-                e.get_source_id(), e.get_target_id(), e.get_label()
-            )
+            yield Edge(e.source, e.target, e.label)
 
     # edge list
-    e1 = BioCypherEdge("src", "tar1", "Test1")
-    e2 = BioCypherEdge("src", "tar2", "Test2")
+    e1 = Edge("src", "tar1", "Test1")
+    e2 = Edge("src", "tar2", "Test2")
     g = gen([e1, e2])
 
     driver.add_biocypher_edges(g)
@@ -244,16 +242,16 @@ def test_add_biocypher_edge_generator(driver):
     )
 
 
-def test_add_biocypher_interaction_as_BioCypherRelAsNode_list(driver):
+def test_add_biocypher_interaction_as_relasnode_list(driver):
     # neo4j database needs to be running!
-    i1 = BioCypherNode("int1", "Int1")
-    i2 = BioCypherNode("int2", "Int2")
+    i1 = Node("int1", "Int1")
+    i2 = Node("int2", "Int2")
     driver.add_biocypher_nodes([i1, i2])
-    e1 = BioCypherEdge("src", "int1", "is_source_of")
-    e2 = BioCypherEdge("tar", "int1", "is_target_of")
-    e3 = BioCypherEdge("src", "int2", "is_source_of")
-    e4 = BioCypherEdge("tar", "int2", "is_target_of")
-    r1, r2 = BioCypherRelAsNode(i1, e1, e2), BioCypherRelAsNode(i2, e3, e4)
+    e1 = Edge("src", "int1", "is_source_of")
+    e2 = Edge("tar", "int1", "is_target_of")
+    e3 = Edge("src", "int2", "is_source_of")
+    e4 = Edge("tar", "int2", "is_target_of")
+    r1, r2 = RelAsNode(i1, e1, e2), RelAsNode(i2, e3, e4)
     driver.add_biocypher_edges([r1, r2])
     r, summary = driver.query(
         "MATCH (n2)-[e4:is_target_of]->(i2:Int2)<-[e3:is_source_of]-"
@@ -276,16 +274,16 @@ def test_add_biocypher_interaction_as_BioCypherRelAsNode_list(driver):
     )
 
 
-def test_add_biocypher_interaction_as_BioCypherRelAsNode_generator(driver):
+def test_add_biocypher_interaction_as_RelAsNode_generator(driver):
     # neo4j database needs to be running!
-    i1 = BioCypherNode("int1", "Int1")
-    i2 = BioCypherNode("int2", "Int2")
+    i1 = Node("int1", "Int1")
+    i2 = Node("int2", "Int2")
     driver.add_biocypher_nodes([i1, i2])
-    e1 = BioCypherEdge("src", "int1", "is_source_of")
-    e2 = BioCypherEdge("tar", "int1", "is_target_of")
-    e3 = BioCypherEdge("src", "int2", "is_source_of")
-    e4 = BioCypherEdge("tar", "int2", "is_target_of")
-    r1, r2 = BioCypherRelAsNode(i1, e1, e2), BioCypherRelAsNode(i2, e3, e4)
+    e1 = Edge("src", "int1", "is_source_of")
+    e2 = Edge("tar", "int1", "is_target_of")
+    e3 = Edge("src", "int2", "is_source_of")
+    e4 = Edge("tar", "int2", "is_target_of")
+    r1, r2 = RelAsNode(i1, e1, e2), RelAsNode(i2, e3, e4)
     relasnode_list = [r1, r2]
 
     def gen(lis):

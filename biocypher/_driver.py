@@ -148,7 +148,7 @@ class Driver(neo4j_utils.Driver):
 
     def _update_translator(self):
 
-        self.translator = Translator(leaves=self.db_meta.schema)
+        self.translator = Translator(schema = self.db_meta.schema)
 
     def _reset_insert_buffer(self):
         """
@@ -363,7 +363,7 @@ class Driver(neo4j_utils.Driver):
         property, ie, ``int``, ``str``, ...).
 
         The dict retrieved by the
-        :meth:`biocypher.create.Node.get_dict()` method is
+        :meth:`biocypher.create.Node._asdict()` method is
         passed into Neo4j as a map of maps, explicitly encoding node id
         and label, and adding all other properties from the 'properties'
         key of the dict. The merge is performed via APOC, matching only
@@ -385,12 +385,12 @@ class Driver(neo4j_utils.Driver):
         try:
 
             entities = [
-                node.get_dict() for node in _misc.ensure_iterable(nodes)
+                node._asdict() for node in _misc.ensure_iterable(nodes)
             ]
 
         except AttributeError as e:
 
-            msg = f'Nodes must have a `get_dict` method: {str(e)}'
+            msg = f'Nodes must have a `_asdict` method: {str(e)}'
             logger.error(msg)
 
             raise TypeError(msg)
@@ -399,8 +399,8 @@ class Driver(neo4j_utils.Driver):
 
         entity_query = (
             'UNWIND $entities AS ent '
-            'CALL apoc.merge.node([ent.node_label], '
-            '{id: ent.node_id}, ent.properties, ent.properties) '
+            'CALL apoc.merge.node([ent.label], '
+            '{id: ent.id}, ent.props, ent.props) '
             'YIELD node '
             'RETURN node'
         )
@@ -436,7 +436,7 @@ class Driver(neo4j_utils.Driver):
         to interaction partners).
 
         The dict retrieved by the
-        :meth:`biocypher.create.Edge.get_dict()` method is
+        :meth:`biocypher.create.Edge._asdict()` method is
         passed into Neo4j as a map of maps, explicitly encoding source
         and target ids and the relationship label, and adding all edge
         properties from the 'properties' key of the dict. The merge is
@@ -456,8 +456,8 @@ class Driver(neo4j_utils.Driver):
             `True` for success, `False` otherwise.
         """
 
-        edges = _misc.ensure_iterable(edges)
-        edges = itertools.chain(*(_misc.ensure_iterable(i) for i in edges))
+        edges = _misc.ensure_iterable_2(edges)
+        edges = itertools.chain(*(_misc.ensure_iterable_2(i) for i in edges))
 
         nodes = []
         rels = []
@@ -466,19 +466,19 @@ class Driver(neo4j_utils.Driver):
 
             for e in edges:
 
-                if hasattr(e, 'get_node'):
+                if hasattr(e, 'node'):
 
-                    nodes.append(e.get_node())
-                    rels.append(e.get_source_edge().get_dict())
-                    rels.append(e.get_target_edge().get_dict())
+                    nodes.append(e.node)
+                    rels.append(e.source._asdict())
+                    rels.append(e.target._asdict())
 
                 else:
 
-                    rels.append(e.get_dict())
+                    rels.append(e._asdict())
 
         except AttributeError as e:
 
-            msg = f'Edges and nodes must have a `get_dict` method: {str(e)}'
+            msg = f'Edges and nodes must have a `_asdict` method: {str(e)}'
             logger.error(msg)
 
             raise TypeError(msg)
@@ -493,20 +493,20 @@ class Driver(neo4j_utils.Driver):
         # TODO add node labels?
         node_query = (
             'UNWIND $rels AS r '
-            'MERGE (src {id: r.source_id}) '
-            'MERGE (tar {id: r.target_id}) '
+            'MERGE (src {id: r.source}) '
+            'MERGE (tar {id: r.target}) '
         )
 
         self.query(node_query, parameters={'rels': rels})
 
         edge_query = (
             'UNWIND $rels AS r '
-            'MATCH (src {id: r.source_id}) '
-            'MATCH (tar {id: r.target_id}) '
+            'MATCH (src {id: r.source}) '
+            'MATCH (tar {id: r.target}) '
             'WITH src, tar, r '
             'CALL apoc.merge.relationship'
-            '(src, r.relationship_label, NULL, '
-            'r.properties, tar, r.properties) '
+            '(src, r.label, NULL, '
+            'r.props, tar, r.props) '
             'YIELD rel '
             'RETURN rel'
         )
@@ -578,7 +578,7 @@ class Driver(neo4j_utils.Driver):
         if not self.batch_writer:
 
             self.batch_writer = BatchWriter(
-                leaves=self.db_meta.schema,
+                schema=self.db_meta.schema,
                 bl_adapter=self.bl_adapter,
                 delimiter=self.csv_delim,
                 array_delimiter=self.csv_adelim,
@@ -600,8 +600,10 @@ class Driver(neo4j_utils.Driver):
             bl_adapter:
                 An instance of :class:`biocypher.adapter.BioLinkAdapter`.
         """
+
         if not self.bl_adapter:
-            self.bl_adapter = BiolinkAdapter(leaves=self.db_meta.schema)
+
+            self.bl_adapter = BiolinkAdapter(schema=self.db_meta.schema)
 
     def get_import_call(self) -> str:
         """

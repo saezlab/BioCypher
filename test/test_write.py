@@ -8,9 +8,9 @@ import pytest
 
 from biocypher._write import BatchWriter
 from biocypher._create import (
-    BioCypherEdge,
-    BioCypherNode,
-    BioCypherRelAsNode,
+    Edge,
+    Node,
+    RelAsNode,
 )
 from biocypher._meta import VersionNode
 from biocypher._driver import Driver
@@ -19,7 +19,7 @@ from biocypher._biolink import BiolinkAdapter
 __all__ = [
     "bw",
     "get_random_string",
-    "test_BioCypherRelAsNode_implementation",
+    "test_RelAsNode_implementation",
     "test_accidental_exact_batch_size",
     "test_create_import_call",
     "test_inconsistent_properties",
@@ -64,9 +64,9 @@ def version_node():
 @pytest.fixture
 def bw(version_node):
 
-    bl_adapter = BiolinkAdapter(leaves=version_node.leaves)
+    bl_adapter = BiolinkAdapter(schema=version_node.schema)
     bw = BatchWriter(
-        leaves=version_node.leaves,
+        schema=version_node.schema,
         bl_adapter=bl_adapter,
         dirname=path,
         delimiter=";",
@@ -110,8 +110,8 @@ def test_write_node_data_headers_import_call(bw):
 
     assert (
         passed
-        and p == ":ID;name;score:double;taxon:long;id;preferred_id;:LABEL"
-        and m == ":ID;name;taxon:long;id;preferred_id;:LABEL"
+        and p == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
+        and m == ":ID;name;taxon:long;id;id_type;:LABEL"
         and c
         == f'bin/neo4j-admin import --database=neo4j --delimiter=";" --array-delimiter="|" --quote="\'" --nodes="{path}/Protein-header.csv,{path}/Protein-part.*" --nodes="{path}/MicroRNA-header.csv,{path}/MicroRNA-part.*" '
     )
@@ -120,10 +120,10 @@ def test_write_node_data_headers_import_call(bw):
 def _get_nodes(l: int) -> list:
     nodes = []
     for i in range(l):
-        bnp = BioCypherNode(
+        bnp = Node(
             node_id=f"p{i+1}",
             node_label="protein",
-            preferred_id="uniprot",
+            id_type="uniprot",
             properties={
                 "score": 4 / (i + 1),
                 "name": "StringProperty1",
@@ -131,10 +131,10 @@ def _get_nodes(l: int) -> list:
             },
         )
         nodes.append(bnp)
-        bnm = BioCypherNode(
+        bnm = Node(
             node_id=f"m{i+1}",
             node_label="microRNA",
-            preferred_id="mirbase",
+            id_type="mirbase",
             properties={"name": "StringProperty1", "taxon": 9606},
         )
         nodes.append(bnm)
@@ -145,7 +145,7 @@ def _get_nodes(l: int) -> list:
 def test_property_types(bw):
     nodes = []
     for i in range(4):
-        bnp = BioCypherNode(
+        bnp = Node(
             node_id=f"p{i+1}",
             node_label="protein",
             properties={
@@ -169,7 +169,7 @@ def test_property_types(bw):
 
     assert (
         passed
-        and header == ":ID;name;score:double;taxon:long;id;preferred_id;:LABEL"
+        and header == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
         and data
         == "p1;'StringProperty1';4.0;9606;'p1';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np2;'StringProperty1';2.0;9606;'p2';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np3;'StringProperty1';1.3333333333333333;9606;'p3';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np4;'StringProperty1';1.0;9606;'p4';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
     )
@@ -228,7 +228,7 @@ def test_write_node_data_from_gen_no_props(bw):
     nodes = []
     le = 4
     for i in range(le):
-        bnp = BioCypherNode(
+        bnp = Node(
             node_id=f"p{i+1}",
             node_label="protein",
             properties={
@@ -238,7 +238,7 @@ def test_write_node_data_from_gen_no_props(bw):
             },
         )
         nodes.append(bnp)
-        bnm = BioCypherNode(
+        bnm = Node(
             node_id=f"m{i+1}",
             node_label="microRNA",
         )
@@ -300,7 +300,7 @@ def test_write_node_data_from_large_gen(bw):
 def test_too_many_properties(bw):
     nodes = _get_nodes(1)
 
-    bn1 = BioCypherNode(
+    bn1 = Node(
         node_id="p0",
         node_label="protein",
         properties={
@@ -326,7 +326,7 @@ def test_too_many_properties(bw):
 def test_not_enough_properties(bw):
     nodes = _get_nodes(1)
 
-    bn1 = BioCypherNode(
+    bn1 = Node(
         node_id="p0",
         node_label="protein",
         properties={"p1": get_random_string(4)},
@@ -350,17 +350,17 @@ def test_write_none_type_property_and_order_invariance(bw):
     # schema_config.yaml
     nodes = []
 
-    bnp1 = BioCypherNode(
+    bnp1 = Node(
         node_id=f"p1",
         node_label="protein",
         properties={"taxon": 9606, "score": 1, "name": None},
     )
-    bnp2 = BioCypherNode(
+    bnp2 = Node(
         node_id=f"p2",
         node_label="protein",
         properties={"name": None, "score": 2, "taxon": 9606},
     )
-    bnm = BioCypherNode(
+    bnm = Node(
         node_id=f"m1",
         node_label="microRNA",
         properties={"name": None, "taxon": 9606},
@@ -421,8 +421,8 @@ def test_accidental_exact_batch_size(bw):
         and mi_lines == 1e4
         and not isfile(p1_csv)
         and not isfile(m1_csv)
-        and p == ":ID;name;score:double;taxon:long;id;preferred_id;:LABEL"
-        and m == ":ID;name;taxon:long;id;preferred_id;:LABEL"
+        and p == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
+        and m == ":ID;name;taxon:long;id;id_type;:LABEL"
     )
 
 
@@ -454,19 +454,19 @@ def test_write_edge_data_from_gen(bw):
 def _get_edges(l):
     edges = []
     for i in range(l):
-        e1 = BioCypherEdge(
-            source_id=f"p{i}",
-            target_id=f"p{i + 1}",
-            relationship_label="PERTURBED_IN_DISEASE",
+        e1 = Edge(
+            source=f"p{i}",
+            target=f"p{i + 1}",
+            label="PERTURBED_IN_DISEASE",
             properties={"residue": "T253", "level": 4},
             # we suppose the verb-form relationship label is created by
             # translation functionality in translate.py
         )
         edges.append(e1)
-        e2 = BioCypherEdge(
-            source_id=f"m{i}",
-            target_id=f"p{i + 1}",
-            relationship_label="Is_Mutated_In",
+        e2 = Edge(
+            source=f"m{i}",
+            target=f"p{i + 1}",
+            label="Is_Mutated_In",
             properties={"site": "3-UTR", "confidence": 1},
             # we suppose the verb-form relationship label is created by
             # translation functionality in translate.py
@@ -529,16 +529,16 @@ def test_write_edge_data_from_list_no_props(bw):
     le = 4
     edges = []
     for i in range(le):
-        e1 = BioCypherEdge(
-            source_id=f"p{i}",
-            target_id=f"p{i + 1}",
-            relationship_label="PERTURBED_IN_DISEASE",
+        e1 = Edge(
+            source=f"p{i}",
+            target=f"p{i + 1}",
+            label="PERTURBED_IN_DISEASE",
         )
         edges.append(e1)
-        e2 = BioCypherEdge(
-            source_id=f"m{i}",
-            target_id=f"p{i + 1}",
-            relationship_label="Is_Mutated_In",
+        e2 = Edge(
+            source=f"m{i}",
+            target=f"p{i + 1}",
+            label="Is_Mutated_In",
         )
         edges.append(e2)
 
@@ -613,7 +613,7 @@ def test_write_duplicate_edges(bw):
     assert passed and l == 4 and c == 4
 
 
-def test_BioCypherRelAsNode_implementation(bw):
+def test_RelAsNode_implementation(bw):
     trips = _get_rel_as_nodes(4)
 
     def gen(lis):
@@ -644,24 +644,28 @@ def test_BioCypherRelAsNode_implementation(bw):
 
 
 def _get_rel_as_nodes(l):
+
     rels = []
+
     for i in range(l):
-        n = BioCypherNode(
+
+        n = Node(
             node_id=f"i{i+1}",
             node_label="post translational interaction",
             properties={"directed": True, "effect": -1},
         )
-        e1 = BioCypherEdge(
-            source_id=f"i{i+1}",
-            target_id=f"p{i+1}",
-            relationship_label="IS_SOURCE_OF",
+        e1 = Edge(
+            source=f"i{i+1}",
+            target=f"p{i+1}",
+            label="IS_SOURCE_OF",
         )
-        e2 = BioCypherEdge(
-            source_id=f"i{i}",
-            target_id=f"p{i + 2}",
-            relationship_label="IS_TARGET_OF",
+        e2 = Edge(
+            source=f"i{i}",
+            target=f"p{i + 2}",
+            label="IS_TARGET_OF",
         )
-        rels.append(BioCypherRelAsNode(n, e1, e2))
+        rels.append(RelAsNode(n, e1, e2))
+
     return rels
 
 
@@ -688,28 +692,28 @@ def test_write_mixed_edges(bw):
     mixed = []
     le = 4
     for i in range(le):
-        e3 = BioCypherEdge(
-            source_id=f"p{i+1}",
-            target_id=f"p{i+1}",
-            relationship_label="PERTURBED_IN_DISEASE",
+        e3 = Edge(
+            source=f"p{i+1}",
+            target=f"p{i+1}",
+            label="PERTURBED_IN_DISEASE",
         )
         mixed.append(e3)
 
-        n = BioCypherNode(
+        n = Node(
             f"i{i+1}",
             "post translational interaction",
         )
-        e1 = BioCypherEdge(
-            source_id=f"i{i+1}",
-            target_id=f"p{i+1}",
-            relationship_label="IS_SOURCE_OF",
+        e1 = Edge(
+            source=f"i{i+1}",
+            target=f"p{i+1}",
+            label="IS_SOURCE_OF",
         )
-        e2 = BioCypherEdge(
-            source_id=f"i{i}",
-            target_id=f"p{i+2}",
-            relationship_label="IS_TARGET_OF",
+        e2 = Edge(
+            source=f"i{i}",
+            target=f"p{i+2}",
+            label="IS_TARGET_OF",
         )
-        mixed.append(BioCypherRelAsNode(n, e1, e2))
+        mixed.append(RelAsNode(n, e1, e2))
 
     def gen(lis):
         yield from lis
@@ -734,26 +738,26 @@ def test_create_import_call(bw):
     mixed = []
     le = 4
     for i in range(le):
-        n = BioCypherNode(
+        n = Node(
             f"i{i+1}",
             "post translational interaction",
         )
-        e1 = BioCypherEdge(
-            source_id=f"i{i+1}",
-            target_id=f"p{i+1}",
-            relationship_label="IS_SOURCE_OF",
+        e1 = Edge(
+            source=f"i{i+1}",
+            target=f"p{i+1}",
+            label="IS_SOURCE_OF",
         )
-        e2 = BioCypherEdge(
-            source_id=f"i{i}",
-            target_id=f"p{i+2}",
-            relationship_label="IS_TARGET_OF",
+        e2 = Edge(
+            source=f"i{i}",
+            target=f"p{i+2}",
+            label="IS_TARGET_OF",
         )
-        mixed.append(BioCypherRelAsNode(n, e1, e2))
+        mixed.append(RelAsNode(n, e1, e2))
 
-        e3 = BioCypherEdge(
-            source_id=f"p{i+1}",
-            target_id=f"p{i+1}",
-            relationship_label="PERTURBED_IN_DISEASE",
+        e3 = Edge(
+            source=f"p{i+1}",
+            target=f"p{i+1}",
+            label="PERTURBED_IN_DISEASE",
         )
         mixed.append(e3)
 
@@ -813,10 +817,10 @@ def test_duplicate_id(bw):
         os.remove(csv)
     # four proteins, four miRNAs
     for _ in range(2):
-        bnp = BioCypherNode(
-            node_id=f"p1",
-            node_label="protein",
-            properties={
+        bnp = Node(
+            id=f"p1",
+            label="protein",
+            props={
                 "name": "StringProperty1",
                 "score": 4.32,
                 "taxon": 9606,
@@ -826,6 +830,8 @@ def test_duplicate_id(bw):
 
     passed = bw.write_nodes(nodes)
 
-    l_lines0 = sum(1 for _ in open(csv))
+    with open(csv, 'r') as fp:
+
+        l_lines0 = sum(1 for _ in fp)
 
     assert passed and l_lines0 == 1

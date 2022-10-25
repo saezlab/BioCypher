@@ -181,10 +181,10 @@ class Translator:
             edge_label = self.schema[bl_type].get('label_as_edge') or bl_type
 
             return Edge(
-                source_id = source,
-                target_id = target,
-                relationship_label = edge_label,
-                properties = filtered_props,
+                source = source,
+                target = target,
+                label = edge_label,
+                props = filtered_props,
             )
 
     def _rel_as_node(
@@ -227,9 +227,9 @@ class Translator:
             node_id = f'{src}_{tar}_{props_str}'
 
         n = Node(
-            node_id = node_id,
-            node_label = bl_type,
-            properties = props,
+            id = node_id,
+            label = bl_type,
+            props = props,
         )
 
         # directionality check TODO generalise to account for
@@ -246,18 +246,18 @@ class Translator:
             reltype2 = props.get('tar_role') or 'IS_PART_OF'
 
         e_s = Edge(
-            source_id = source,
-            target_id = node_id,
-            relationship_label = reltype1,
+            source = source,
+            target = node_id,
+            label = reltype1,
         )
 
         e_t = Edge(
-            source_id = target,
-            target_id = node_id,
-            relationship_label = reltype2,
+            source = target,
+            target = node_id,
+            label = reltype2,
         )
 
-        yield RelAsNode(n, e_s, e_t)
+        yield RelAsNode(node = n, source = e_s, target = e_t)
 
 
     def node(
@@ -293,22 +293,22 @@ class Translator:
 
             # filter properties for those specified in schema_config if any
             filtered_props = self._filter_props(bl_type, props)
-            preferred_id = self._get_preferred_id(bl_type)
+            id_type = self._id_type(bl_type)
 
             return Node(
-                node_id = _id,
-                node_label = bl_type,
-                preferred_id = preferred_id,
-                properties = filtered_props,
+                id = _id,
+                label = bl_type,
+                id_type = id_type,
+                props = filtered_props,
             )
 
 
-    def _get_preferred_id(self, _bl_type: str) -> str:
+    def _id_type(self, _bl_type: str) -> str:
         """
         Returns the preferred id for the given Biolink type.
         """
 
-        return self.schema.get(_bl_type, {}).get('preferred_id', 'id')
+        return self.schema.get(_bl_type, {}).get('id_type', 'id')
 
     def _filter_props(self, bl_type: str, props: dict) -> dict:
         """

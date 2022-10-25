@@ -21,7 +21,6 @@ logger.debug(f'Loading module {__name__}.')
 from typing import Literal
 import re
 
-from bmt.utils import sentencecase_to_camelcase
 from linkml_runtime.linkml_model.meta import ClassDefinition
 import bmt
 
@@ -375,7 +374,7 @@ class BiolinkAdapter:
         # split on dots if dot is present
         if '.' in name:
             return '.'.join(
-                [sentencecase_to_camelcase(n) for n in name.split('.')],
+                [_misc.cc(n) for n in name.split('.')],
             )
         else:
-            return sentencecase_to_camelcase(name)
+            return _misc.cc(name)

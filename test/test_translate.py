@@ -2,7 +2,7 @@ from linkml_runtime.linkml_model.meta import ClassDefinition
 import pytest
 
 from biocypher._config import module_data_path
-from biocypher._create import BioCypherEdge, BioCypherNode
+from biocypher._create import Edge, Node
 from biocypher._translate import Translator
 from biocypher._biolink import BiolinkAdapter
 from biocypher._meta import VersionNode
@@ -19,13 +19,13 @@ def version_node():
 
 @pytest.fixture
 def translator(version_node):
-    return Translator(version_node.leaves)
+    return Translator(version_node.schema)
 
 
 @pytest.fixture
 def biolink_adapter(version_node):
     return BiolinkAdapter(
-        version_node.leaves,
+        version_node.schema,
         schema="biocypher",  # this is the default
         # unstable, move to test yaml
     )
@@ -40,12 +40,12 @@ def test_translate_nodes(translator):
     ]
     t = translator.translate_nodes(id_type)
 
-    assert all(type(n) == BioCypherNode for n in t)
+    assert all(type(n) == Node for n in t)
 
     t = translator.translate_nodes(id_type)
-    assert next(t).get_label() == "protein"
-    assert next(t).get_label() == "microRNA"
-    assert next(t).get_label() == "macromolecular complex mixin"
+    assert next(t).label == "protein"
+    assert next(t).label == "microRNA"
+    assert next(t).label == "macromolecular complex mixin"
 
 
 def test_specific_and_generic_ids(translator):
@@ -55,12 +55,12 @@ def test_specific_and_generic_ids(translator):
     ]
     t = list(translator.translate_nodes(id_type))
 
-    assert t[0].get_id() == "CHAT"
-    assert t[0].get_properties().get("preferred_id") == "hgnc"
-    assert t[0].get_properties().get("id") == "CHAT"
-    assert t[1].get_id() == "REACT:25520"
-    assert t[1].get_properties().get("preferred_id") == "reactome"
-    assert t[1].get_properties().get("id") == "REACT:25520"
+    assert t[0].id == "CHAT"
+    assert t[0].props.get("id_type") == "hgnc"
+    assert t[0].props.get("id") == "CHAT"
+    assert t[1].id == "REACT:25520"
+    assert t[1].props.get("id_type") == "reactome"
+    assert t[1].props.get("id") == "REACT:25520"
 
 
 def test_translate_edges(translator):
@@ -76,9 +76,9 @@ def test_translate_edges(translator):
 
     t = translator.translate_edges(gen_edges())
 
-    assert type(next(t)) == BioCypherEdge
-    assert next(t).get_label() == "PERTURBED_IN_DISEASE"
-    assert next(t).get_label() == "phosphorylation"
+    assert type(next(t)) == Edge
+    assert next(t).label == "PERTURBED_IN_DISEASE"
+    assert next(t).label == "phosphorylation"
 
     # node type association (defined in `schema_config.yaml`)
     src_tar_type_node = [
@@ -100,21 +100,20 @@ def test_translate_edges(translator):
 
     n = next(t)
     n = next(t)
-    assert n.get_source_edge().get_label() == "IS_PART_OF"
+    assert n.source.label == "IS_PART_OF"
     n = next(t)
-    no = n.get_node()
     assert (
-        type(n.get_node()) == BioCypherNode
-        and type(n.get_source_edge()) == BioCypherEdge
-        and type(n.get_target_edge()) == BioCypherEdge
+        type(n.node) == Node
+        and type(n.source) == Edge
+        and type(n.target) == Edge
     )
-    assert n.get_node().get_id() == "G15258_G16347_True_-1"
-    assert n.get_source_edge().get_source_id() == "G15258"
-    assert n.get_target_edge().get_label() == "IS_TARGET_OF"
+    assert n.node.id == "G15258_G16347_True_-1"
+    assert n.source.id == "G15258"
+    assert n.target.label == "IS_TARGET_OF"
 
 
 def test_adapter(version_node):
-    ad = BiolinkAdapter(version_node.leaves, schema="biolink")
+    ad = BiolinkAdapter(schema = version_node.schema, model="biolink")
 
     assert isinstance(
         ad.biolink_leaves["protein"]["class_definition"],
@@ -124,8 +123,8 @@ def test_adapter(version_node):
 
 def test_custom_bmt_yaml(version_node):
     ad = BiolinkAdapter(
-        version_node.leaves,
-        schema=module_data_path("test-biolink-model"),
+        schema = version_node.schema,
+        model = module_data_path("test-biolink-model"),
     )
     p = ad.biolink_leaves["protein"]
 
@@ -170,12 +169,12 @@ def test_merge_multiple_inputs_node(version_node, translator):
     assert t
 
     # check unique node type
-    assert not any([s for s in version_node.leaves.keys() if ".gene" in s])
-    assert any([s for s in version_node.leaves.keys() if ".pathway" in s])
+    assert not any([s for s in version_node.schema.keys() if ".gene" in s])
+    assert any([s for s in version_node.schema.keys() if ".pathway" in s])
 
     # check translator.translate_nodes for unique return type
-    assert all([type(n) == BioCypherNode for n in t])
-    assert all([n.get_label() == "gene" for n in t])
+    assert all([type(n) == Node for n in t])
+    assert all([n.label == "gene" for n in t])
 
 
 def test_merge_multiple_inputs_edge(version_node, translator):
@@ -195,20 +194,21 @@ def test_merge_multiple_inputs_edge(version_node, translator):
     assert not any(
         [
             s
-            for s in version_node.leaves.keys()
+            for s in version_node.schema.keys()
             if ".gene to disease association" in s
         ]
     )
     assert any(
-        [s for s in version_node.leaves.keys() if ".sequence variant" in s]
+        [s for s in version_node.schema.keys() if ".sequence variant" in s]
     )
 
     # check translator.translate_nodes for unique return type
-    assert all([type(e) == BioCypherEdge for e in t])
-    assert all([e.get_label() == "PERTURBED_IN_DISEASE" for e in t])
+    assert all([type(e) == Edge for e in t])
+    assert all([e.label == "PERTURBED_IN_DISEASE" for e in t])
 
 
 def test_multiple_inputs_multiple_virtual_leaves_rel_as_node(biolink_adapter):
+
     vtg = biolink_adapter.biolink_leaves["variant to gene association"]
     kvtg = biolink_adapter.biolink_leaves[
         "known.sequence variant.variant to gene association"
@@ -226,12 +226,12 @@ def test_multiple_inputs_multiple_virtual_leaves_rel_as_node(biolink_adapter):
 
 def test_virtual_leaves_inherit_is_a(version_node):
 
-    snrna = version_node.leaves.get("intact.snRNA sequence")
+    snrna = version_node.schema.get("intact.snRNA sequence")
 
     assert "is_a" in snrna.keys()
     assert snrna["is_a"] == ["snRNA sequence", "nucleic acid entity"]
 
-    dsdna = version_node.leaves.get("intact.dsDNA sequence")
+    dsdna = version_node.schema.get("intact.dsDNA sequence")
 
     assert dsdna["is_a"] == [
         "dsDNA sequence",
@@ -242,7 +242,7 @@ def test_virtual_leaves_inherit_is_a(version_node):
 
 def test_virtual_leaves_inherit_properties(version_node):
 
-    snrna = version_node.leaves.get("intact.snRNA sequence")
+    snrna = version_node.schema.get("intact.snRNA sequence")
 
     assert "properties" in snrna.keys()
     assert "exclude_properties" in snrna.keys()
@@ -273,7 +273,7 @@ def test_leaves_of_ad_hoc_child(biolink_adapter):
 
 def test_inherit_properties(version_node):
 
-    dsdna = version_node.leaves.get("intact.dsDNA sequence")
+    dsdna = version_node.schema.get("intact.dsDNA sequence")
 
     assert "properties" in dsdna.keys()
     assert "sequence" in dsdna["properties"]
@@ -290,6 +290,7 @@ def test_multiple_inheritance(biolink_adapter):
 
 
 def test_properties_from_config(version_node, translator):
+
     id_type = [
         ("G49205", "protein", {"taxon": 9606, "name": "test"}),
         ("G92035", "protein", {"taxon": 9606}),
@@ -303,9 +304,9 @@ def test_properties_from_config(version_node, translator):
 
     r = list(t)
     assert (
-        "name" in r[0].get_properties().keys()
-        and "name" in r[1].get_properties().keys()
-        and "test" not in r[2].get_properties().keys()
+        "name" in r[0].props.keys()
+        and "name" in r[1].props.keys()
+        and "test" not in r[2].props.keys()
     )
 
     src_tar_type = [
@@ -335,12 +336,12 @@ def test_properties_from_config(version_node, translator):
 
     r = list(t)
     assert (
-        "directional" in r[0].get_properties().keys()
-        and "directional" in r[1].get_properties().keys()
-        and "curated" in r[1].get_properties().keys()
-        and "score" in r[0].get_properties().keys()
-        and "score" in r[1].get_properties().keys()
-        and "test" not in r[1].get_properties().keys()
+        "directional" in r[0].props.keys()
+        and "directional" in r[1].props.keys()
+        and "curated" in r[1].props.keys()
+        and "score" in r[0].props.keys()
+        and "score" in r[1].props.keys()
+        and "test" not in r[1].props.keys()
     )
 
 
@@ -357,9 +358,9 @@ def test_exclude_properties(translator):
 
     r = list(t)
     assert (
-        "taxon" in r[0].get_properties().keys()
-        and "taxon" in r[1].get_properties().keys()
-        and "accession" not in r[0].get_properties().keys()
+        "taxon" in r[0].props.keys()
+        and "taxon" in r[1].props.keys()
+        and "accession" not in r[0].props.keys()
     )
 
     src_tar_type = [
@@ -388,11 +389,11 @@ def test_exclude_properties(translator):
 
     r = list(t)
     assert (
-        "directional" in r[0].get_properties().keys()
-        and "directional" in r[1].get_properties().keys()
-        and "score" in r[0].get_properties().keys()
-        and "score" in r[1].get_properties().keys()
-        and "accession" not in r[1].get_properties().keys()
+        "directional" in r[0].props.keys()
+        and "directional" in r[1].props.keys()
+        and "score" in r[0].props.keys()
+        and "score" in r[1].props.keys()
+        and "accession" not in r[1].props.keys()
     )
 
 

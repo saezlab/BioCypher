@@ -33,6 +33,20 @@ def ensure_iterable(value: Any) -> Iterable:
     return value if isinstance(value, LIST_LIKE) else (value,)
 
 
+def ensure_iterable_2(value: Any) -> Iterable:
+    """
+    Same as ``ensure_iterable`` but considers tuple a simple type.
+    """
+
+    return (
+        (value,)
+            if isinstance(value, (SIMPLE_TYPES, tuple)) else
+        value
+            if isinstance(value, LIST_LIKE) else
+        (value,)
+    )
+
+
 def prettyfloat(n: float) -> str:
     """
     Floats as strings of two value digits, for printing.
