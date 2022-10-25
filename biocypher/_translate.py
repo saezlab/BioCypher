@@ -60,20 +60,20 @@ class Translator:
         tuple[str, str, str, str, dict]
     )
 
-    def __init__(self, leaves: dict[str, dict]):
+    def __init__(self, schema: dict[str, dict]):
         """
         Create a translator object for one database schema.
 
         Args:
-            leaves:
-                Dictionary detailing the leaves of the hierarchy
-                tree representing the structure of the graph; the leaves are
+            schema:
+                Dictionary detailing the schema of the hierarchy
+                tree representing the structure of the graph; the schema are
                 the entities that will be direct components of the graph,
                 while the intermediary nodes are additional labels for
                 filtering purposes.
         """
 
-        self.leaves = leaves
+        self.schema = schema
         self._update_bl_types()
 
         # record nodes without biolink type configured in schema_config.yaml
@@ -166,7 +166,7 @@ class Translator:
         else:
 
             filtered_props = self._filter_props(bl_type, props)
-            rep = self.leaves[bl_type]['represented_as']
+            rep = self.schema[bl_type]['represented_as']
 
             if rep == 'node':
 
@@ -178,7 +178,7 @@ class Translator:
                     props = filtered_props,
                 )
 
-            edge_label = self.leaves[bl_type].get('label_as_edge') or bl_type
+            edge_label = self.schema[bl_type].get('label_as_edge') or bl_type
 
             return BioCypherEdge(
                 source_id = source,
@@ -282,7 +282,7 @@ class Translator:
             found in the schema.
         """
 
-        # find the node in leaves that represents biolink node type
+        # find the node in schema that represents biolink node type
         bl_type = self._get_bl_type(_type)
 
         if not bl_type:
@@ -308,17 +308,17 @@ class Translator:
         Returns the preferred id for the given Biolink type.
         """
 
-        return self.leaves.get(_bl_type, {}).get('preferred_id', 'id')
+        return self.schema.get(_bl_type, {}).get('preferred_id', 'id')
 
     def _filter_props(self, bl_type: str, props: dict) -> dict:
         """
         Filters properties for those specified in schema_config if any.
         """
 
-        filter_props = self.leaves[bl_type].get('properties', {})
+        filter_props = self.schema[bl_type].get('properties', {})
         exclude_props = set(
             _misc.to_list(
-                self.leaves[bl_type].get('exclude_properties', []),
+                self.schema[bl_type].get('exclude_properties', []),
             ),
         )
 
@@ -379,7 +379,7 @@ class Translator:
 
         self._bl_types = {}
 
-        for key, value in self.leaves.items():
+        for key, value in self.schema.items():
 
             if isinstance(value.get('label_in_input'), str):
                 self._bl_types[value.get('label_in_input')] = key
@@ -391,7 +391,7 @@ class Translator:
     def _get_bl_type(self, label: str) -> str | None:
         """
         For each given input type ("label_in_input"), find the corresponding
-        Biolink type in the leaves dictionary.
+        Biolink type in the schema dictionary.
 
         Args:
             label:
