@@ -29,8 +29,8 @@ Todo:
       later externalised)
 """
 
-from dataclasses import field, dataclass
 import re
+import collections
 
 from . import _misc
 from ._misc import is_str
@@ -38,9 +38,9 @@ from ._logger import logger
 
 __all__ = [
     'BC_TYPES',
-    'BioCypherEdge',
-    'BioCypherNode',
-    'BioCypherRelAsNode',
+    'Edge',
+    'Node',
+    'RelAsNode',
 ]
 
 logger.debug(f'Loading module {__name__}.')
@@ -49,23 +49,27 @@ logger.debug(f'Loading module {__name__}.')
 _RELFCR = re.compile('[\n\r]+')
 
 
-class BioCypherEntity:
+class Entity:
 
-    def _type_in_properties(self):
+    @staticmethod
+    def _type_in_properties(props: dict) -> dict:
 
-        if ':TYPE' in self.properties:
+        if ':TYPE' in props:
 
             logger.warning(
                 'Keyword `:TYPE` is reserved for Neo4j. '
                 'Removing from properties.',
             )
-            del self.properties[':TYPE']
+            del props[':TYPE']
 
-    def _process_str_props(self):
+        return props
 
-        return
+    @staticmethod
+    def _process_str_props(props: dict) -> dict:
 
-        self.properties = {
+        return props
+
+        props = {
             k:
             _RELFCR.sub(' ', ', '.join(_misc.to_list(v))).replace('"', "'")
             if is_str(v) or isinstance(v, list) and all(map(is_str, v)) else v
@@ -73,8 +77,19 @@ class BioCypherEntity:
         }
 
 
-@dataclass
-class BioCypherNode(BioCypherEntity):
+class Node(
+        collections.namedtuple(
+            'NodeBase',
+            (
+                'id',
+                'label',
+                'id_type',
+                'props',
+            ),
+            defaults = ('id', None),
+        ),
+        Entity,
+    ):
     """
     Handoff class to represent biomedical entities as Neo4j nodes.
 
@@ -85,10 +100,14 @@ class BioCypherNode(BioCypherEntity):
     PascalCase and as nouns, as per Neo4j consensus.
 
     Args:
-        node_id (string): consensus "best" id for biological entity
-        node_label (string): primary type of entity, capitalised
-        **properties (kwargs): collection of all other properties to be
-            passed to neo4j for the respective node (dict)
+        id:
+            Identifier for biological entity.
+        label:
+            Type of the entity.
+        id_type:
+            Type of the identifier.
+        props:
+            Further properties of the node.
 
     Todo:
         - check and correct small inconsistencies such as capitalisation
@@ -98,12 +117,15 @@ class BioCypherNode(BioCypherEntity):
         - ID conversion using pypath translation facilities for now
     """
 
-    node_id: str
-    node_label: str
-    preferred_id: str = 'id'
-    properties: dict = field(default_factory=dict)
+    __slots__ = ()
 
-    def __post_init__(self):
+    def __new__(
+            cls,
+            id: str,
+            label: str,
+            id_type: str = 'id',
+            props: dict | None = None,
+        ):
         """
         Add id field to properties.
 
@@ -112,67 +134,21 @@ class BioCypherNode(BioCypherEntity):
         Replace unwanted characters in properties.
         """
 
-        self.entity = 'node'
-        self.properties['id'] = self.node_id
-        self.properties['preferred_id'] = self.preferred_id or None
-        # TODO actually make None possible here; as is, "id" is the default in
-        # the dataclass as well as in the configuration file
+        props = props or {}
+        props['id'] = id
+        props['id_type'] = id_type or None
+        props = cls._type_in_properties(props)
+        props = cls._process_str_props(props)
 
-        self._type_in_properties()
-        self._process_str_props()
+        new = super(Node, cls).__new__(
+            cls, id, label.capitalize(), id_type = id_type, props = props,
+        )
+        new.entity = 'node'
 
-    def get_id(self) -> str:
-        """
-        Returns primary node identifier.
-
-        Returns:
-            The node identifier.
-        """
-        return self.node_id
-
-    def get_label(self) -> str:
-        """
-        Primary node label.
-
-        Returns:
-            The label of the node.
-        """
-        return self.node_label
-
-    def get_preferred_id(self) -> str:
-        """
-        The preferred identifier.
-
-        Returns:
-            The preferred ID of the node.
-        """
-        return self.preferred_id
-
-    def get_properties(self) -> dict:
-        """
-        Properties of the node.
-
-        Returns:
-            Node properties apart from primary id and label as key-value pairs.
-        """
-        return self.properties
-
-    def get_dict(self) -> dict:
-        """
-        Return dict of id, labels, and properties.
-
-        Returns:
-            dict: node_id and node_label as top-level key-value pairs,
-            properties as second-level dict.
-        """
-        return {
-            'node_id': self.node_id,
-            'node_label': self.node_label,
-            'properties': self.properties,
-        }
+        return new
 
     @property
-    def nodes(self) -> tuple['BioCypherNode']:
+    def nodes(self) -> tuple['Node']:
         """
         Create a tuple of node(s).
 
@@ -189,11 +165,23 @@ class BioCypherNode(BioCypherEntity):
         this item belongs to.
         """
 
-        return (self.node_label, self.entity)
+        return (self.label, self.entity)
 
 
-@dataclass
-class BioCypherEdge(BioCypherEntity):
+class Edge(
+        collections.namedtuple(
+            'EdgeBase',
+            (
+                'source',
+                'target',
+                'label',
+                'id',
+                'props',
+            ),
+            defaults = (None, None),
+        ),
+        Entity,
+    ):
     """
     Handoff class to represent biomedical relationships in Neo4j.
 
@@ -206,95 +194,47 @@ class BioCypherEdge(BioCypherEntity):
     Neo4j consensus.
 
     Args:
-        source_id:
-            Consensus "best" id for biological entity.
-        target_id:
-            Consensus "best" id for biological entity.
-        relationship_label:
-            Type of interaction, UPPERCASE.
-        properties:
-            Collection of all other properties of the respective edge.
+        source:
+            Identifier of the source node.
+        target:
+            Identifier of the target node.
+        label:
+            Relation label: type of the interaction.
+        props:
+            Further relation properties.
     """
 
-    source_id: str
-    target_id: str
-    relationship_label: str
-    id: str = None
-    properties: dict = field(default_factory=dict)
+    __slots__ = ()
 
-    def __post_init__(self):
+    def __new__(
+            cls,
+            source: str,
+            target: str,
+            label: str,
+            id: str | None = None,
+            props: dict | None = None,
+        ):
         """
         Check for reserved keywords.
+
+        Make sure label is uppercase.
+
+        Replace unwanted characters in properties.
         """
 
-        self.entity = 'edge'
-        self._type_in_properties()
+        props = props or {}
+        props = cls._type_in_properties(props)
+        props = cls._process_str_props(props)
 
-    def get_id(self) -> str | None:
-        """
-        Returns primary node identifier or None.
+        new = super(Edge, cls).__new__(
+            cls, source, target, label.upper(), id = id, props = props,
+        )
+        new.entity = 'edge'
 
-        Returns:
-            str: node_id
-        """
-
-        return self.id
-
-    def get_source_id(self) -> str:
-        """
-        Primary node identifier of the relationship source.
-
-        Returns:
-            A node identifier.
-        """
-        return self.source_id
-
-    def get_target_id(self) -> str:
-        """
-        Primary node identifier of the relationship target.
-
-        Returns:
-            A node identifier.
-        """
-        return self.target_id
-
-    def get_label(self) -> str:
-        """
-        Label of the relationship.
-
-        Returns:
-            str: relationship_label
-        """
-        return self.relationship_label
-
-    def get_properties(self) -> dict:
-        """
-        Properties of the relationship.
-
-        Returns:
-            All relationship properties apart from primary ids and label
-            as key-value pairs.
-        """
-        return self.properties
-
-    def get_dict(self) -> dict:
-        """
-        Return dict of ids, label, and properties.
-
-        Returns:
-            dict: source_id, target_id and relationship_label as
-                top-level key-value pairs, properties as second-level
-                dict.
-        """
-        return {
-            'source_id': self.source_id,
-            'target_id': self.target_id,
-            'relationship_label': self.relationship_label,
-            'properties': self.properties,
-        }
+        return new
 
     @property
-    def edges(self) -> tuple['BioCypherEdge']:
+    def edges(self) -> tuple['Edge']:
         """
         Create a tuple of edge(s).
 
@@ -325,62 +265,57 @@ class BioCypherEdge(BioCypherEntity):
         return (self.relationship_label, self.entity)
 
 
-@dataclass(frozen=True)
-class BioCypherRelAsNode:
+class RelAsNode(
+        collections.namedtuple(
+            'RelAsNodeBase',
+            (
+                'node',
+                'source',
+                'target',
+            ),
+        ),
+        Entity,
+    ):
     """
     Class to represent relationships as nodes.
 
     A relationship can be converted or alternatively represented as a node
-    with in- and outgoing edges, ie. a triplet of a BioCypherNode and two
-    BioCypherEdges. Main usage in type checking (instances where the
+    with in- and outgoing edges, ie. a triplet of a Node and two
+    Edges. Main usage in type checking (instances where the
     receiving function needs to check whether it receives a relationship
     as a single edge or as a triplet).
 
     Args:
         node:
             Node representing the relationship.
-        source_edge:
+        source:
             Eedge representing the source of the relationship.
-        target_edge:
+        target:
             Edge representing the target of the relationship.
     """
 
-    node: BioCypherNode
-    source_edge: BioCypherEdge
-    target_edge: BioCypherEdge
+    def __new__(
+            cls,
+            node: Node,
+            source: Edge,
+            target: Edge,
+        ):
 
-    def __post_init__(self):
+        for attr, t in cls.__new__.__annotations__.items():
 
-        # wow, I thought dataclass at least does this out of the box
-        for attr, t in self.__class__.__annotations__.items():
-
-            if not isinstance(getattr(self, attr), t):
+            if not isinstance(locals()[attr], t):
 
                 raise TypeError(
-                    f'{self.__class__.__name__}.{attr} must be '
+                    f'{cls.__name__}.{attr} must be '
                     f'of type `{t.__name__}`.',
                 )
 
-    def get_node(self):
-        """
-        The node representing the former relationship.
-        """
-        return self.node
+        new = super(RelAsNode, cls).__new__(cls, node, source, target)
 
-    def get_source_edge(self):
-        """
-        The edge pointing to the source of the relationship.
-        """
-        return self.source_edge
-
-    def get_target_edge(self) -> BioCypherEdge:
-        """
-        The edge pointing to the target of the relationship.
-        """
-        return self.target_edge
+        return new
 
     @property
-    def edges(self) -> tuple[BioCypherEdge, BioCypherEdge]:
+    def edges(self) -> tuple[Edge, Edge]:
         """
         Create a tuple of edge(s).
 
@@ -391,7 +326,7 @@ class BioCypherRelAsNode:
         return (self.source_edge, self.target_edge)
 
     @property
-    def nodes(self) -> tuple[BioCypherNode]:
+    def nodes(self) -> tuple[Node]:
         """
         Create a tuple of node(s).
 
@@ -403,7 +338,7 @@ class BioCypherRelAsNode:
 
 
 BC_TYPES = (
-    BioCypherNode |
-    BioCypherEdge |
-    BioCypherRelAsNode
+    Node |
+    Edge |
+    RelAsNode
 )
