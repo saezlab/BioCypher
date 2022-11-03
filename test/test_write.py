@@ -884,3 +884,38 @@ def test_duplicate_id(bw):
 
     assert passed
     assert numof_lines == 1
+
+
+def test_write_synonym(bw):
+
+    csv_path = os.path.join(path, 'Complex-part000.csv')
+
+    if os.path.exists(csv_path):
+
+        os.remove(csv)
+
+    nodes = [
+        Node(
+            node_id = f'p{i + 1}',
+            node_label = 'complex',
+            properties = {
+                'name': 'StringProperty1',
+                'score': 4.32,
+                'taxon': 9606,
+            },
+        )
+        for i in range(4)
+    ]
+
+    passed = bw.write_nodes(nodes)
+
+    with open(csv_path) as f:
+
+        comp = f.read()
+
+    assert passed
+    assert os.path.exists(csv)
+    assert comp == (
+        # this looks really ugly
+        "p1;'StringProperty1';4.32;9606;'p1';'id';Complex|MacromolecularComplexMixin|MacromolecularMachineMixin\np2;'StringProperty1';4.32;9606;'p2';'id';Complex|MacromolecularComplexMixin|MacromolecularMachineMixin\np3;'StringProperty1';4.32;9606;'p3';'id';Complex|MacromolecularComplexMixin|MacromolecularMachineMixin\np4;'StringProperty1';4.32;9606;'p4';'id';Complex|MacromolecularComplexMixin|MacromolecularMachineMixin\n"
+    )

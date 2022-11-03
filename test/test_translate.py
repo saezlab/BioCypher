@@ -10,6 +10,7 @@ from biocypher._meta import VersionNode
 
 @pytest.fixture
 def version_node():
+
     return VersionNode(
         from_config=True,
         config_file="biocypher/_config/test_schema_config.yaml",
@@ -19,11 +20,13 @@ def version_node():
 
 @pytest.fixture
 def translator(version_node):
+
     return Translator(version_node.schema)
 
 
 @pytest.fixture
 def biolink_adapter(version_node):
+
     return BiolinkAdapter(
         schema=version_node.schema,
         model="biocypher",  # this is the default
@@ -32,23 +35,27 @@ def biolink_adapter(version_node):
 
 
 def test_translate_nodes(translator):
+
     items = [
         ("G9205", "protein", {"taxon": 9606}),
         ("hsa-miR-132-3p", "mirna", {"taxon": 9606}),
         ("ASDB_OSBS", "complex", {"taxon": 9606}),
         ("REACT:25520", "reactome", {}),
     ]
+
     t = translator.translate(items = items)
 
     assert all(isinstance(n, Node) for n in t)
 
     t = translator.translate(items = items)
+
     assert next(t).label == "Protein"
     assert next(t).label == "Microrna"
-    assert next(t).label == "Macromolecular complex mixin"
+    assert next(t).label == "Complex"
 
 
 def test_specific_and_generic_ids(translator):
+
     items = [
         ("CHAT", "hgnc", {"taxon": 9606}),
         ("REACT:25520", "reactome", {}),
@@ -287,6 +294,15 @@ def test_multiple_inheritance(biolink_adapter):
     assert "GenotypeToTissueAssociation" in mta["ancestors"]
     assert "EntityToTissueAssociation" in mta["ancestors"]
     assert "Association" in mta["ancestors"]
+
+
+def test_synonym(biolink_adapter):
+
+    comp = biolink_adapter.biolink_leaves.get('complex')
+
+    assert comp
+    assert 'Complex' in comp['ancestors']
+    assert 'MacromolecularComplexMixin' in comp['ancestors']
 
 
 def test_properties_from_config(version_node, translator):

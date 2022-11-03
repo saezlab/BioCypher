@@ -37,7 +37,8 @@ microRNA:
   preferred_id: mirbase.mature
   label_in_input: mirna
 
-macromolecular complex mixin:
+complex:
+  synonym_for: macromolecular complex mixin
   represented_as: node
   preferred_id: complexportal
   label_in_input: complex
