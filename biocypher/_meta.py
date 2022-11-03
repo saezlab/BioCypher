@@ -448,6 +448,11 @@ class VersionNode:
             if 'represented_as' not in v:
                 continue
 
+            # preferred_id optional: if not provided, use `id`
+            if 'preferred_id' not in v:
+
+                v['preferred_id'] = 'id'
+
             for key in ('preferred_id', 'source'):
 
                 # "horizontal" inheritance: create siblings

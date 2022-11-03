@@ -62,3 +62,10 @@ def test_rel_as_node(rel_as_node):
 def test_rel_as_node_invalid_node():
     with pytest.raises(TypeError):
         RelAsNode("str", 1, 2.5122)
+
+
+def test_preferred_id_optional(version_node):
+
+    pti = version_node.leaves.get('post translational interaction')
+
+    assert pti.get('preferred_id') == 'id'
