@@ -174,6 +174,7 @@ files on disk, so no data need to be copied around.
 
 ## Section 2: Merging data
 
+(merging)=
 ### Plain merge
 ```{admonition} Tutorial files
 :class: note
@@ -207,6 +208,7 @@ UniProt IDs, but we will instead use the opportunity to demonstrate how to
 merge data from different sources into the same ontological class using *ad
 hoc* subclasses.
 
+(implicit_subclass)=
 ### *Ad hoc* subclassing
 ```{admonition} Tutorial files
 :class: note
