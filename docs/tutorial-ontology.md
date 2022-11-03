@@ -179,6 +179,7 @@ pathway:
   represented_as: node
   preferred_id: [reactome, wikipathways]
   label_in_input: [react, wiki]
+  # ...
 ```
 
 This will prompt BioCypher to create two subclasses of `pathway`, one for each
@@ -190,6 +191,26 @@ labelling paradigm, those nodes will also inherit the `Pathway` class label as
 well as all parent labels and mixins of `Pathway` (`BiologicalProcess`, etc.).
 This allows us to query the graph for all `Pathway` nodes as well as for
 specific datasets depending on the desired granularity.
+
+```{note}
+This also works for relationships, but in this case, not the preferred
+identifiers but the sources (defined in the `source` field) are used to
+create the subclasses.
+```
+
+For instance, if we wanted to create subclasses for `protein protein
+interaction` relationships from two differenent sources, say, Signor and Intact,
+we could do so as follows:
+
+```{code-block} yaml
+:caption: schema_config.yaml
+protein protein interaction:
+  is_a: pairwise molecular interaction
+  represented_as: node
+  source: [signor, intact]
+  label_in_input: [signor_ppi, intact_ppi]
+  # ...
+```
 
 <!-- TODO tutorial code -->
 
@@ -211,6 +232,7 @@ nodes, and we can do so as follows:
 phenotype:
   synonym_for: clinical finding
   represented_as: node
+  # ...
 ```
 
 Importantly, BioCypher preserves these mappings to enable compatibility between
