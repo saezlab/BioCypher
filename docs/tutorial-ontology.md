@@ -198,21 +198,32 @@ identifiers but the sources (defined in the `source` field) are used to
 create the subclasses.
 ```
 
-For instance, if we wanted to create subclasses for `protein protein
-interaction` relationships from two differenent sources, say, Signor and Intact,
-we could do so as follows:
+For instance, if we wanted to create subclasses for pathway membership
+relationships of proteins from two different sources, such as the above Reactome
+and Wikipathways pathways, we could do so as follows:
 
 ```{code-block} yaml
 :caption: schema_config.yaml
-protein protein interaction:
-  is_a: pairwise molecular interaction
+pathway to protein association:
+  is_a: association
   represented_as: node
-  source: [signor, intact]
-  label_in_input: [signor_ppi, intact_ppi]
+  source: [reactome.pathway, wikipathways.pathway]
+  target: protein
+  label_in_input: [react_protein_membership, wiki_protein_membership]
   # ...
 ```
 
+Like in the above example, this will prompt BioCypher to create two subclasses
+of `pathway to protein association`, one for each input, and to map the input
+data to these subclasses. In the resulting knowledge graph, pathway to protein
+associations from Reactome and Wikipathways will be represented as distinct
+subclasses by prepending the source to the relationship label, i.e., as
+`Reactome.PathwayToProteinAssociation` and
+`Wikipathways.PathwayToProteinAssociation`.
+
 <!-- TODO tutorial code -->
+<!-- TODO are these really the labels? do the sources need to be provided in
+sentence case or PascalCase? -->
 
 (tut_synonyms)=
 ### Synonyms
