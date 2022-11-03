@@ -20,12 +20,16 @@ logger.debug(f'Loading module {__name__}.')
 
 from typing import Literal
 import re
+import json
+import pickle
+import hashlib
 
 from linkml_runtime.linkml_model.meta import ClassDefinition
 import bmt
 
 from . import _misc
 from ._config import module_data_path
+from . import _cache
 
 __all__ = ['BiolinkAdapter']
 
@@ -40,6 +44,15 @@ class BiolinkAdapter:
     Todo:
         - refer to pythonised biolink model from YAML
     """
+
+    _DATA_ATTRS = (
+        'schema',
+        'model',
+        'model_name',
+        'mappings',
+        'reverse_mappings',
+    )
+
 
     def __init__(
         self,
@@ -67,21 +80,65 @@ class BiolinkAdapter:
         self.mappings = {}
         self.reverse_mappings = {}
 
-        logger.debug('Instantiating Biolink Adapter.')
+        logger.info('Instantiating Biolink Adapter.')
 
         self.main()
 
+
     def main(self):
+        """
+        Populate the data structures of the object.
+        """
+
+        self._from_cache() or self._load()
+
+
+    def _load(self):
+
+        logger.info('Building Biolink model.')
         # select with model to use
         self.set_model()
         # initialise biolink toolkit
         self.init_toolkit()
         # translate schema
         self.translate_schema_to_biolink()
+        self.save_to_cache()
+
+
+    def _from_cache(self) -> bool:
+
+        data = _cache.cache.load(self.schema)
+
+        if data:
+
+            logger.info('Loading Biolink model from cache.')
+
+            for attr in self._DATA_ATTRS:
+
+                setattr(self, attr, data[attr])
+
+            return True
+
+        logger.info('Could not find Biolink model in cache.')
+
+        return False
+
+
+    def save_to_cache(cachedir: str | None = None):
+        """
+        Save the data currently contained in the object into the cache.
+        """
+
+        data = {k: getattr(self, a) for k, a in self._DATA_ATTRS.items()}
+
+        logger.info('Saving Biolink model into cache.')
+
+        _cache.cache.save(obj = data, self.schema, cachedir = cachedir)
+
 
     def set_model(self):
 
-        modelta_builtin = {
+        model_builtin = {
             'biocypher': 'biocypher-biolink-model',
             'biolink': 'biolink-model',
         }
@@ -92,9 +149,9 @@ class BiolinkAdapter:
             self.model if isinstance(self.model, str) else 'custom'
         )
 
-        if self.model in modelta_builtin:
+        if self.model in model_builtin:
 
-            label = modelta_builtin[self.model]
+            label = model_builtin[self.model]
             self.model = module_data_path(label)
 
     def init_toolkit(self):

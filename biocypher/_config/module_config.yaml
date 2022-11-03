@@ -22,3 +22,4 @@ debug: true
 
 # Path to the output directory
 outdir: biocypher-out
+cachedir: null
