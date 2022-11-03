@@ -1,4 +1,4 @@
-# BioCypher Tutorial: Handling Ontologies
+# BioCypher Tutorial - Handling Ontologies
 BioCypher relies on ontologies to ground the knowledge graph contents in
 biology. This has the advantage of making working with BioCypher accessible to
 biologically oriented researchers. However, it also means that BioCypher
@@ -62,7 +62,7 @@ Biolink model class representing this concept are synonymous. For instance, the
 concept *protein* is represented by the Biolink class [*protein*](). To
 introduce proteins into the knowledge graph, one would simply define a node
 constituent with the class label *protein*. This is the mechanism we implicitly
-used for proteins in the basic tutorial; to reiterate:
+used for proteins in the basic tutorial ([part 1](tut_01_schema)); to reiterate:
 
 ```{code-block} yaml
 :caption: schema_config.yaml
@@ -74,7 +74,7 @@ protein:
 ## Biolink model extensions
 There are multiple reasons why a user might want to modify the Biolink model.  A
 class that is relevant to the user's task might be missing ([Explicit
-inheritance](tut_explicit)). A class might be not granular enough, and the user
+inheritance](tut_explicit)). A class might not be granular enough, and the user
 would like to split it into subclasses based on distinct inputs ([Implicit
 inheritance](tut_implicit)). The name of a Biolink model class may be too
 unwieldy for the use inside the desired knowledge graph, and the user would like
@@ -98,7 +98,7 @@ does not contain a class for `protein isoform`, and neither does it contain a
 relationship class for `protein protein interaction`, both of which we have
 already used in the basic tutorial. Since protein isoforms are specific types of
 protein, it makes sense to extend the existing Biolink model class `protein`
-with the concept of protein isoforms. To do this, we simple add a new class
+with the concept of protein isoforms. To do this, we simply add a new class
 `protein isoform` to the schema configuration, and specify that it is a subclass
 of `protein` using the (optional) `is_a` field:
 
@@ -267,7 +267,7 @@ possible to create a custom Biolink model that can be used in BioCypher. This
 is done by specifying a custom Biolink model to be built using the [Biolink
 Model Toolkit (BMT)](https://github.com/biolink/biolink-model-toolkit) in the
 BioCypher workflow. We provide one such model with BioCypher directly
-(`biocypher/_config/biocypher-biolink-model.yaml`), which is a modified version
+(`biocypher/_config/test-biolink-model.yaml`), which is a modified version
 of the original Biolink model that includes a *post translational interaction*
 class as well as a custom mixin (so far only for demonstration purposes).
 

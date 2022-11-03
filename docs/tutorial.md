@@ -69,6 +69,7 @@ the following section.
 
 <!-- Figure for ID, label, prop of nodes and edges? -->
 
+(tut_01_schema)=
 ### Schema configuration
 How each BioCypher graph is structured is determined by the schema
 configuration YAML file that is given to the driver. This also serves to ground
