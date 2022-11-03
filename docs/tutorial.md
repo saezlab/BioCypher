@@ -369,6 +369,7 @@ We now create three separate data files, all of which are children of the
 and one explicit child (`protein isoform`).
 ```
 
+(tut_relationships)=
 ## Section 4: Handling relationships
 ```{admonition} Tutorial files
 :class: note

@@ -3,9 +3,9 @@
 The main interface for interacting with the BioCypher module to create
 your own property graph consists of two components:
 
-1. the [host module adapter](host-module-adapter), a python
+1. the [host module adapter](qs_host-module-adapter), a python
    program, and
-2. the [schema configuration file](schema-config), a YAML file. 
+2. the [schema configuration file](qs_schema-config), a YAML file.
 
 The adapter serves as a data interface between the source and BioCypher,
 piping the "raw" data into BioCypher for the creation of the property
@@ -13,7 +13,7 @@ graph, while the schema configuration tells BioCypher how the graph
 should be structured, detailing the names of constituents and how they
 should be connected.
 
-(host-module-adapter)=
+(qs_host-module-adapter)=
 ## The host module adapter
 
 Currently, BioCypher expects input from the user module via an adapter
@@ -76,7 +76,7 @@ one; they can be passed in as a complete dictionary of all entries and
 filtered inside BioCypher by detailing the desired properties per node
 type in the schema configuration file.
 
-(schema-config)=
+(qs_schema-config)=
 ## The schema configuration YAML file
 
 The second important component of translation into a
@@ -174,7 +174,7 @@ identifier, which will then be a named property on the
 BioCypher accepts non-Biolink IDs since not all possible entries possess a
 systematic identifier system, whereas the entity class (``protein``,
 ``post translational interaction``) has to be included in the Biolink schema and
-spelled identically. For this reason, we [extend the Biolink schema](biolink)
+spelled identically. For this reason, we [extend the Biolink schema](qs_biolink)
 in cases where there exists no entry for our entity of choice. Further, we are
 specifying the source and target classes of our association (both ``protein``),
 the label we provide in the input from ``PyPath`` (``post_translational``). 
@@ -199,7 +199,7 @@ post translational interaction:
   label_as_edge: INTERACTS_POST_TRANSLATIONALLY
 ```
 
-(biolink)=
+(qs_biolink)=
 ## The Biolink model extension
 
 ### Soft extensions
@@ -207,13 +207,13 @@ post translational interaction:
 In some cases that are not too complex, the Biolink model can be
 extended using only implicit subclasses given in the BioCypher
 schema_config.yaml file. Soft extensions can be achieved in two ways:
-- via [implicit subclasses](implicit) of existing Biolink classes by supplying
+- via [implicit subclasses](qs_implicit) of existing Biolink classes by supplying
   multiple preferred ids and input labels in the `schema_config.yaml`
-- via [explicit subclasses](explicit) of existing Biolink classes by supplying an
+- via [explicit subclasses](qs_explicit) of existing Biolink classes by supplying an
   `is_a` parameter to any non-biolink class, referring to an existing
   one
 
-(implicit)=
+(qs_implicit)=
 #### Implicit subclasses
 
 For instance, Pathway annotations are supplied by multiple sources,
@@ -241,7 +241,7 @@ graph with granular access to each one and without information loss, but
 will also enable aggregate query of all pathways by calling the parent 
 entity, ``pathway``.
 
-(explicit)=
+(qs_explicit)=
 #### Explicit subclasses
 
 For example, adding the child `tissue` to the existing Biolink class
