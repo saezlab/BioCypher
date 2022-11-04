@@ -95,14 +95,24 @@ class Driver(neo4j_utils.Driver):
             wipe:
                 Wipe the database after connection, ensuring the data is
                 loaded into an empty database.
+            offline:
+                Do not connect to the database, but use the provided
+                schema to create a graph representation and write CSVs for
+                admin import.
             schema_config:
                 Path to a custom database schema configuration file.
             delimiter:
                 Delimiter for CSV export.
-            quote_char:
-                String quotation character for CSV export.
             array_delimiter:
                 Array delimiter for CSV exported contents.
+            quote_char:
+                String quotation character for CSV export.
+            skip_bad_relationships:
+                Whether to skip relationships with missing source or target
+                nodes in the admin import shell command.
+            skip_duplicate_nodes:
+                Whether to skip duplicate nodes in the admin import shell
+                command.
             biolink_model:
                 Either a Biolink model as a dict, or the name of a
                 built in model, or path to the model YAML file to load.
