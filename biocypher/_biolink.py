@@ -124,6 +124,8 @@ class BiolinkAdapter:
 
                 setattr(self, attr, data[attr])
 
+            self._update_model_version()
+
             return True
 
         logger.info('Could not find Biolink model in cache.')
@@ -174,6 +176,13 @@ class BiolinkAdapter:
         self.toolkit = (
             bmt.Toolkit(self.model) if self.model else bmt.Toolkit()
         )
+        self._update_model_version()
+
+
+    def _update_model_version(self):
+
+        self.biolink_version = self.toolkit.get_model_version()
+        logger.info(f'Bioloink model version: `{self.biolink_version}`.')
 
     def translate_schema_to_biolink(self):
         """
