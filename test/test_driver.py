@@ -380,4 +380,12 @@ def test_log_missing_bl_types(driver):
     driver.translator.notype = {"a": 1, "b": 2}
     mt = driver.log_missing_bl_types()
 
+<<<<<<< HEAD
     assert mt["a"] == 1 and mt["b"] == 2
+=======
+    assert mt.get('a') == 1 and mt.get('b') == 2
+
+
+def test_treelib_vis(driver):
+    pass
+>>>>>>> 24ef67b (add function to visualise ontology structure)

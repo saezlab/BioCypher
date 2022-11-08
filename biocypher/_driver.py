@@ -741,7 +741,17 @@ class Driver(neo4j_utils.Driver):
         else:
             logger.info('No duplicate edges in input.')
 
-    # TRANSLATION METHODS #
+
+    def show_ontology(self) -> None:
+        """
+        Show the ontology structure of the database using the Biolink
+        schema and treelib.
+        """
+
+        self.start_bl_adapter()
+
+        self.bl_adapter.show()
+
 
     def translate_term(self, term: str) -> str:
         """

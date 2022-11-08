@@ -471,5 +471,13 @@ def test_log_missing_nodes(translator):
     tn = list(tn)
 
     m = translator.get_missing_bl_types()
+
     assert m.get("missing_protein") == 2
     assert m.get("missing_pathway") == 1
+
+
+def test_show_tree(biolink_adapter):
+
+    treevis = biolink_adapter.show()
+
+    assert treevis is not None

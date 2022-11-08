@@ -52,6 +52,7 @@ class BiolinkAdapter:
         'mappings',
         'reverse_mappings',
         '_ad_hoc_inheritance',
+        '_tree',
     )
 
 
@@ -109,6 +110,7 @@ class BiolinkAdapter:
         self.init_toolkit()
         # translate schema
         self.translate_schema_to_biolink()
+        self.update_tree()
         self.save_to_cache()
 
 
@@ -489,3 +491,76 @@ class BiolinkAdapter:
             )
         else:
             return _misc.cc(name)
+
+
+    def update_tree(self):
+        """
+        Create a tree representation of the ontology including the ancestors
+        of the leaves.
+        """
+
+        # refactor inheritance tree to be compatible with treelib
+        tree = {
+            'entity': None,  # root node, named itself to stop while loop
+            'mixin': 'entity',
+        }
+
+        for class_name, properties in self.biolink_schema.items():
+
+            if properties['class_definition']['is_a'] is not None:
+
+                parent = properties['class_definition']['is_a']
+
+                # add to tree
+                tree[class_name] = parent
+
+        # find parents that are not in tree (apart from root node)
+        parents = set(tree.values())
+        parents.discard(None)
+        children = set(tree.keys())
+
+        # while there are still parents that are not in the tree
+        while parents - children:
+            missing = parents - children
+
+            # add missing parents to tree
+            for child in missing:
+                parent = self.toolkit.get_parent(child)
+                if parent:
+                    tree[child] = parent
+
+                # remove root and mixins
+                if self.toolkit.is_mixin(child):
+                    tree[child] = 'mixin'
+
+            parents = set(tree.values())
+            parents.discard(None)
+            children = set(tree.keys())
+
+        self._tree = tree
+
+
+    @property
+    def tree(self) -> 'treelib.Tree':
+        """
+        Ontology tree as an ASCII printable string.
+        """
+
+        if not getattr(self, '_tree', None):
+
+            self.update_tree()
+
+        return _misc.tree_figure(self._tree)
+
+
+    def show(self):
+        """
+        Show the ontology tree using treelib.
+        """
+
+        logger.info(
+            'Showing ontology structure, '
+            f'based on Biolink {self.biolink_version}:'
+        )
+
+        self.tree.show()

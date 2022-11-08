@@ -3,6 +3,7 @@ from collections.abc import Iterable
 import re
 
 from neo4j_utils._misc import LIST_LIKE, if_none, to_list  # noqa: F401
+import treelib
 
 __all__ = [
     'SIMPLE_TYPES',
@@ -130,3 +131,42 @@ def first(value: Any) -> Any:
     elif isinstance(value, Iterable):
 
         return next(iter(value), None)
+
+
+def tree_figure(tree: dict) -> treelib.Tree:
+    """
+    Creates a visualisation of the inheritance tree using treelib.
+    """
+
+    # find root node
+    classes = set(tree.keys())
+    parents = set(tree.values())
+    root = list(parents - classes)[0]
+
+    if not root:
+
+        # find key whose value is None
+        root = list(inheritance_tree.keys())[
+            list(inheritance_tree.values()).index(None)
+        ]
+
+    _tree = treelib.Tree()
+    _tree.create_node(root, root)
+
+    while classes:
+
+        for child in classes:
+
+            parent = tree[child]
+
+            if parent in _tree.nodes.keys() or parent == root:
+
+                _tree.create_node(child, child, parent=parent)
+
+        for node in _tree.nodes.keys():
+
+            if node in classes:
+
+                classes.remove(node)
+
+    return _tree
