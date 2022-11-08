@@ -212,6 +212,30 @@ def bw(version_node):
     os.rmdir(path)
 
 
+@pytest.fixture
+def tab_bw(version_node):
+    tmp_bl_adapter = BiolinkAdapter(
+        leaves=version_node.leaves,
+        schema=module_data_path('test-biolink-model'),
+        clear_cache=True,
+    )
+    tab_bw = BatchWriter(
+        leaves=version_node.leaves,
+        bl_adapter=tmp_bl_adapter,
+        dirname=path,
+        delimiter='\t',
+        array_delimiter='|',
+        quote="'",
+    )
+
+    yield tab_bw
+
+    # teardown
+    for f in os.listdir(path):
+        os.remove(os.path.join(path, f))
+    os.rmdir(path)
+
+
 def test_writer_and_output_dir(bw):
 
     assert (
@@ -256,32 +280,18 @@ def test_write_node_data_headers_import_call(bw):
     )
 
 
-def test_tab_delimiter(version_node):
-
-    bl_adapter = BiolinkAdapter(
-        leaves=version_node.leaves,
-        schema=module_data_path('test-biolink-model'),
-        use_cache=False,
-    )
-
-    bw = BatchWriter(
-        schema=version_node.schema,
-        bl_adapter=bl_adapter,
-        dirname=path,
-        delimiter='\t',
-        array_delimiter='|',
-        quote="'",
-    )
+def test_tab_delimiter(tab_bw):
 
     nodes = _get_nodes(8)
 
-    passed_n0 = bw.write_nodes(nodes[:4])
-    passed_n1 = bw.write_nodes(nodes[4:])
-    bw.write_call()
+    passed_n0 = tab_bw.write_nodes(nodes[:4])
+    passed_n1 = tab_bw.write_nodes(nodes[4:])
+    tab_bw.write_import_call()
 
     call_path = os.path.join(path, 'neo4j-admin-import-call.sh')
 
     with open(call_path) as f:
+
         the_call = f.read()
 
     assert passed_n0
