@@ -52,6 +52,40 @@ specific classes from a more domain-specific ontology, such as the EBI molecular
 interactions ontology ([PSI-MI](https://www.ebi.ac.uk/ols/ontologies/mi)).
 
 <!-- TODO example -->
+## Visualising ontologies
+BioCypher provides a simple way of visualising the ontology hierarchy. This is
+useful for debugging and for getting a quick overview of the ontology and which
+parts are actually used in the knowledge graph to be created. To get an overview
+of the structure of our project, we can run the following command via the
+driver:
+
+```{code-block} python
+:caption: Visualising the ontology hierarchy
+driver.show_ontology_structure()
+```
+
+This will print a tree visualisation of the ontology hierarchy to the console
+using the treelib library. You can see this in action in tutorial
+[part 6](tut_relationships) (`tutorial/06_relationships.py`). The output will
+look something like this:
+
+```{code-block} text
+Showing ontology structure, based on Biolink 3.0.3:
+entity
+├── association
+│   └── gene to gene association
+│       └── pairwise gene to gene interaction
+│           └── pairwise molecular interaction
+│               └── protein protein interaction
+├── mixin
+└── named thing
+    └── biological entity
+        └── polypeptide
+            └── protein
+                ├── entrez.protein
+                ├── protein isoform
+                └── uniprot.protein
+```
 
 ## Using ontologies: plain Biolink
 BioCypher maps any input data to the underlying ontology; in the basic case, the

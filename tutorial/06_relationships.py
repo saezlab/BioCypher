@@ -60,6 +60,9 @@ def main():
     # Write command line call
     driver.write_import_call()
 
+    # Visualise ontology schema
+    driver.show_ontology_structure()
+
 
 if __name__ == "__main__":
     main()

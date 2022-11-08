@@ -47,6 +47,7 @@ from more_itertools import peekable
 from . import _misc
 from ._entity import BC_TYPES, Edge, Node, RelAsNode
 
+<<<<<<< HEAD
 __all__ = ['Translator']
 
 

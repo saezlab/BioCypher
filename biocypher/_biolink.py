@@ -501,7 +501,7 @@ class BiolinkAdapter:
 
         # refactor inheritance tree to be compatible with treelib
         tree = {
-            'entity': None,  # root node, named itself to stop while loop
+            'entity': None,  # root node
             'mixin': 'entity',
         }
 
