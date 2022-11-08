@@ -51,6 +51,7 @@ class BiolinkAdapter:
         'model_name',
         'mappings',
         'reverse_mappings',
+        '_ad_hoc_inheritance',
     )
 
 
@@ -70,12 +71,15 @@ class BiolinkAdapter:
                 Either a label referring to a built-in model, or a path
                 to a YAML file with the model. If not provided, the default
                 built-in model will be used.
+            use_cache:
+                Read the model from the cache if available.
         """
 
         self.schema = schema
         self.model = model
         self.model_name = None
         self.biolink_schema = None
+        self._ad_hoc_inheritance = []
 
         # mapping functionality for translating terms and queries
         self.mappings = {}
@@ -124,6 +128,8 @@ class BiolinkAdapter:
 
                 setattr(self, attr, data[attr])
 
+
+            self._log_ad_hoc_inheritance(from_ = 'cache')
             self._update_model_version()
 
             return True
@@ -131,6 +137,20 @@ class BiolinkAdapter:
         logger.info('Could not find Biolink model in cache.')
 
         return False
+
+
+    def _log_ad_hoc_inheritance(self, from_: str):
+
+        if self._ad_hoc_inheritance:
+
+            msg = (
+                f'Ad hoc inheritance (from {from_}):\n\t' +
+                '\n\t'.join(
+                    f'{k} -> {v}'
+                    for k, v in self._ad_hoc_inheritance
+                )
+            )
+            logger.info(msg)
 
 
     def save_to_cache(cachedir: str | None = None):
@@ -260,6 +280,9 @@ class BiolinkAdapter:
                 # build class definition for virtual leaf
                 self._build_biolink_class(entity, values)
 
+        self._log_ad_hoc_inheritance()
+
+
     def translate_term(self, term):
         """
         Translate a single term.
@@ -349,6 +372,8 @@ class BiolinkAdapter:
             f'by setting `{entity}` as a child of `{parents[0]}`.',
         )
 
+        self._ad_hoc_inheritance.append((parents[0], entity))
+
         while parents:
             parent = parents.pop(0)
             if self.biolink_schema.get(parent):
@@ -394,11 +419,14 @@ class BiolinkAdapter:
         parents = _misc.to_list(values.get('is_a'))
         ancestors = []
 
+
         logger.info(
             'Received ad hoc multiple inheritance '
             'information; updating pseudo-Biolink edge '
             f'by setting `{entity}` as a child of `{parents[0]}`.',
         )
+
+        self._ad_hoc_inheritance.append((parents[0], entity))
 
         while parents:
             parent = parents.pop(0)
