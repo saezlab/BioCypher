@@ -507,6 +507,14 @@ class BiolinkAdapter:
 
         for class_name, properties in self.biolink_schema.items():
 
+            if isinstance(properties['class_definition'], bmt.TypeDefinition):
+
+                logger.warning(
+                    f'Leaf `{class_name}` is a type definition, not a class. '
+                    'This is not supported yet.'
+                )
+                continue
+
             if properties['class_definition']['is_a'] is not None:
 
                 parent = properties['class_definition']['is_a']
