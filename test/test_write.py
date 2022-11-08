@@ -255,6 +255,39 @@ def test_write_node_data_headers_import_call(bw):
     )
 
 
+def test_tab_delimiter(version_node):
+
+    bl_adapter = BiolinkAdapter(
+        leaves=version_node.leaves,
+        schema=module_data_path('test-biolink-model'),
+        use_cache=False,
+    )
+
+    bw = BatchWriter(
+        schema=version_node.schema,
+        bl_adapter=bl_adapter,
+        dirname=path,
+        delimiter='\t',
+        array_delimiter='|',
+        quote="'",
+    )
+
+    nodes = _get_nodes(8)
+
+    passed_n0 = bw.write_nodes(nodes[:4])
+    passed_n1 = bw.write_nodes(nodes[4:])
+    bw.write_call()
+
+    call_path = os.path.join(path, 'neo4j-admin-import-call.sh')
+
+    with open(call_path) as f:
+        the_call = f.read()
+
+    assert passed_n0
+    assert passed_n1
+    assert unformat(the_call) == 'something...'
+
+
 def test_property_types(bw):
     nodes = [
         Node(
