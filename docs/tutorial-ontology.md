@@ -62,7 +62,10 @@ driver:
 ```{code-block} python
 :caption: Visualising the ontology hierarchy
 import biocypher
-driver = biocypher.Driver(offline=True) # no need to connect or to load data
+driver = biocypher.Driver(
+    offline=True,  # no need to connect or to load data
+    user_schema_config_path="tutorial/06_schema_config.yaml",
+)
 driver.show_ontology_structure()
 ```
 
