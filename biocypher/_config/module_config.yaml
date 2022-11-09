@@ -14,6 +14,10 @@ csv_array_delimiter: '|'
 csv_quote_char: '"'
 csv_batch_size: 1000000
 
+# MultiDB functionality
+# Set to false for using community edition or older versions of Neo4j
+neo4j_multi_db: true
+
 # Offline mode: do not connect to a running Neo4j instance
 # Can be used e.g. for writing CSV files for admin import
 offline: true

@@ -56,16 +56,14 @@ class Driver(neo4j_utils.Driver):
         db_uri: Optional[str] = None,
         db_user: Optional[str] = None,
         db_passwd: Optional[str] = None,
+        multi_db: Optional[bool] = None,
         fetch_size: int = 1000,
         raise_errors: Optional[bool] = None,
         wipe: bool = False,
         offline: Optional[bool] = None,
         increment_version: bool = True,
         user_schema_config_path: Optional[str] = None,
-<<<<<<< HEAD
-=======
         clear_cache: Optional[bool] = None,
->>>>>>> 7a5ee13 (extend biocypher module config)
         delimiter: Optional[str] = None,
         array_delimiter: Optional[str] = None,
         quote_char: Optional[str] = None,
@@ -137,7 +135,6 @@ class Driver(neo4j_utils.Driver):
         self.skip_duplicate_nodes = skip_duplicate_nodes
         self._biolink_use_cache = biolink_use_cache
 
-<<<<<<< HEAD
         neo4j_utils.Driver.__init__(self, **driver_args)
         # get database version node ('check' module) immutable
         # variable of each instance (ie, each call from the
@@ -150,10 +147,7 @@ class Driver(neo4j_utils.Driver):
             offline=self.offline,
             bcy_driver=self,
         )
-=======
-        self.offline = offline or _config('offline')
         self.clear_cache = clear_cache or _config('clear_cache')
->>>>>>> 7a5ee13 (extend biocypher module config)
 
         # if db representation node does not exist or explicitly
         # asked for wipe, create new graph representation: default

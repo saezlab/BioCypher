@@ -71,6 +71,10 @@ neo4j_pw: neo4j                     # password
 neo4j_delimiter: '¦'
 neo4j_array_delimiter: '|'
 neo4j_quote_char: '"'
+
+# MultiDB functionality
+# Set to false for using community edition or older versions of Neo4j
+neo4j_multi_db: true
 ```
 
 ## BioCypher settings
