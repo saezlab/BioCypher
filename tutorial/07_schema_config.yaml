@@ -1,0 +1,31 @@
+protein:
+    represented_as: node
+    preferred_id: [uniprot, entrez]
+    label_in_input: [uniprot_protein, entrez_protein]
+    properties:
+        sequence: str
+        description: str
+        taxon: str
+        mass: int
+
+protein isoform:
+    is_a: protein
+    inherit_properties: true
+    represented_as: node
+    preferred_id: uniprot
+    label_in_input: uniprot_isoform
+
+protein protein interaction:
+    is_a: pairwise molecular interaction
+    represented_as: node
+    preferred_id: intact
+    label_in_input: interacts_with
+    properties:
+        method: str
+        source: str
+
+complex:
+    synonym_for: macromolecular complex mixin
+    represented_as: node
+    preferred_id: complexportal
+    label_in_input: complex

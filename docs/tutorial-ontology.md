@@ -87,6 +87,14 @@ entity
                 └── uniprot.protein
 ```
 
+```{note}
+BioCypher will only show the parts of the ontology that are actually used in
+the knowledge graph with the exception of intermediary nodes that are needed to
+build a complete tree. For instance, the `protein` class is linked to the root
+class `entity` via `polypeptide`, `biological entity`, and `named thing`, all
+of which are not part of the input data.
+```
+
 ## Using ontologies: plain Biolink
 BioCypher maps any input data to the underlying ontology; in the basic case, the
 Biolink model. This mapping is defined in the schema configuration
@@ -261,21 +269,28 @@ sentence case or PascalCase? -->
 
 (tut_synonyms)=
 ### Synonyms
+```{admonition} Tutorial files
+:class: note
+The code for this tutorial can be found at `tutorial/07_synonyms.py`. Schema
+files are at `tutorial/07_schema_config.yaml`. Data generation happens in
+`tutorial/data_generator.py`.
+```
+
 In some cases, Biolink may contain a biological concept, but the name of the
 concept in Biolink does for some reason not agree with the users desired
 knowledge graph structure. For instance, the user may not want to represent
-clinical phenotypes of patients in the graph as `clinical finding` nodes
-due to ease of use and/or readability criteria and rather call these nodes
-`phenotype`. In such cases, the user can introduce a synonym for the Biolink
-class. This is done by selecting another, more desirable name for the respective
-class(es) and specifying the `synonym_for` field in their schema configuration.
-In this case, we would like to represent patient phenotypes as `phenotype`
-nodes, and we can do so as follows:
+protein complexes in the graph as `macromolecular complex mixin` nodes due to
+ease of use and/or readability criteria and rather call these nodes `complex`.
+In such cases, the user can introduce a synonym for the Biolink class. This is
+done by selecting another, more desirable name for the respective class(es) and
+specifying the `synonym_for` field in their schema configuration.  In this case,
+as we would like to represent protein complexes as `complex` nodes, we can do so
+as follows:
 
 ```{code-block} yaml
 :caption: schema_config.yaml
-phenotype:
-  synonym_for: clinical finding
+complex:
+  synonym_for: macromolecular complex mixin
   represented_as: node
   # ...
 ```
@@ -290,6 +305,31 @@ It is essential that the desired class name is used as the main class key in
 the schema configuration, and the Biolink class name is given in the
 `synonym_for` field. The name given in the `synonym_for` field must be an
 existing Biolink class name.
+```
+
+We can visualise the structure of the ontology as we have before using
+`driver.show_ontology_structure()`, and we observe that the `complex` class is
+now a synonym for the `macromolecular complex mixin` class and has taken its
+place as the child of `macromolecular machine mixin`:
+
+```{code-block} text
+Showing ontology structure, based on Biolink 3.0.3:
+entity
+├── association
+│   └── gene to gene association
+│       └── pairwise gene to gene interaction
+│           └── pairwise molecular interaction
+│               └── protein protein interaction
+├── mixin
+│   └── macromolecular machine mixin
+│       └── complex
+└── named thing
+    └── biological entity
+        └── polypeptide
+            └── protein
+                ├── entrez.protein
+                ├── protein isoform
+                └── uniprot.protein
 ```
 
 (tut_custom)=

@@ -78,6 +78,38 @@ class Protein(Node):
         return properties
 
 
+class Complex(Node):
+    """
+    Generates instances of complexes.
+    """
+    def __init__(self):
+        self.id = self._generate_id()
+        self.label = 'complex'
+        self.properties = self._generate_properties()
+
+    def _generate_id(self):
+        """
+        Generate a random Complex Portal id.
+        """
+        nums = [random.choice(string.digits) for _ in range(4)]
+
+        # join alternating between lets and nums
+        return f"CPX-{''.join(nums)}"
+
+    def _generate_properties(self):
+        properties = {}
+
+        ## random description
+        properties['description'] = ' '.join(
+            [random.choice(string.ascii_lowercase) for _ in range(10)],
+        )
+
+        ## taxon
+        properties['taxon'] = '9606'
+
+        return properties
+
+
 class RandomPropertyProtein(Protein):
     """
     Generates instances of proteins with random properties.
