@@ -138,10 +138,18 @@ def tree_figure(tree: dict) -> treelib.Tree:
     Creates a visualisation of the inheritance tree using treelib.
     """
 
+    # ugly, imperfect solution, to be fixed later
     # find root node
-    classes = set(tree.keys())
-    parents = set(tree.values())
-    root = list(parents - classes)[0]
+    classes = set(inheritance_tree.keys())
+    parents = set(inheritance_tree.values())
+    root = list(parents - classes)
+
+    if len(root) > 1:
+        raise ValueError(
+            'Inheritance tree cannot have more than one root node.'
+        )
+    else:
+        root = root[0]
 
     if not root:
 
