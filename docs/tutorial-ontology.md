@@ -159,7 +159,11 @@ protein isoform:
 
 Explicit inheritance can also be used to introduce new relationship classes.
 However, if the output is a Neo4j graph, these relationships must be represented
-as nodes, because edges do not allow multiple labels. For instance, we have
+as nodes to provide full functionality, since edges do not allow multiple
+labels. This does not mean that explicit inheritance cannot be used in edges; it
+is even recommended to do so to situate all components of the knowledge graph in
+the ontological hierarchy. However, to have the ancestry represented in the
+resulting Neo4j graph DB, multiple labels are required. For instance, we have
 already used the `protein protein interaction` relationship in the basic
 tutorial ([part 6](tut_relationships)), making it a child of the Biolink model
 class `pairwise molecular interaction`. To reiterate:
@@ -181,16 +185,17 @@ wanted to further extend the protein-protein interaction with a more specific
 ```{code-block} yaml
 :caption: schema_config.yaml
 enzymatic interaction:
-  is_a: [protein protein interaction, molecular interaction]
+  is_a: [protein protein interaction, pairwise molecular interaction]
   represented_as: node
   # ...
 ```
 
 ```{note}
-To create this multiple inheritance chain, we do not require the creation of
-a `protein protein interaction` class as shown above; all intermediary classes
-are automatically created by BioCypher and inserted into the ontological
-hierarchy.
+To create this multiple inheritance chain, we do not require the creation of a
+`protein protein interaction` class as shown above; all intermediary classes are
+automatically created by BioCypher and inserted into the ontological hierarchy.
+To obtain a continuous ontology tree, the target class (i.e., the last in the
+list) must be a real Biolink model class.
 ```
 
 (tut_implicit)=
