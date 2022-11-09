@@ -61,13 +61,15 @@ driver:
 
 ```{code-block} python
 :caption: Visualising the ontology hierarchy
+import biocypher
+driver = biocypher.Driver(offline=True) # no need to connect or to load data
 driver.show_ontology_structure()
 ```
 
-This will print a tree visualisation of the ontology hierarchy to the console
-using the treelib library. You can see this in action in tutorial
-[part 6](tut_relationships) (`tutorial/06_relationships.py`). The output will
-look something like this:
+This will build the ontology scaffold and print a tree visualisation of its
+hierarchy to the console using the treelib library. You can see this in action
+in tutorial [part 6](tut_relationships) (`tutorial/06_relationships.py`). The
+output will look something like this:
 
 ```{code-block} text
 Showing ontology structure, based on Biolink 3.0.3:
