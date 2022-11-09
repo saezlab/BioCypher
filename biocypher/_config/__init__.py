@@ -112,7 +112,7 @@ def read_config() -> dict:
     Read the module config.
 
     Read and merge the built-in default, the user level and directory level
-    configuration.
+    configuration, the latest having the highest precedence.
 
     TODO explain path configuration
     """

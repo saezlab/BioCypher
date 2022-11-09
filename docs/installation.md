@@ -44,3 +44,54 @@ a local dependency.
 ```{note}
 The `driver` tests require a running Neo4j instance with a DB named `test`.
 ```
+
+# Configuration
+BioCypher comes with a default set of configuration parameters. You can
+overwrite them by creating a `biocypher_config.yaml` file in the root directory
+of your project. You only need to specify the ones you wish to override from
+default. If you want to create global user settings, you can create a
+`biocypher_config.yaml` in your default BioCypher user directory (as found using
+`appdirs.user_config_dir('biocypher')`). For instance, on Mac OS, this would be
+`~/Library/Caches/biocypher/biocypher_config.yaml`.
+
+Configuration files are read in the order `default -> user level -> project
+level`, with the later ones overriding the preceding. The following parameters
+are available:
+
+## Neo4j settings
+```{code-block} yaml
+:caption: biocypher_config.yaml
+# Neo4j connection credentials
+neo4j_uri: neo4j://localhost:7687   # DB URI
+neo4j_db: neo4j                     # DB name
+neo4j_user: neo4j                   # user name
+neo4j_pw: neo4j                     # password
+
+# Neo4j admin import batch writer settings
+neo4j_delimiter: '¦'
+neo4j_array_delimiter: '|'
+neo4j_quote_char: '"'
+```
+
+## BioCypher settings
+```{code-block} yaml
+:caption: biocypher_config.yaml
+# Offline mode: do not connect to a running Neo4j instance
+# Can be used e.g. for writing CSV files for admin import
+offline: true
+
+# Logging granularity
+# Set debug to true if more granular logging is desired
+debug: true
+
+# Set to change the log directory
+logdir: biocypher-log
+
+# Set to change the output directory
+outdir: biocypher-out
+
+# Clear ontology cache
+# BioCypher caches the ontology scaffold for performance reasons
+# Set to true to clear the cache and re-download the ontology
+clear_cache: false
+```

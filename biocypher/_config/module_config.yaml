@@ -1,6 +1,6 @@
 Title: BioCypher python module configuration file
 
-# Neo4j connection using credentials
+# Neo4j connection credentials
 neo4j_uri: neo4j://localhost:7687
 neo4j_db: neo4j # DB name
 neo4j_user: neo4j # user name
@@ -15,21 +15,21 @@ csv_quote_char: '"'
 csv_batch_size: 1000000
 
 # Offline mode: do not connect to a running Neo4j instance
-# Can be used for writing CSV files for admin import
+# Can be used e.g. for writing CSV files for admin import
 offline: true
 
 # Logging granularity
 # Set debug to true if more granular logging is desired
 debug: true
 
-# Path to the log directory
+# Set to change the log directory
 logdir: biocypher-log
 
-# Path to the output directory
+# Set to change the output directory
 outdir: biocypher-out
 cachedir: null
 
 # Clear ontology cache
-# BioCypher caches the ontology scaffold for performance reasons, turn off to
-# clear the cache and re-download the ontology
+# BioCypher caches the ontology scaffold for performance reasons
+# Set to true to clear the cache and re-download the ontology
 clear_cache: false
