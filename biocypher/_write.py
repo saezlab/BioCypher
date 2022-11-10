@@ -82,6 +82,7 @@ import os
 import re
 import glob
 import importlib as imp
+import warnings
 
 import biocypher._misc as _misc
 from biocypher._config import config as _config
@@ -264,7 +265,7 @@ class BatchWriter:
         self.property_types = by_entity(lambda: defaultdict(dict))
         self.call = by_entity(lambda: [])
         self.seen = by_entity(lambda: defaultdict(int))
-        self.dupl_by_type = by_entity(lambda: defaultdict(int))
+        self.dupl_by_type = by_entity(lambda: defaultdict(set))
 
     def _duplicate_types(self, what: ENTITIES) -> set[str]:
         """
@@ -278,10 +279,7 @@ class BatchWriter:
             The labels or types with at least one duplicate ID.
         """
 
-        raise NotImplementedError(
-            'Not sure if this function is necessary. '
-            'If it is, will be easy to implement.'
-        )
+        return {typ for typ, dupl in self.dupl_by_type[what].items() if dupl}
 
     @property
     def duplicate_node_labels(self) -> set[str]:
@@ -374,6 +372,30 @@ class BatchWriter:
         """
 
         return self._count_duplicates('edge')
+
+
+    def _report_duplicates(self):
+        """
+        Log message about duplicates.
+        """
+
+        dupl = {
+            'node': self.duplicate_node_labels,
+            'edge': self.duplicate_edge_types,
+        }
+
+        msg = ' and '.join(
+            f'for the following {entity_type} labels: {", ".join(ids)}'
+            for entity_type, ids in dupl.items()
+            if ids
+        )
+
+
+        msg = f'{"Encountered duplicate identifiers " if msg else } {msg}'
+
+        logger.warning(msg)
+        warnings.warn(msg)
+
 
     def write(
             self,
@@ -571,7 +593,7 @@ class BatchWriter:
             # check for duplicates
             if self.seen[what][_id] > 1:
 
-                self.dupl_by_type[what][label] += 1
+                self.dupl_by_type[what][label].add(_id)
                 continue
 
             if label not in by_label:
@@ -745,6 +767,7 @@ class BatchWriter:
         if not all(isinstance(e, eclass) for e in entities):
 
             whatcap = what.capitalize()
+
             logger.error(
                 f'{whatcap}s must be passed as '
                 f'type BioCypher{whatcap}.'

@@ -727,6 +727,7 @@ class Driver(neo4j_utils.Driver):
         etypes = self.batch_writer.get_duplicate_edge_types()
 
         if etypes:
+
             logger.warning(
                 'Duplicate edges encountered in the following types '
                 '(see log for details): \n'
