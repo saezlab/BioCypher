@@ -59,10 +59,22 @@ The concept of an adapter can become arbitrarily complex and involve
 programmatic access to databases, API requests, asynchronous queries, context
 managers, and other complicating factors. However, it always boils down to
 providing the BioCypher driver with a collection of tuples, one for each entity
-in the input data. As descibed above, nodes possess a mandatory ID, a mandatory
-label, and a property dictionary, while edges possess an (optional) ID, two
-mandatory IDs for source and target, a mandatory label, and a property
-dictionary. How these entities are mapped to the ontological hierarchy
+in the input data.
+
+As descibed above, *nodes* possess:
+
+- a mandatory ID,
+- a mandatory label, and
+- a property dictionary,
+
+while *edges* possess:
+
+- an (optional) ID,
+- two mandatory IDs for source and target,
+- a mandatory label, and
+- a property dictionary.
+
+How these entities are mapped to the ontological hierarchy
 underlying a BioCypher graph is determined by their mandatory labels, which
 connect the input data stream to the schema configuration. This we will see in
 the following section.
@@ -78,8 +90,10 @@ hierarchy. In this tutorial, we refer to the Biolink model as the general
 backbone of our ontological hierarchy. The basic premise of the schema
 configuration YAML file is that each component of the desired knowledge graph
 output should be configured here; if (and only if) an entity is represented in
-the schema configuration *and* is present in the input data stream, it will be
-part of our knowledge graph. In our case, since we only import proteins, we
+the schema configuration *and* is present in the input data stream, will it be
+part of our knowledge graph.
+
+In our case, since we only import proteins, we
 only require few lines of configuration:
 
 ```{code-block} yaml
@@ -91,8 +105,8 @@ protein:                            # mapping
 
 The first line (`protein`) identifies our entity and connects to the
 ontological backbone; here we define the first class to be represented in the
-graph. In the configuration YAML, we represent entities - similar to the
-internal representation of Biolink - in lower sentence case (e.g., "small
+graph. In the configuration YAML, we represent entities — similar to the
+internal representation of Biolink — in lower sentence case (e.g., "small
 molecule"). Conversely, for class names, in file names, and property graph
 labels, we use PascalCase instead (e.g., "SmallMolecule") to avoid issues with
 handling spaces. The transformation is done by BioCypher internally. BioCypher
@@ -221,7 +235,7 @@ line call created by BioCypher. However, we are generating our `entrez`
 proteins as having entrez IDs, which could result in problems in querying.
 Additionally, a strict import mode including regex pattern matching of
 identifiers will fail at this point due to the difference in pattern of UniProt
-vs. Enrez IDs. This issue could be resolved by mapping the Entrez IDs to
+vs. Entrez IDs. This issue could be resolved by mapping the Entrez IDs to
 UniProt IDs, but we will instead use the opportunity to demonstrate how to
 merge data from different sources into the same ontological class using *ad
 hoc* subclasses.

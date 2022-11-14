@@ -40,7 +40,7 @@ need to be "reified", i.e., turned into nodes. BioCypher provides a simple way
 of converting edges to nodes and vice versa (using the `represented_as` field).
 
 ## How BioCypher uses ontologies
-BioCypher is - in principle - agnostic to the choice of ontology. Practically,
+BioCypher is — in principle — agnostic to the choice of ontology. Practically,
 however, we have built our initial projects around the [Biolink
 model](https://biolink.github.io/biolink-model/), because it comprises a large
 part of concepts that are relevant to the biomedical domain.  This does not mean
