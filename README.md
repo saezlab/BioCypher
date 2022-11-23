@@ -1,5 +1,9 @@
 # BioCypher
 
+## 📖 Documentation
+https://saezlab.github.io/BioCypher/
+
+## ❓ Description
 This is the development repository for BioCypher, our proposal for a unified
 framework to create knowledge graph databases for systems biology. For an 
 overview, usage notes, and a tutorial, read the docs
@@ -9,7 +13,7 @@ overview, usage notes, and a tutorial, read the docs
 
 ## Usage
 
-BioCypher is currently in prototype stage. Installation instructions can be 
+BioCypher is currently in prototype stage. Installation instructions can be
 found [here](https://saezlab.github.io/BioCypher/installation.html).
 
 Exemplary usage of BioCypher to build a graph database is shown in the
@@ -21,7 +25,6 @@ is located in the
 [scripts](https://github.com/saezlab/pypath/blob/master/scripts/) directory.
 
 ### Note for contributors
-
 The project uses documentation format [Napoleon](
 https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 ) with a [Sphinx](https://www.sphinx-doc.org/en/master/) autodoc GitHub
