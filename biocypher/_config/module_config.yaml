@@ -37,3 +37,7 @@ cachedir: null
 # BioCypher caches the ontology scaffold for performance reasons
 # Set to true to clear the cache and re-download the ontology
 clear_cache: false
+
+# database schema options
+required_properties: ["source", "license", "version"]
+strict_mode: false

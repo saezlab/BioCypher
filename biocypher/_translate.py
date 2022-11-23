@@ -34,6 +34,8 @@ Todo:
       dictionary)? biolink?
 """
 
+from __future__ import annotations
+
 from ._logger import logger
 
 logger.debug(f'Loading module {__name__}.')
@@ -46,9 +48,14 @@ from more_itertools import peekable
 
 from . import _misc
 from ._entity import BC_TYPES, Edge, Node, RelAsNode
+from ._config import config
 
-<<<<<<< HEAD
 __all__ = ['Translator']
+
+
+PROP_SYNONYMS = {
+    'licence': 'license',
+}
 
 
 class Translator:
@@ -62,7 +69,11 @@ class Translator:
         tuple[str, str, str, str, dict]
     )
 
-    def __init__(self, schema: dict[str, dict]):
+    def __init__(
+            self,
+            schema: dict[str, dict],
+            strict_mode: bool | None = None,
+        ):
         """
         Create a translator object for one database schema.
 
@@ -73,8 +84,12 @@ class Translator:
                 the entities that will be direct components of the graph,
                 while the intermediary nodes are additional labels for
                 filtering purposes.
+            strict_mode:
+                Fail on missing mandatory properties.
         """
 
+        self._required_props = config('required_props')
+        self.strict_mode = strict_mode
         self.schema = schema
         self._update_bl_types()
 
@@ -323,6 +338,12 @@ class Translator:
 
         return self.schema.get(_bl_type, {}).get('id_type', 'id')
 
+
+    def _property_synonyms(props: dict[str, str]) -> dict[str, str]:
+
+        return {PROP_SYNONYMS.get(k, k): v for k, v in props.items()}
+
+
     def _filter_props(self, bl_type: str, props: dict) -> dict:
         """
         Filters properties for those specified in schema_config if any.
@@ -334,6 +355,8 @@ class Translator:
                 self.schema[bl_type].get('exclude_properties', []),
             ),
         )
+
+        props = self._property_synonyms(props)
 
         prop_keys = (
             (set(props.keys()) - exclude_props) &
@@ -351,6 +374,16 @@ class Translator:
             exclude_props -
             set(props.keys())
         )
+
+        if self.strict_mode and missing_keys & self._required_props:
+
+            missing_required = missing_keys & self._required_props
+            err = (
+                'Missing mandatory properties for entity of BioLink type '
+                f'{bl_type}: {", ".join(missing_required)}'
+            )
+            logger.error(err)
+            raise ValueError(err)
 
         # add missing properties with default values
         props.update({k: None for k in missing_keys})

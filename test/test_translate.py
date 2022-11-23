@@ -481,3 +481,53 @@ def test_show_tree(biolink_adapter):
     treevis = biolink_adapter.show()
 
     assert treevis is not None
+
+
+def test_strict_mode_error(translator):
+
+    translator.strict_mode = True
+
+    n1 = (
+        'n2', 'Test', {
+            'prop': 'val',
+            'source': 'test',
+            'licence': 'test',
+            'version': 'test'
+        }
+    )
+
+    assert list(translator.translate_nodes([n1])) is not None
+
+    # test 'license' instead of 'licence'
+    n2 = (
+        'n2', 'Test', {
+            'prop': 'val',
+            'source': 'test',
+            'license': 'test',
+            'version': 'test'
+        }
+    )
+
+    assert list(translator.translate_nodes([n2])) is not None
+
+    n3 = ('n1', 'Test', {'prop': 'val'})
+
+    with pytest.raises(ValueError):
+
+        list(translator.translate_nodes([n1, n2, n3]))
+
+    e1 = (
+        'n1', 'n2', 'Test', {
+            'prop': 'val',
+            'source': 'test',
+            'licence': 'test',
+            'version': 'test',
+        }
+    )
+
+    assert list(translator.translate_edges([e1])) is not None
+
+    e2 = ('n1', 'n2', 'Test', {'prop': 'val'})
+
+    with pytest.raises(ValueError):
+        list(translator.translate_edges([e1, e2]))
