@@ -386,3 +386,15 @@ def test_log_missing_bl_types(driver):
 def test_treelib_vis(driver):
 
     pass
+
+
+def test_schema_config_from_web():
+    driver = Driver(
+        offline = True,
+        user_schema_config_path = (
+            'https://raw.githubusercontent.com/saezlab/BioCypher/'
+            'main/biocypher/_config/test_schema_config.yaml'
+        )
+    )
+
+    assert driver.translator._bl_types
