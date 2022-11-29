@@ -9,6 +9,8 @@
 # Distributed under GPLv3 license, see the file `LICENSE`.
 #
 
+from __future__ import annotations
+
 """
 Biocypher specific database management and access methods.
 """
@@ -35,6 +37,7 @@ from . import _misc
 from ._meta import VersionNode
 from ._write import ENTITIES, BatchWriter
 from ._config import config as _config
+from ._config import neo4j_config as _neo4j_config
 from ._entity import BC_TYPES, Edge, Node
 from ._biolink import BiolinkAdapter
 from ._translate import Translator
@@ -58,15 +61,16 @@ class Driver(neo4j_utils.Driver):
         db_passwd: Optional[str] = None,
         multi_db: Optional[bool] = None,
         fetch_size: int = 1000,
-        raise_errors: Optional[bool] = None,
+        raise_errors: bool | None = None,
         wipe: bool = False,
+        strict_mode: bool | None = None,
         offline: Optional[bool] = None,
         increment_version: bool = True,
-        user_schema_config_path: Optional[str] = None,
-        clear_cache: Optional[bool] = None,
-        delimiter: Optional[str] = None,
-        array_delimiter: Optional[str] = None,
-        quote_char: Optional[str] = None,
+        user_schema_config_path: str | None = None,
+        clear_cache: bool | None = None,
+        delimiter: str | None = None,
+        array_delimiter: str | None = None,
+        quote_char: str | None = None,
         skip_bad_relationships: bool = False,
         skip_duplicate_nodes: bool = False,
         biolink_model: dict | str | None = None,
@@ -101,6 +105,8 @@ class Driver(neo4j_utils.Driver):
                 Do not connect to the database, but use the provided
                 schema to create a graph representation and write CSVs for
                 admin import.
+            strict_mode:
+                Fail on missing mandatory properties.
             schema_config:
                 Path to a custom database schema configuration file.
             delimiter:
@@ -122,8 +128,9 @@ class Driver(neo4j_utils.Driver):
                 Load the Biolink model from cache, if available.
         """
 
+        neo4j_config = _neo4j_config()
         driver_args = {
-            arg: _misc.if_none(locals().get(arg, None), _config(arg))
+            arg: _misc.if_none(locals().get(arg), _neo4j_config.get(arg))
             for arg in inspect.signature(neo4j_utils.Driver).parameters
         }
 
@@ -131,6 +138,7 @@ class Driver(neo4j_utils.Driver):
         self.csv_adelim = array_delimiter or _config('csv_array_delimiter')
         self.csv_quote = quote_char or _config('csv_quote_char')
         self.wipe = wipe
+        self.strict_mode = _misc.if_none(strict_mode, _config('strict_mode'))
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
         self._biolink_use_cache = biolink_use_cache
@@ -170,7 +178,10 @@ class Driver(neo4j_utils.Driver):
 
     def _update_translator(self):
 
-        self.translator = Translator(schema = self.db_meta.schema)
+        self.translator = Translator(
+            schema = self.db_meta.schema,
+            strict_mode = self.strict_mdoe,
+        )
 
     def _reset_insert_buffer(self):
         """

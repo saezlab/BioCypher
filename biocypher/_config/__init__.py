@@ -161,18 +161,18 @@ def neo4j_config() -> dict:
     """
 
     n4jprefix = re.compile('^neo4j_')
-
+    db_prefix = {'name', 'uri', 'user', 'passwd'}
 
     def config_key(key: str) -> str:
 
         key = n4jprefix.sub('', key)
         key = _NEO4J_SYNONYMS.get(key, key)
 
-        return key
+        return f'db_{key}' if key in db_prefix else key
 
 
     return {
-        f'db_{config_key(k)}': v
+        config_key(k): v
         for k, v in _config.items()
         if k.startswith('neo4j_')
     }

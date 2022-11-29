@@ -1,11 +1,14 @@
 Title: BioCypher python module configuration file
 
-# Neo4j connection credentials
+## Neo4j connection credentials and options
 neo4j_uri: neo4j://localhost:7687
 neo4j_db: neo4j # DB name
 neo4j_user: neo4j # user name
 neo4j_pw: neo4j # password
 neo4j_insert_batch_size: 30000
+# Offline mode: do not connect to a running Neo4j instance
+# Can be used e.g. for writing CSV files for admin import
+neo4j_offline: true
 
 
 # Neo4j admin import batch writer settings
@@ -17,10 +20,6 @@ csv_batch_size: 1000000
 # MultiDB functionality
 # Set to false for using community edition or older versions of Neo4j
 neo4j_multi_db: true
-
-# Offline mode: do not connect to a running Neo4j instance
-# Can be used e.g. for writing CSV files for admin import
-offline: true
 
 # Logging granularity
 # Set debug to true if more granular logging is desired
@@ -40,4 +39,6 @@ clear_cache: false
 
 # database schema options
 required_properties: ["source", "license", "version"]
+# Strict mode: do not allow to create new nodes or relationships without
+# specifying source, version, and license parameters
 strict_mode: false
