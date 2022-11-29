@@ -89,7 +89,7 @@ class Translator:
         """
 
         self._required_props = config('required_props')
-        self.strict_mode = argconf(locals(), 'strict_mode')
+        self.strict_mode = argconf('strict_mode')
         self.schema = schema
         self._update_bl_types()
 

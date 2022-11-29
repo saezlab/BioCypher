@@ -66,6 +66,7 @@ class Driver(neo4j_utils.Driver):
         wipe: bool = False,
         strict_mode: bool | None = None,
         offline: Optional[bool] = None,
+        output_directory: str | None = None,
         increment_version: bool = True,
         user_schema_config_path: str | None = None,
         clear_cache: bool | None = None,
@@ -106,6 +107,8 @@ class Driver(neo4j_utils.Driver):
                 Do not connect to the database, but use the provided
                 schema to create a graph representation and write CSVs for
                 admin import.
+            output_directory:
+                Directory to write CSV files to.
             strict_mode:
                 Fail on missing mandatory properties.
             schema_config:
@@ -139,7 +142,9 @@ class Driver(neo4j_utils.Driver):
         self.csv_adelim = array_delimiter or _config('csv_array_delimiter')
         self.csv_quote = quote_char or _config('csv_quote_char')
         self.wipe = wipe
-        self.strict_mode = _argconf(locals(), 'strict_mode')
+        self.strict_mode = _argconf('strict_mode')
+        self.output_directory = _argconf('output_directory')
+        self.clear_cache = _argconf('clear_cache')
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
         self._biolink_use_cache = biolink_use_cache
@@ -156,7 +161,6 @@ class Driver(neo4j_utils.Driver):
             offline=self.offline,
             bcy_driver=self,
         )
-        self.clear_cache = clear_cache or _config('clear_cache')
 
         # if db representation node does not exist or explicitly
         # asked for wipe, create new graph representation: default
@@ -553,6 +557,7 @@ class Driver(neo4j_utils.Driver):
 
         return result
 
+
     def write_csv(
             self,
             items: Iterable[INPUT_BC_TYPES],
@@ -596,10 +601,10 @@ class Driver(neo4j_utils.Driver):
         return self.batch_writer.write(items)
 
     def start_batch_writer(
-        self,
-        dirname: str,
-        db_name: str,
-    ) -> None:
+            self,
+            dirname: str | None,
+            db_name: str | None,
+        ) -> None:
         """
         Instantiate the batch writer if it does not exist.
 
@@ -609,6 +614,9 @@ class Driver(neo4j_utils.Driver):
             db_name:
                 The name of the database to write the files to.
         """
+
+        dirname = dirname or self.output_directory
+
         if not self.batch_writer:
 
             self.batch_writer = BatchWriter(
@@ -623,6 +631,10 @@ class Driver(neo4j_utils.Driver):
                 skip_duplicate_nodes=self.skip_duplicate_nodes,
                 wipe=self.wipe,
             )
+
+        self.batch_writer.set_outdir(dirname)
+        self.batch_writer.db_name = db_name
+
 
     def start_bl_adapter(self):
         """
@@ -644,7 +656,9 @@ class Driver(neo4j_utils.Driver):
                 use_caceh = self._biolink_use_cache,
             )
 
+
     def get_import_call(self) -> str:
+
         """
         Create a *neo4j-admin* CLI call that imports the generated CSV files.
 

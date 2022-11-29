@@ -200,7 +200,7 @@ class BatchWriter:
         self.adelim = array_delimiter or _config('csv_array_delimiter')
         self.quote = quote or _config('csv_quote_char')
         self.batch_size = batch_size or _config('csv_batch_size')
-        self.strict_mode = _argconf(locals(), 'strict_mode')
+        self.strict_mode = _argconf('strict_mode')
 
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes

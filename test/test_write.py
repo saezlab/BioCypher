@@ -874,6 +874,7 @@ def test_write_offline():
         user_schema_config_path = 'biocypher/_config/test_schema_config.yaml',
         delimiter = ',',
         array_delimiter = '|',
+        output_directory = path,
     )
 
     nodes = _get_nodes(4)
