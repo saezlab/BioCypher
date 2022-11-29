@@ -350,6 +350,11 @@ class Translator:
         """
 
         filter_props = self.schema[bl_type].get('properties', {})
+
+        if self.strict_mode:
+
+            filter_props.update({p: 'str' for p in self._required_props})
+
         exclude_props = set(
             _misc.to_list(
                 self.schema[bl_type].get('exclude_properties', []),

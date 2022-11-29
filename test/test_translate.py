@@ -488,24 +488,28 @@ def test_strict_mode_error(translator):
     translator.strict_mode = True
 
     n1 = (
-        'n2', 'Test', {
+        'n2',
+        'Test',
+        {
             'prop': 'val',
             'source': 'test',
             'licence': 'test',
             'version': 'test'
-        }
+        },
     )
 
     assert list(translator.translate_nodes([n1])) is not None
 
     # test 'license' instead of 'licence'
     n2 = (
-        'n2', 'Test', {
+        'n2',
+        'Test',
+        {
             'prop': 'val',
             'source': 'test',
             'license': 'test',
             'version': 'test'
-        }
+        },
     )
 
     assert list(translator.translate_nodes([n2])) is not None
@@ -522,7 +526,7 @@ def test_strict_mode_error(translator):
             'source': 'test',
             'licence': 'test',
             'version': 'test',
-        }
+        },
     )
 
     assert list(translator.translate_edges([e1])) is not None
@@ -531,3 +535,25 @@ def test_strict_mode_error(translator):
 
     with pytest.raises(ValueError):
         list(translator.translate_edges([e1, e2]))
+
+
+def test_strict_mode_property_filter(translator):
+
+    translator.strict_mode = True
+
+    p1 = (
+        'p1',
+        'protein',
+        {
+            'taxon': 9606,
+            'source': 'test',
+            'licence': 'test',
+            'version': 'test',
+        },
+    )
+
+    l = list(translator.translate_nodes([p1]))
+
+    assert 'source' in l[0].get_properties().keys()
+    assert 'licence' in l[0].get_properties().keys()
+    assert 'version' in l[0].get_properties().keys()
