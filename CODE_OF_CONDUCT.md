@@ -1,6 +1,8 @@
 
 # Code of Conduct
 
+Adapted from the [Contributor Covenant][homepage].
+
 We as members, contributors, and leaders pledge to make participation in our
 community a harassment-free experience for everyone. We pledge to act and
 interact in ways that contribute to an open, welcoming, diverse, inclusive, and
@@ -105,8 +107,7 @@ community.
 
 ## Attribution
 
-This Code of Conduct is adapted from the [Contributor Covenant][homepage],
-version 2.1, available at
+This version of the basic Code of Conduct is available at
 [https://www.contributor-covenant.org/version/2/1/code_of_conduct.html][v2.1].
 
 Community Impact Guidelines were inspired by
