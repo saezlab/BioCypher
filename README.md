@@ -11,7 +11,7 @@ overview, usage notes, and a tutorial, read the docs
 
 ![BioCypher](fig_1_draft.png)
 
-## Usage
+## ⚙️ Usage
 
 BioCypher is currently in prototype stage. Installation instructions can be
 found [here](https://saezlab.github.io/BioCypher/installation.html).
@@ -26,7 +26,6 @@ As the project evolves, more of these examples will be directly included in
 the documentation.
 
 ### Note for contributors
-The project uses documentation format [Napoleon](
-https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
-) with a [Sphinx](https://www.sphinx-doc.org/en/master/) autodoc GitHub
-Actions workflow. We use poetry for dependency management.
+We are very happy about contributions from the community, large and small!
+If you would like to contribute to BioCypher development, please refer to
+our [contribution guidelines](CONTRIBUTING.md). :)
