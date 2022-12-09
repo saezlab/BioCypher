@@ -1,0 +1,3517 @@
+format-version: 1.2
+data-version: 2021-11-22
+date: 22:11:2021 06:31
+saved-by: Evan Christensen
+auto-generated-by: OBO-Edit 2.3.1
+subsetdef: Alliance_of_Genome_Resources "Alliance of Genome Resources Gene Biotype Slim"
+subsetdef: biosapiens "biosapiens protein feature ontology"
+subsetdef: DBVAR "database of genomic structural variation"
+subsetdef: SOFA "SO feature annotation"
+synonymtypedef: aa1 "amino acid 1 letter code"
+synonymtypedef: aa3 "amino acid 3 letter code"
+synonymtypedef: AAMOD "amino acid modification"
+synonymtypedef: AGR "Alliance of Genome Resources"
+synonymtypedef: BS "biosapiens"
+synonymtypedef: dbsnp "dbsnp variant terms"
+synonymtypedef: dbvar "DBVAR"
+synonymtypedef: ebi_variants "ensembl variant terms"
+synonymtypedef: RNAMOD "RNA modification" EXACT
+synonymtypedef: VAR "variant annotation term"
+default-namespace: sequence
+ontology: so
+
+[Term]
+id: SO:0000000
+name: Sequence_Ontology
+subset: SOFA
+is_obsolete: true
+
+[Term]
+id: SO:0000001
+name: region
+def: "A sequence_feature with an extent greater than zero. A nucleotide region is composed of bases and a polypeptide region is composed of amino acids." [SO:ke]
+subset: SOFA
+synonym: "sequence" EXACT []
+is_a: SO:0000110 ! sequence_feature
+
+[Term]
+id: SO:0000002
+name: sequence_secondary_structure
+def: "A folded sequence." [SO:ke]
+synonym: "INSDC_feature:misc_structure" EXACT []
+synonym: "sequence secondary structure" EXACT []
+is_a: SO:0001411 ! biological_region
+
+[Term]
+id: SO:0000003
+name: G_quartet
+def: "G-quartets are unusual nucleic acid structures consisting of a planar arrangement where each guanine is hydrogen bonded by hoogsteen pairing to another guanine in the quartet." [http://www.ncbi.nlm.nih.gov/pubmed/7919797?dopt=Abstract]
+synonym: "G quartet" EXACT []
+synonym: "G tetrad" EXACT []
+synonym: "G-quadruplex" EXACT []
+synonym: "G-quartet" EXACT []
+synonym: "G-tetrad" EXACT []
+synonym: "G_quadruplex" EXACT []
+synonym: "guanine tetrad" EXACT []
+xref: http://en.wikipedia.org/wiki/G-quadruplex "wiki"
+is_a: SO:0000002 ! sequence_secondary_structure
+
+[Term]
+id: SO:0000004
+name: interior_coding_exon
+def: "A coding exon that is not the most 3-prime or the most 5-prime in a given transcript." []
+subset: SOFA
+synonym: "interior coding exon" EXACT []
+is_a: SO:0000195 ! coding_exon
+
+[Term]
+id: SO:0000005
+name: satellite_DNA
+def: "The many tandem repeats (identical or related) of a short basic repeating unit; many have a base composition or other property different from the genome average that allows them to be separated from the bulk (main band) genomic DNA." [http://www.insdc.org/files/feature_table.html]
+subset: SOFA
+synonym: "INSDC_feature:repeat_region" BROAD []
+synonym: "INSDC_qualifier:satellite" EXACT []
+synonym: "satellite DNA" EXACT []
+xref: http://en.wikipedia.org/wiki/Satellite_DNA "wiki"
+is_a: SO:0000705 ! tandem_repeat
+
+[Term]
+id: SO:0000006
+name: PCR_product
+def: "A region amplified by a PCR reaction." [SO:ke]
+comment: This term is mapped to MGED. This term is now located in OBI, with the following ID OBI_0000406.
+subset: SOFA
+synonym: "amplicon" RELATED []
+synonym: "PCR product" EXACT []
+xref: http://en.wikipedia.org/wiki/RAPD "wiki"
+is_a: SO:0000695 ! reagent
+
+[Term]
+id: SO:0000007
+name: read_pair
+def: "One of a pair of sequencing reads in which the two members of the pair are related by originating at either end of a clone insert." [SO:ls]
+subset: SOFA
+synonym: "mate pair" EXACT []
+synonym: "read-pair" EXACT []
+is_a: SO:0000150 ! read
+relationship: part_of SO:0000149 ! contig
+relationship: part_of SO:0001790 ! paired_end_fragment
+
+[Term]
+id: SO:0000008
+name: gene_sensu_your_favorite_organism
+is_obsolete: true
+
+[Term]
+id: SO:0000009
+name: gene_class
+is_obsolete: true
+
+[Term]
+id: SO:0000010
+name: protein_coding
+def: "A gene which, when transcribed, can be translated into a protein." []
+synonym: "protein-coding" EXACT []
+is_a: SO:0000401 ! gene_attribute
+
+[Term]
+id: SO:0000011
+name: non_protein_coding
+def: "A gene which can be transcribed, but will not be translated into a protein." []
+synonym: "non protein-coding" EXACT []
+is_a: SO:0000401 ! gene_attribute
+
+[Term]
+id: SO:0000012
+name: scRNA_primary_transcript
+def: "The primary transcript of any one of several small cytoplasmic RNA molecules present in the cytoplasm and sometimes nucleus of a Eukaryote." [http://www.ebi.ac.uk/embl/WebFeat/align/scRNA_s.html]
+synonym: "scRNA primary transcript" EXACT []
+synonym: "scRNA transcript" EXACT []
+synonym: "small cytoplasmic RNA" RELATED []
+synonym: "small cytoplasmic RNA transcript" EXACT []
+synonym: "small_cytoplasmic_RNA" RELATED []
+is_a: SO:0000483 ! nc_primary_transcript
+
+[Term]
+id: SO:0000013
+name: scRNA
+def: "A small non coding RNA sequence, present in the cytoplasm." [SO:ke]
+subset: SOFA
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:scRNA" EXACT []
+synonym: "small cytoplasmic RNA" EXACT []
+is_a: SO:0000655 ! ncRNA
+relationship: derives_from SO:0000012 ! scRNA_primary_transcript
+
+[Term]
+id: SO:0000014
+name: INR_motif
+def: "A sequence element characteristic of some RNA polymerase II promoters required for the correct positioning of the polymerase for the start of transcription. Overlaps the TSS. The mammalian consensus sequence is YYAN(T|A)YY; the Drosophila consensus sequence is TCA(G|T)t(T|C). In each the A is at position +1 with respect to the TSS. Functionally similar to the TATA box element." [PMID:12651739, PMID:16858867]
+comment: Binds TAF1, TAF2.
+synonym: "DMp2" RELATED []
+synonym: "initiator" EXACT []
+synonym: "initiator motif" EXACT []
+synonym: "INR motif" EXACT []
+is_a: SO:0001660 ! core_eukaryotic_promoter_element
+relationship: part_of SO:0001669 ! RNApol_II_core_promoter
+
+[Term]
+id: SO:0000015
+name: DPE_motif
+def: "A sequence element characteristic of some RNA polymerase II promoters; Positioned from +28 to +32 with respect to the TSS (+1). Experimental results suggest that the DPE acts in conjunction with the INR_motif to provide a binding site for TFIID in the absence of a TATA box to mediate transcription of TATA-less promoters. Consensus sequence (A|G)G(A|T)(C|T)(G|A|C)." [PMID:12515390, PMID:12537576, PMID:12651739, PMID:16858867]
+comment: Binds TAF6, TAF9.
+synonym: "CRWMGCGWKCGCTTS" NARROW []
+synonym: "downstream core promoter element" EXACT []
+synonym: "DPE motif" EXACT []
+is_a: SO:0001660 ! core_eukaryotic_promoter_element
+relationship: part_of SO:0001669 ! RNApol_II_core_promoter
+
+[Term]
+id: SO:0000016
+name: BREu_motif
+def: "A sequence element characteristic of some RNA polymerase II promoters, located immediately upstream of some TATA box elements at -37 to -32 with respect to the TSS (+1). Consensus sequence is (G|C)(G|C)(G|A)CGCC. Binds TFIIB." [PMID:12651739, PMID:16858867]
+comment: Binds TFIIB.
+synonym: "B-recognition element" EXACT []
+synonym: "BRE motif" EXACT []
+synonym: "BREu" RELATED []
+synonym: "BREu motif" EXACT []
+synonym: "TFIIB recognition element" RELATED []
+synonym: "transcription factor B-recognition element" EXACT []
+is_a: SO:0001660 ! core_eukaryotic_promoter_element
+relationship: part_of SO:0001669 ! RNApol_II_core_promoter
+
+[Term]
+id: SO:0000017
+name: PSE_motif
+def: "A sequence element characteristic of the promoters of snRNA genes transcribed by RNA polymerase II or by RNA polymerase III. Located between -45 and -60 relative to the TSS. The human PSE_motif consensus sequence is TCACCNTNA(C|G)TNAAAAG(T|G). The basal transcription factor, snRNA-activating protein complex (SNAPc), binds the PSE_motif and is required for the transcription of both RNA polymerase II and III transcribed small-nuclear RNA genes." [PMID:11390411, PMID:12621023, PMID:12651739, PMID:23166507, PMID:8339931]
+synonym: "proximal sequence element" EXACT []
+synonym: "PSE motif" EXACT []
+is_a: SO:0000713 ! DNA_motif
+relationship: part_of SO:0000167 ! promoter
+
+[Term]
+id: SO:0000018
+name: linkage_group
+def: "A group of loci that can be grouped in a linear order representing the different degrees of linkage among the genes concerned." [ISBN:038752046]
+synonym: "linkage group" EXACT []
+xref: http://en.wikipedia.org/wiki/Linkage_group "wiki"
+is_a: SO:0001411 ! biological_region
+
+[Term]
+id: SO:0000020
+name: RNA_internal_loop
+def: "A region of double stranded RNA where the bases do not conform to WC base pairing. The loop is closed on both sides by canonical base pairing. If the interruption to base pairing occurs on one strand only, it is known as a bulge." [SO:ke]
+synonym: "RNA internal loop" EXACT []
+is_a: SO:0000715 ! RNA_motif
+
+[Term]
+id: SO:0000021
+name: asymmetric_RNA_internal_loop
+def: "An internal RNA loop where one of the strands includes more bases than the corresponding region on the other strand." [SO:ke]
+synonym: "asymmetric RNA internal loop" EXACT []
+is_a: SO:0000020 ! RNA_internal_loop
+
+[Term]
+id: SO:0000022
+name: A_minor_RNA_motif
+def: "A region forming a motif, composed of adenines, where the minor groove edges are inserted into the minor groove of another helix." [SO:ke]
+synonym: "A minor RNA motif" EXACT []
+is_a: SO:0000715 ! RNA_motif
+
+[Term]
+id: SO:0000023
+name: K_turn_RNA_motif
+def: "The kink turn (K-turn) is an RNA structural motif that creates a sharp (~120 degree) bend between two continuous helices." [SO:ke]
+synonym: "K turn RNA motif" EXACT []
+synonym: "K-turn" EXACT []
+synonym: "kink turn" EXACT []
+synonym: "kink-turn motif" EXACT []
+xref: http://en.wikipedia.org/wiki/K-turn "wiki"
+is_a: SO:0000021 ! asymmetric_RNA_internal_loop
+
+[Term]
+id: SO:0000024
+name: sarcin_like_RNA_motif
+def: "A loop in ribosomal RNA containing the sites of attack for ricin and sarcin." [http://www.ncbi.nlm.nih.gov/pubmed/7897662]
+synonym: "sarcin like RNA motif" EXACT []
+synonym: "sarcin/ricin domain" EXACT []
+synonym: "sarcin/ricin loop" EXACT []
+synonym: "sarcin/ricin RNA domain" EXACT []
+is_a: SO:0000021 ! asymmetric_RNA_internal_loop
+
+[Term]
+id: SO:0000025
+name: symmetric_RNA_internal_loop
+def: "An internal RNA loop where the extent of the loop on both stands is the same size." [SO:ke]
+synonym: "A-minor RNA motif" EXACT []
+is_a: SO:0000020 ! RNA_internal_loop
+
+[Term]
+id: SO:0000026
+name: RNA_junction_loop
+synonym: "RNA junction loop" EXACT []
+is_a: SO:0000715 ! RNA_motif
+
+[Term]
+id: SO:0000027
+name: RNA_hook_turn
+synonym: "hook turn" RELATED []
+synonym: "hook-turn motif" EXACT []
+synonym: "RNA hook turn" EXACT []
+is_a: SO:0000026 ! RNA_junction_loop
+
+[Term]
+id: SO:0000028
+name: base_pair
+def: "Two bases paired opposite each other by hydrogen bonds creating a secondary structure." []
+synonym: "base pair" EXACT []
+xref: http://en.wikipedia.org/wiki/Base_pair "wiki"
+is_a: SO:0000002 ! sequence_secondary_structure
+
+[Term]
+id: SO:0000029
+name: WC_base_pair
+def: "The canonical base pair, where two bases interact via WC edges, with glycosidic bonds oriented cis relative to the axis of orientation." [PMID:12177293]
+synonym: "canonical base pair" EXACT []
+synonym: "Watson Crick base pair" EXACT []
+synonym: "Watson-Crick base pair" RELATED []
+synonym: "Watson-Crick pair" EXACT []
+synonym: "WC base pair" EXACT []
+is_a: SO:0000028 ! base_pair
+
+[Term]
+id: SO:0000030
+name: sugar_edge_base_pair
+def: "A type of non-canonical base-pairing." [PMID:12177293]
+synonym: "sugar edge base pair" EXACT []
+is_a: SO:0000028 ! base_pair
+
+[Term]
+id: SO:0000031
+name: aptamer
+def: "DNA or RNA molecules that have been selected from random pools based on their ability to bind other molecules." [http://aptamer.icmb.utexas.edu]
+xref: http://en.wikipedia.org/wiki/Aptamer "wiki"
+is_a: SO:0000696 ! oligo
+
+[Term]
+id: SO:0000032
+name: DNA_aptamer
+def: "DNA molecules that have been selected from random pools based on their ability to bind other molecules." [http:aptamer.icmb.utexas.edu]
+synonym: "DNA aptamer" EXACT []
+is_a: SO:0000031 ! aptamer
+
+[Term]
+id: SO:0000033
+name: RNA_aptamer
+def: "RNA molecules that have been selected from random pools based on their ability to bind other molecules." [http://aptamer.icmb.utexas.edu]
+synonym: "RNA aptamer" EXACT []
+is_a: SO:0000031 ! aptamer
+
+[Term]
+id: SO:0000034
+name: morpholino_oligo
+def: "Morpholino oligos are synthesized from four different Morpholino subunits, each of which contains one of the four genetic bases (A, C, G, T) linked to a 6-membered morpholine ring. Eighteen to 25 subunits of these four subunit types are joined in a specific order by non-ionic phosphorodiamidate intersubunit linkages to give a Morpholino." [http://www.gene-tools.com/]
+synonym: "morphant" BROAD []
+synonym: "morpholino" EXACT []
+synonym: "morpholino oligo" EXACT []
+is_a: SO:0001247 ! synthetic_oligo
+intersection_of: SO:0001247 ! synthetic_oligo
+intersection_of: has_quality SO:0001183 ! morpholino_backbone
+relationship: has_quality SO:0001183 ! morpholino_backbone
+
+[Term]
+id: SO:0000035
+name: riboswitch
+def: "A riboswitch is a part of an mRNA that can act as a direct sensor of small molecules to control their own expression. A riboswitch is a cis element in the 5' end of an mRNA, that acts as a direct sensor of metabolites." [PMID:2820954]
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:riboswitch" EXACT []
+synonym: "riboswitch RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/Riboswitch "wiki"
+is_a: SO:0000836 ! mRNA_region
+relationship: part_of SO:0000234 ! mRNA
+
+[Term]
+id: SO:0000036
+name: matrix_attachment_site
+def: "A DNA region that is required for the binding of chromatin to the nuclear matrix." [SO:ma]
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:matrix_attachment_region" EXACT []
+synonym: "MAR" EXACT []
+synonym: "matrix association region" EXACT []
+synonym: "matrix attachment region" EXACT []
+synonym: "matrix attachment site" EXACT []
+synonym: "nuclear matrix association region" EXACT []
+synonym: "nuclear matrix attachment site" EXACT []
+synonym: "S/MAR" EXACT []
+synonym: "S/MAR element" RELATED []
+synonym: "scaffold attachment site" EXACT []
+synonym: "scaffold matrix attachment region" EXACT []
+synonym: "SMAR" EXACT []
+xref: http://en.wikipedia.org/wiki/Matrix_attachment_site "wiki"
+is_a: SO:0000626 ! chromosomal_regulatory_element
+
+[Term]
+id: SO:0000037
+name: locus_control_region
+def: "A DNA region that includes DNAse hypersensitive sites located near a gene that confers the high-level, position-independent, and copy number-dependent expression to that gene." [SO:ma]
+comment: Definition updated Nov 10 2020, Colin Logie from GREEKC helped us realize that LCRs can also be located 3' to a gene.
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:locus_control_region" EXACT []
+synonym: "LCR" EXACT []
+synonym: "locus control element" RELATED []
+synonym: "locus control region" EXACT []
+xref: http://en.wikipedia.org/wiki/Locus_control_region "wiki"
+is_a: SO:0000727 ! cis_regulatory_module
+
+[Term]
+id: SO:0000038
+name: match_set
+def: "A collection of match parts." [SO:ke]
+subset: SOFA
+is_obsolete: true
+
+[Term]
+id: SO:0000039
+name: match_part
+def: "A part of a match, for example an hsp from blast is a match_part." [SO:ke]
+subset: SOFA
+synonym: "match part" EXACT []
+is_a: SO:0001410 ! experimental_feature
+relationship: part_of SO:0000343 ! match
+
+[Term]
+id: SO:0000040
+name: genomic_clone
+def: "A clone of a DNA region of a genome." [SO:ma]
+synonym: "genomic clone" EXACT []
+is_a: SO:0000151 ! clone
+intersection_of: SO:0000151 ! clone
+intersection_of: has_quality SO:0000991 ! genomic_DNA
+relationship: has_quality SO:0000991 ! genomic_DNA
+
+[Term]
+id: SO:0000041
+name: sequence_operation
+def: "An operation that can be applied to a sequence, that results in a change." [SO:ke]
+synonym: "sequence operation" EXACT []
+is_obsolete: true
+
+[Term]
+id: SO:0000042
+name: pseudogene_attribute
+def: "An attribute of a pseudogene (SO:0000336)." [SO:ma]
+synonym: "pseudogene attribute" EXACT []
+is_obsolete: true
+
+[Term]
+id: SO:0000043
+name: processed_pseudogene
+def: "A pseudogene created via retrotranposition of the mRNA of a functional protein-coding parent gene followed by accumulation of deleterious mutations lacking introns and promoters, often including a polyA tail." [GENCODE:http\://www.gencodegenes.org/gencode_biotypes.html]
+comment: Please not the synonym R psi M uses the spelled out form of the greek letter.
+synonym: "INSDC_feature:gene" BROAD []
+synonym: "INSDC_qualifier:processed" EXACT []
+synonym: "processed pseudogene" EXACT []
+synonym: "pseudogene by reverse transcription" RELATED []
+synonym: "R psi G" RELATED []
+synonym: "retropseudogene" EXACT []
+is_a: SO:0000336 ! pseudogene
+
+[Term]
+id: SO:0000044
+name: pseudogene_by_unequal_crossing_over
+def: "A pseudogene caused by unequal crossing over at recombination." [SO:ke]
+synonym: "pseudogene by unequal crossing over" EXACT []
+is_a: SO:0001760 ! non_processed_pseudogene
+
+[Term]
+id: SO:0000045
+name: delete
+def: "To remove a subsection of sequence." [SO:ke]
+is_obsolete: true
+
+[Term]
+id: SO:0000046
+name: insert
+def: "To insert a subsection of sequence." [SO:ke]
+is_obsolete: true
+
+[Term]
+id: SO:0000047
+name: invert
+def: "To invert a subsection of sequence." [SO:ke]
+is_obsolete: true
+
+[Term]
+id: SO:0000048
+name: substitute
+def: "To substitute a subsection of sequence for another." [SO:ke]
+is_obsolete: true
+
+[Term]
+id: SO:0000049
+name: translocate
+def: "To translocate a subsection of sequence." [SO:ke]
+is_obsolete: true
+
+[Term]
+id: SO:0000050
+name: gene_part
+def: "A part of a gene, that has no other route in the ontology back to region. This concept is necessary for logical inference as these parts must have the properties of region. It also allows us to associate all the parts of genes with a gene." [SO:ke]
+subset: SOFA
+is_obsolete: true
+
+[Term]
+id: SO:0000051
+name: probe
+def: "A DNA sequence used experimentally to detect the presence or absence of a complementary nucleic acid." [SO:ma]
+xref: http://en.wikipedia.org/wiki/Hybridization_probe "wiki"
+is_a: SO:0000696 ! oligo
+
+[Term]
+id: SO:0000052
+name: assortment_derived_deficiency
+synonym: "assortment-derived_deficiency" RELATED []
+is_obsolete: true
+
+[Term]
+id: SO:0000053
+name: sequence_variant_affecting_regulatory_region
+def: "A sequence_variant_effect which changes the regulatory region of a gene." [SO:ke]
+comment: OBSOLETE: This term was deleted as it conflated more than one term. The alteration is separate from the effect.
+synonym: "mutation affecting regulatory region" RELATED []
+synonym: "sequence variant affecting regulatory region" EXACT []
+is_obsolete: true
+replaced_by: SO:0001556
+
+[Term]
+id: SO:0000054
+name: aneuploid
+def: "A kind of chromosome variation where the chromosome complement is not an exact multiple of the haploid number." [SO:ke]
+xref: http://en.wikipedia.org/wiki/Aneuploid "wiki"
+is_a: SO:1000182 ! chromosome_number_variation
+
+[Term]
+id: SO:0000055
+name: hyperploid
+def: "A kind of chromosome variation where the chromosome complement is not an exact multiple of the haploid number as extra chromosomes are present." [SO:ke]
+xref: http://en.wikipedia.org/wiki/Hyperploid "wiki"
+is_a: SO:0000054 ! aneuploid
+
+[Term]
+id: SO:0000056
+name: hypoploid
+def: "A kind of chromosome variation where the chromosome complement is not an exact multiple of the haploid number as some chromosomes are missing." [SO:ke]
+xref: http://en.wikipedia.org/wiki/Hypoploid "wiki"
+is_a: SO:0000054 ! aneuploid
+
+[Term]
+id: SO:0000057
+name: operator
+def: "A regulatory element of an operon to which activators or repressors bind thereby effecting translation of genes in that operon." [SO:ma]
+comment: Moved to transcriptional_cis_regulatory_region (SO:0001055) from gene_group_regulatory_region (SO:0000752) on 11 Feb 2021 when SO:0000752 was merged into SO:0001055. See GitHub Issue #529.
+subset: SOFA
+synonym: "operator segment" EXACT []
+xref: http://en.wikipedia.org/wiki/Operator_(biology)#Operator "wiki"
+is_a: SO:0001055 ! transcriptional_cis_regulatory_region
+
+[Term]
+id: SO:0000058
+name: assortment_derived_aneuploid
+synonym: "assortment-derived_aneuploid" RELATED []
+is_obsolete: true
+
+[Term]
+id: SO:0000059
+name: nuclease_binding_site
+def: "A binding site that, of a nucleotide molecule, that interacts selectively and non-covalently with polypeptide residues of a nuclease." [SO:cb]
+subset: SOFA
+synonym: "nuclease binding site" EXACT []
+is_a: SO:0001654 ! nucleotide_to_protein_binding_site
+
+[Term]
+id: SO:0000060
+name: compound_chromosome_arm
+def: "One arm of a compound chromosome." []
+comment: FLAG - this term is should probably be a part of rather than an is_a.
+synonym: "compound chromosome arm" EXACT []
+is_a: SO:1000042 ! compound_chromosome
+
+[Term]
+id: SO:0000061
+name: restriction_enzyme_binding_site
+def: "A binding site that, in the nucleotide molecule, interacts selectively and non-covalently with polypeptide residues of a restriction enzyme." [SO:cb]
+comment: A region of a molecule that binds to a restriction enzyme.
+synonym: "restriction endonuclease binding site" EXACT []
+synonym: "restriction enzyme binding site" EXACT []
+is_a: SO:0000059 ! nuclease_binding_site
+
+[Term]
+id: SO:0000062
+name: deficient_intrachromosomal_transposition
+def: "An intrachromosomal transposition whereby a translocation in which one of the four broken ends loses a segment before re-joining." [FB:reference_manual]
+synonym: "deficient intrachromosomal transposition" EXACT []
+is_a: SO:1000029 ! chromosomal_deletion
+is_a: SO:1000041 ! intrachromosomal_transposition
+relationship: has_part SO:0000159 ! deletion
+
+[Term]
+id: SO:0000063
+name: deficient_interchromosomal_transposition
+def: "An interchromosomal transposition whereby a translocation in which one of the four broken ends loses a segment before re-joining." [SO:ke]
+synonym: "deficient interchromosomal transposition" EXACT []
+is_a: SO:1000155 ! interchromosomal_transposition
+
+[Term]
+id: SO:0000064
+name: gene_by_transcript_attribute
+comment: This classes of attributes was added by MA to allow the broad description of genes based on qualities of the transcript(s). A product of SO meeting 2004.
+is_obsolete: true
+
+[Term]
+id: SO:0000065
+name: free_chromosome_arm
+def: "A chromosome structure variation whereby an arm exists as an individual chromosome element." [SO:ke]
+synonym: "free chromosome arm" EXACT []
+is_a: SO:1000183 ! chromosome_structure_variation
+
+[Term]
+id: SO:0000066
+name: gene_by_polyadenylation_attribute
+is_obsolete: true
+
+[Term]
+id: SO:0000067
+name: gene_to_gene_feature
+synonym: "gene to gene feature" EXACT []
+is_a: SO:0000401 ! gene_attribute
+
+[Term]
+id: SO:0000068
+name: overlapping
+def: "An attribute describing a gene that has a sequence that overlaps the sequence of another gene." [SO:ke]
+is_a: SO:0000067 ! gene_to_gene_feature
+
+[Term]
+id: SO:0000069
+name: inside_intron
+def: "An attribute to describe a gene when it is located within the intron of another gene." [SO:ke]
+synonym: "inside intron" EXACT []
+is_a: SO:0000068 ! overlapping
+
+[Term]
+id: SO:0000070
+name: inside_intron_antiparallel
+def: "An attribute to describe a gene when it is located within the intron of another gene and on the opposite strand." [SO:ke]
+synonym: "inside intron antiparallel" EXACT []
+is_a: SO:0000069 ! inside_intron
+
+[Term]
+id: SO:0000071
+name: inside_intron_parallel
+def: "An attribute to describe a gene when it is located within the intron of another gene and on the same strand." [SO:ke]
+synonym: "inside intron parallel" EXACT []
+is_a: SO:0000069 ! inside_intron
+
+[Term]
+id: SO:0000072
+name: end_overlapping_gene
+is_obsolete: true
+
+[Term]
+id: SO:0000073
+name: five_prime_three_prime_overlap
+def: "An attribute to describe a gene when the five prime region overlaps with another gene's 3' region." [SO:ke]
+synonym: "five prime-three prime overlap" EXACT []
+is_a: SO:0000068 ! overlapping
+
+[Term]
+id: SO:0000074
+name: five_prime_five_prime_overlap
+def: "An attribute to describe a gene when the five prime region overlaps with another gene's five prime region." [SO:ke]
+synonym: "five prime-five prime overlap" EXACT []
+is_a: SO:0000068 ! overlapping
+
+[Term]
+id: SO:0000075
+name: three_prime_three_prime_overlap
+def: "An attribute to describe a gene when the 3' region overlaps with another gene's 3' region." [SO:ke]
+synonym: "three prime-three prime overlap" EXACT []
+is_a: SO:0000068 ! overlapping
+
+[Term]
+id: SO:0000076
+name: three_prime_five_prime_overlap
+def: "An attribute to describe a gene when the 3' region overlaps with another gene's 5' region." [SO:ke]
+synonym: "5' 3' overlap" EXACT []
+synonym: "three prime five prime overlap" EXACT []
+is_a: SO:0000068 ! overlapping
+
+[Term]
+id: SO:0000077
+name: antisense
+def: "A region sequence that is complementary to a sequence of messenger RNA." [SO:ke]
+xref: http://en.wikipedia.org/wiki/Antisense "wiki"
+is_a: SO:0000068 ! overlapping
+
+[Term]
+id: SO:0000078
+name: polycistronic_transcript
+def: "A transcript that is polycistronic." [SO:xp]
+synonym: "polycistronic transcript" EXACT []
+is_a: SO:0000673 ! transcript
+intersection_of: SO:0000673 ! transcript
+intersection_of: has_quality SO:0000880 ! polycistronic
+relationship: has_quality SO:0000880 ! polycistronic
+
+[Term]
+id: SO:0000079
+name: dicistronic_transcript
+def: "A transcript that is dicistronic." [SO:ke]
+synonym: "dicistronic transcript" EXACT []
+is_a: SO:0000078 ! polycistronic_transcript
+intersection_of: SO:0000673 ! transcript
+intersection_of: has_quality SO:0000879 ! dicistronic
+relationship: has_quality SO:0000879 ! dicistronic
+
+[Term]
+id: SO:0000080
+name: operon_member
+def: "A gene that is a member of an operon, which is a set of genes transcribed together as a unit." []
+synonym: "operon member" EXACT []
+is_a: SO:0000081 ! gene_array_member
+
+[Term]
+id: SO:0000081
+name: gene_array_member
+synonym: "gene array member" EXACT []
+is_a: SO:0000401 ! gene_attribute
+
+[Term]
+id: SO:0000082
+name: processed_transcript_attribute
+is_obsolete: true
+
+[Term]
+id: SO:0000083
+name: macronuclear_sequence
+def: "DNA belonging to the macronuclei of ciliates." []
+synonym: "macronuclear sequence" EXACT []
+is_a: SO:0000736 ! organelle_sequence
+
+[Term]
+id: SO:0000084
+name: micronuclear_sequence
+def: "DNA belonging to the micronuclei of a cell." []
+synonym: "micronuclear sequence" EXACT []
+is_a: SO:0000736 ! organelle_sequence
+
+[Term]
+id: SO:0000085
+name: gene_by_genome_location
+is_obsolete: true
+
+[Term]
+id: SO:0000086
+name: gene_by_organelle_of_genome
+is_obsolete: true
+
+[Term]
+id: SO:0000087
+name: nuclear_gene
+def: "A gene from nuclear sequence." [SO:xp]
+synonym: "nuclear gene" EXACT []
+xref: http://en.wikipedia.org/wiki/Nuclear_gene "wiki"
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_origin SO:0000738 ! nuclear_sequence
+relationship: has_origin SO:0000738 ! nuclear_sequence
+
+[Term]
+id: SO:0000088
+name: mt_gene
+def: "A gene located in mitochondrial sequence." [SO:xp]
+synonym: "mitochondrial gene" EXACT []
+synonym: "mt gene" EXACT []
+xref: http://en.wikipedia.org/wiki/Mitochondrial_gene "wiki"
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_origin SO:0000737 ! mitochondrial_sequence
+relationship: has_origin SO:0000737 ! mitochondrial_sequence
+
+[Term]
+id: SO:0000089
+name: kinetoplast_gene
+def: "A gene located in kinetoplast sequence." [SO:xp]
+synonym: "kinetoplast gene" EXACT []
+is_a: SO:0000088 ! mt_gene
+intersection_of: SO:0000088 ! mt_gene
+intersection_of: has_origin SO:0000741 ! kinetoplast
+relationship: has_origin SO:0000741 ! kinetoplast
+
+[Term]
+id: SO:0000090
+name: plastid_gene
+def: "A gene from plastid sequence." [SO:xp]
+synonym: "plastid gene" EXACT []
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_origin SO:0000740 ! plastid_sequence
+relationship: has_origin SO:0000740 ! plastid_sequence
+
+[Term]
+id: SO:0000091
+name: apicoplast_gene
+def: "A gene from apicoplast sequence." [SO:xp]
+synonym: "apicoplast gene" EXACT []
+is_a: SO:0000090 ! plastid_gene
+intersection_of: SO:0000090 ! plastid_gene
+intersection_of: has_origin SO:0000743 ! apicoplast_sequence
+relationship: has_origin SO:0000743 ! apicoplast_sequence
+
+[Term]
+id: SO:0000092
+name: ct_gene
+def: "A gene from chloroplast sequence." [SO:xp]
+synonym: "chloroplast gene" EXACT []
+synonym: "ct gene" EXACT []
+is_a: SO:0000090 ! plastid_gene
+intersection_of: SO:0000090 ! plastid_gene
+intersection_of: has_origin SO:0000745 ! chloroplast_sequence
+relationship: has_origin SO:0000745 ! chloroplast_sequence
+
+[Term]
+id: SO:0000093
+name: chromoplast_gene
+def: "A gene from chromoplast_sequence." [SO:xp]
+synonym: "chromoplast gene" EXACT []
+is_a: SO:0000090 ! plastid_gene
+intersection_of: SO:0000090 ! plastid_gene
+intersection_of: has_origin SO:0000744 ! chromoplast_sequence
+relationship: has_origin SO:0000744 ! chromoplast_sequence
+
+[Term]
+id: SO:0000094
+name: cyanelle_gene
+def: "A gene from cyanelle sequence." [SO:xp]
+synonym: "cyanelle gene" EXACT []
+is_a: SO:0000090 ! plastid_gene
+intersection_of: SO:0000090 ! plastid_gene
+intersection_of: has_origin SO:0000746 ! cyanelle_sequence
+relationship: has_origin SO:0000746 ! cyanelle_sequence
+
+[Term]
+id: SO:0000095
+name: leucoplast_gene
+def: "A plastid gene from leucoplast sequence." [SO:xp]
+synonym: "leucoplast gene" EXACT []
+is_a: SO:0000090 ! plastid_gene
+intersection_of: SO:0000090 ! plastid_gene
+intersection_of: has_origin SO:0000747 ! leucoplast_sequence
+relationship: has_origin SO:0000747 ! leucoplast_sequence
+
+[Term]
+id: SO:0000096
+name: proplastid_gene
+def: "A gene from proplastid sequence." [SO:ke]
+synonym: "proplastid gene" EXACT []
+is_a: SO:0000090 ! plastid_gene
+intersection_of: SO:0000090 ! plastid_gene
+intersection_of: has_origin SO:0000748 ! proplastid_sequence
+relationship: has_origin SO:0000748 ! proplastid_sequence
+
+[Term]
+id: SO:0000097
+name: nucleomorph_gene
+def: "A gene from nucleomorph sequence." [SO:xp]
+synonym: "nucleomorph gene" EXACT []
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_origin SO:0000739 ! nucleomorphic_sequence
+relationship: has_origin SO:0000739 ! nucleomorphic_sequence
+
+[Term]
+id: SO:0000098
+name: plasmid_gene
+def: "A gene from plasmid sequence." [SO:xp]
+synonym: "plasmid gene" EXACT []
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_origin SO:0000749 ! plasmid_location
+relationship: has_origin SO:0000749 ! plasmid_location
+
+[Term]
+id: SO:0000099
+name: proviral_gene
+def: "A gene from proviral sequence." [SO:xp]
+synonym: "proviral gene" EXACT []
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_origin SO:0000751 ! proviral_location
+relationship: has_origin SO:0000751 ! proviral_location
+
+[Term]
+id: SO:0000100
+name: endogenous_retroviral_gene
+def: "A proviral gene with origin endogenous retrovirus." [SO:xp]
+synonym: "endogenous retroviral gene" EXACT []
+is_a: SO:0000099 ! proviral_gene
+intersection_of: SO:0000099 ! proviral_gene
+intersection_of: has_origin SO:0000903 ! endogenous_retroviral_sequence
+relationship: has_origin SO:0000903 ! endogenous_retroviral_sequence
+
+[Term]
+id: SO:0000101
+name: transposable_element
+def: "A transposon or insertion sequence. An element that can insert in a variety of DNA sequences." [http://www.sci.sdsu.edu/~smaloy/Glossary/T.html]
+subset: SOFA
+synonym: "transposable element" EXACT []
+synonym: "transposon" EXACT []
+xref: http://en.wikipedia.org/wiki/Transposable_element "wiki"
+is_a: SO:0001039 ! integrated_mobile_genetic_element
+
+[Term]
+id: SO:0000102
+name: expressed_sequence_match
+def: "A match to an EST or cDNA sequence." [SO:ke]
+subset: SOFA
+synonym: "expressed sequence match" EXACT []
+is_a: SO:0000347 ! nucleotide_match
+
+[Term]
+id: SO:0000103
+name: clone_insert_end
+def: "The end of the clone insert." [SO:ke]
+subset: SOFA
+synonym: "clone insert end" EXACT []
+is_a: SO:0000699 ! junction
+relationship: part_of SO:0000753 ! clone_insert
+
+[Term]
+id: SO:0000104
+name: polypeptide
+alt_id: SO:0000358
+def: "A sequence of amino acids linked by peptide bonds which may lack appreciable tertiary structure and may not be liable to irreversible denaturation." [SO:ma]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology. The term 'protein' was merged with 'polypeptide'. Although 'protein' was a sequence_attribute and therefore meant to describe the quality rather than an actual feature, it was being used erroneously. It is replaced by 'peptidyl' as the polymer attribute.
+subset: SOFA
+synonym: "protein" EXACT []
+xref: http://en.wikipedia.org/wiki/Polypeptide "wiki"
+is_a: SO:0001411 ! biological_region
+relationship: derives_from SO:0000316 ! CDS
+
+[Term]
+id: SO:0000105
+name: chromosome_arm
+def: "A region of the chromosome between the centromere and the telomere. Human chromosomes have two arms, the p arm (short) and the q arm (long) which are separated from each other by the centromere." [http://www.medterms.com/script/main/art.asp?articlekey=5152]
+synonym: "chromosome arm" EXACT []
+is_a: SO:0000830 ! chromosome_part
+
+[Term]
+id: SO:0000106
+name: non_capped_primary_transcript
+is_obsolete: true
+
+[Term]
+id: SO:0000107
+name: sequencing_primer
+def: "A single stranded oligo used for polymerase chain reaction." []
+synonym: "sequencing primer" EXACT []
+is_a: SO:0000112 ! primer
+
+[Term]
+id: SO:0000108
+name: mRNA_with_frameshift
+def: "An mRNA with a frameshift." [SO:xp]
+synonym: "frameshifted mRNA" EXACT []
+synonym: "mRNA with frameshift" EXACT []
+is_a: SO:0000234 ! mRNA
+intersection_of: SO:0000234 ! mRNA
+intersection_of: has_quality SO:0000865 ! frameshift
+relationship: has_quality SO:0000865 ! frameshift
+
+[Term]
+id: SO:0000109
+name: sequence_variant_obs
+def: "A sequence_variant is a non exact copy of a sequence_feature or genome exhibiting one or more sequence_alteration." [SO:ke]
+subset: SOFA
+synonym: "mutation" RELATED []
+is_obsolete: true
+
+[Term]
+id: SO:0000110
+name: sequence_feature
+def: "Any extent of continuous biological sequence." [LAMHDI:mb, SO:ke]
+subset: SOFA
+synonym: "INSDC_feature:misc_feature" EXACT []
+synonym: "INSDC_note:other" EXACT []
+synonym: "INSDC_note:sequence_feature" EXACT []
+synonym: "located sequence feature" RELATED []
+synonym: "located_sequence_feature" EXACT []
+synonym: "sequence feature" EXACT []
+disjoint_from: SO:0000400 ! sequence_attribute
+
+[Term]
+id: SO:0000111
+name: transposable_element_gene
+def: "A gene encoded within a transposable element. For example gag, int, env and pol are the transposable element genes of the TY element in yeast." [SO:ke]
+synonym: "transposable element gene" EXACT []
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: part_of SO:0000101 ! transposable_element
+relationship: part_of SO:0000101 ! transposable_element
+
+[Term]
+id: SO:0000112
+name: primer
+def: "An oligo to which new deoxyribonucleotides can be added by DNA polymerase." [SO:ke]
+subset: SOFA
+synonym: "DNA primer" EXACT []
+synonym: "primer oligonucleotide" EXACT []
+synonym: "primer polynucleotide" EXACT []
+synonym: "primer sequence" EXACT []
+xref: http://en.wikipedia.org/wiki/Primer_(molecular_biology) "wiki"
+is_a: SO:0000441 ! ss_oligo
+
+[Term]
+id: SO:0000113
+name: proviral_region
+def: "A viral sequence which has integrated into a host genome." [SO:ke]
+subset: SOFA
+synonym: "proviral region" EXACT []
+synonym: "proviral sequence" RELATED []
+is_a: SO:0001039 ! integrated_mobile_genetic_element
+
+[Term]
+id: SO:0000114
+name: methylated_cytosine
+def: "A methylated deoxy-cytosine." [SO:ke]
+subset: SOFA
+synonym: "methylated C" EXACT []
+synonym: "methylated cytosine" EXACT []
+synonym: "methylated cytosine base" EXACT []
+synonym: "methylated cytosine residue" EXACT []
+synonym: "methylated_C" EXACT []
+is_a: SO:0000306 ! methylated_DNA_base_feature
+is_a: SO:0001963 ! modified_cytosine
+
+[Term]
+id: SO:0000115
+name: transcript_feature
+is_obsolete: true
+
+[Term]
+id: SO:0000116
+name: edited
+def: "An attribute describing a sequence that is modified by editing." [SO:ke]
+is_a: SO:0000237 ! transcript_attribute
+
+[Term]
+id: SO:0000117
+name: transcript_with_readthrough_stop_codon
+is_obsolete: true
+
+[Term]
+id: SO:0000118
+name: transcript_with_translational_frameshift
+def: "A transcript with a translational frameshift." [SO:xp]
+synonym: "transcript with translational frameshift" EXACT []
+is_a: SO:0000673 ! transcript
+intersection_of: SO:0000673 ! transcript
+intersection_of: has_quality SO:0000887 ! translationally_frameshifted
+relationship: has_quality SO:0000887 ! translationally_frameshifted
+
+[Term]
+id: SO:0000119
+name: regulated
+def: "An attribute to describe a sequence that is regulated." [SO:ke]
+is_a: SO:0000401 ! gene_attribute
+
+[Term]
+id: SO:0000120
+name: protein_coding_primary_transcript
+def: "A primary transcript that, at least in part, encodes one or more proteins." [SO:ke]
+comment: May contain introns.
+subset: SOFA
+synonym: "pre mRNA" RELATED []
+synonym: "protein coding primary transcript" EXACT []
+is_a: SO:0000185 ! primary_transcript
+
+[Term]
+id: SO:0000121
+name: forward_primer
+def: "A single stranded oligo used for polymerase chain reaction." [http://mged.sourceforge.net/ontologies/MGEDontology.php]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+synonym: "DNA forward primer" EXACT []
+synonym: "forward DNA primer" EXACT []
+synonym: "forward primer" EXACT []
+synonym: "forward primer oligo" EXACT []
+synonym: "forward primer oligonucleotide" EXACT []
+synonym: "forward primer polynucleotide" EXACT []
+synonym: "forward primer sequence" EXACT []
+is_a: SO:0000112 ! primer
+intersection_of: SO:0000112 ! primer
+intersection_of: has_quality SO:0001030 ! forward
+relationship: has_quality SO:0001030 ! forward
+
+[Term]
+id: SO:0000122
+name: RNA_sequence_secondary_structure
+def: "A folded RNA sequence." [SO:ke]
+synonym: "RNA sequence secondary structure" EXACT []
+is_a: SO:0000002 ! sequence_secondary_structure
+
+[Term]
+id: SO:0000123
+name: transcriptionally_regulated
+def: "An attribute describing a gene that is regulated at transcription." [SO:ma]
+comment: By:<protein_id>.
+synonym: "transcriptionally regulated" EXACT []
+is_a: SO:0000119 ! regulated
+
+[Term]
+id: SO:0000124
+name: transcriptionally_constitutive
+def: "Expressed in relatively constant amounts without regard to cellular environmental conditions such as the concentration of a particular substrate." [SO:ke]
+synonym: "transcriptionally constitutive" EXACT []
+is_a: SO:0000123 ! transcriptionally_regulated
+
+[Term]
+id: SO:0000125
+name: transcriptionally_induced
+def: "An inducer molecule is required for transcription to occur." [SO:ke]
+synonym: "transcriptionally induced" EXACT []
+is_a: SO:0000123 ! transcriptionally_regulated
+
+[Term]
+id: SO:0000126
+name: transcriptionally_repressed
+def: "A repressor molecule is required for transcription to stop." [SO:ke]
+synonym: "transcriptionally repressed" EXACT []
+is_a: SO:0000123 ! transcriptionally_regulated
+
+[Term]
+id: SO:0000127
+name: silenced_gene
+def: "A gene that is silenced." [SO:xp]
+synonym: "silenced gene" EXACT []
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_quality SO:0000893 ! silenced
+relationship: has_quality SO:0000893 ! silenced
+
+[Term]
+id: SO:0000128
+name: gene_silenced_by_DNA_modification
+def: "A gene that is silenced by DNA modification." [SO:xp]
+synonym: "gene silenced by DNA modification" EXACT []
+is_a: SO:0000127 ! silenced_gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_quality SO:0000894 ! silenced_by_DNA_modification
+relationship: has_quality SO:0000894 ! silenced_by_DNA_modification
+
+[Term]
+id: SO:0000129
+name: gene_silenced_by_DNA_methylation
+def: "A gene that is silenced by DNA methylation." [SO:xp]
+synonym: "gene silenced by DNA methylation" EXACT []
+synonym: "methylation-silenced gene" EXACT []
+is_a: SO:0000128 ! gene_silenced_by_DNA_modification
+intersection_of: SO:0000128 ! gene_silenced_by_DNA_modification
+intersection_of: has_quality SO:0000895 ! silenced_by_DNA_methylation
+relationship: has_quality SO:0000895 ! silenced_by_DNA_methylation
+
+[Term]
+id: SO:0000130
+name: post_translationally_regulated
+def: "An attribute describing a gene that is regulated after it has been translated." [SO:ke]
+synonym: "post translationally regulated" EXACT []
+synonym: "post-translationally regulated" EXACT []
+is_a: SO:0000119 ! regulated
+
+[Term]
+id: SO:0000131
+name: translationally_regulated
+def: "An attribute describing a gene that is regulated as it is translated." [SO:ke]
+synonym: "translationally regulated" EXACT []
+is_a: SO:0000119 ! regulated
+
+[Term]
+id: SO:0000132
+name: reverse_primer
+def: "A single stranded oligo used for polymerase chain reaction." [http://mged.sourceforge.net/ontologies/MGEDontology.php]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+synonym: "DNA reverse primer" EXACT []
+synonym: "reverse DNA primer" EXACT []
+synonym: "reverse primer" EXACT []
+synonym: "reverse primer oligo" EXACT []
+synonym: "reverse primer oligonucleotide" EXACT []
+synonym: "reverse primer sequence" EXACT []
+is_a: SO:0000112 ! primer
+intersection_of: SO:0000112 ! primer
+intersection_of: has_quality SO:0001031 ! reverse
+relationship: has_quality SO:0001031 ! reverse
+
+[Term]
+id: SO:0000133
+name: epigenetically_modified
+def: "This attribute describes a gene where heritable changes other than those in the DNA sequence occur. These changes include: modification to the DNA (such as DNA methylation, the covalent modification of cytosine), and post-translational modification of histones." [SO:ke]
+synonym: "epigenetically modified" EXACT []
+is_a: SO:0000401 ! gene_attribute
+
+[Term]
+id: SO:0000134
+name: genomically_imprinted
+def: "Imprinted genes are epigenetically modified genes that are expressed monoallelically according to their parent of origin." [SO:ke]
+synonym: "genomically imprinted" EXACT []
+synonym: "imprinted" BROAD []
+xref: http:http\://en.wikipedia.org/wiki/Genomic_imprinting "wiki"
+is_a: SO:0000119 ! regulated
+is_a: SO:0000133 ! epigenetically_modified
+
+[Term]
+id: SO:0000135
+name: maternally_imprinted
+def: "The maternal copy of the gene is modified, rendering it transcriptionally silent." [SO:ke]
+synonym: "maternally imprinted" EXACT []
+is_a: SO:0000134 ! genomically_imprinted
+
+[Term]
+id: SO:0000136
+name: paternally_imprinted
+def: "The paternal copy of the gene is modified, rendering it transcriptionally silent." [SO:ke]
+synonym: "paternally imprinted" EXACT []
+is_a: SO:0000134 ! genomically_imprinted
+
+[Term]
+id: SO:0000137
+name: allelically_excluded
+def: "Allelic exclusion is a process occurring in diploid organisms, where a gene is inactivated and not expressed in that cell." [SO:ke]
+comment: Examples are x-inactivation and immunoglobulin formation.
+synonym: "allelically excluded" EXACT []
+is_a: SO:0000133 ! epigenetically_modified
+
+[Term]
+id: SO:0000138
+name: gene_rearranged_at_DNA_level
+def: "An epigenetically modified gene, rearranged at the DNA level." [SO:xp]
+synonym: "gene rearranged at DNA level" EXACT []
+is_a: SO:0000898 ! epigenetically_modified_gene
+intersection_of: SO:0000898 ! epigenetically_modified_gene
+intersection_of: has_quality SO:0000904 ! rearranged_at_DNA_level
+relationship: has_quality SO:0000904 ! rearranged_at_DNA_level
+
+[Term]
+id: SO:0000139
+name: ribosome_entry_site
+def: "Region in mRNA where ribosome assembles." [SO:ke]
+subset: SOFA
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:ribosome_binding_site" EXACT []
+synonym: "ribosome entry site" EXACT []
+is_a: SO:0000836 ! mRNA_region
+relationship: part_of SO:0000204 ! five_prime_UTR
+
+[Term]
+id: SO:0000140
+name: attenuator
+def: "A sequence segment located within the five prime end of an mRNA that causes premature termination of translation." [SO:as]
+subset: SOFA
+synonym: "attenuator sequence" EXACT []
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:attenuator" EXACT []
+xref: http://en.wikipedia.org/wiki/Attenuator "wiki"
+is_a: SO:0001680 ! translation_regulatory_region
+relationship: part_of SO:0000234 ! mRNA
+
+[Term]
+id: SO:0000141
+name: terminator
+def: "The sequence of DNA located either at the end of the transcript that causes RNA polymerase to terminate transcription." [http://www.insdc.org/files/feature_table.html]
+comment: Moved from transcription_regulatory_region (SO:0001679) to transcriptional_cis_regulatory_region (SO:0001055) by Dave Sant on Feb 11, 2021 when transcription_regulatory_region was merged into transcriptional_cis_regulatory_region to be consistent with GO and reduce redundancy as part of the GREEKC consortium. See GitHub Issue #527.
+subset: SOFA
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:terminator" EXACT []
+synonym: "terminator sequence" EXACT []
+xref: http://en.wikipedia.org/wiki/Terminator_(genetics) "wiki"
+is_a: SO:0001055 ! transcriptional_cis_regulatory_region
+relationship: part_of SO:0000673 ! transcript
+
+[Term]
+id: SO:0000142
+name: DNA_sequence_secondary_structure
+def: "A folded DNA sequence." [SO:ke]
+synonym: "DNA sequence secondary structure" EXACT []
+is_a: SO:0000002 ! sequence_secondary_structure
+
+[Term]
+id: SO:0000143
+name: assembly_component
+def: "A region of known length which may be used to manufacture a longer region." [SO:ke]
+subset: SOFA
+synonym: "assembly component" EXACT []
+is_a: SO:0001410 ! experimental_feature
+
+[Term]
+id: SO:0000144
+name: primary_transcript_attribute
+is_obsolete: true
+
+[Term]
+id: SO:0000145
+name: recoded_codon
+def: "A codon that has been redefined at translation. The redefinition may be as a result of translational bypass, translational frameshifting or stop codon readthrough." [SO:xp]
+synonym: "recoded codon" EXACT []
+is_a: SO:0000360 ! codon
+
+[Term]
+id: SO:0000146
+name: capped
+def: "An attribute describing when a sequence, usually an mRNA is capped by the addition of a modified guanine nucleotide at the 5' end." [SO:ke]
+is_a: SO:0000237 ! transcript_attribute
+
+[Term]
+id: SO:0000147
+name: exon
+def: "A region of the transcript sequence within a gene which is not removed from the primary RNA transcript by RNA splicing." [SO:ke]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+subset: SOFA
+synonym: "INSDC_feature:exon" EXACT []
+xref: http://en.wikipedia.org/wiki/Exon "wiki"
+is_a: SO:0000833 ! transcript_region
+
+[Term]
+id: SO:0000148
+name: supercontig
+def: "One or more contigs that have been ordered and oriented using end-read information. Contains gaps that are filled with N's." [SO:ls]
+subset: SOFA
+synonym: "scaffold" RELATED []
+is_a: SO:0001876 ! partial_genomic_sequence_assembly
+relationship: part_of SO:0000719 ! ultracontig
+
+[Term]
+id: SO:0000149
+name: contig
+def: "A contiguous sequence derived from sequence assembly. Has no gaps, but may contain N's from unavailable bases." [SO:ls]
+subset: SOFA
+xref: http://en.wikipedia.org/wiki/Contig "wiki"
+is_a: SO:0000143 ! assembly_component
+is_a: SO:0000353 ! sequence_assembly
+relationship: part_of SO:0000148 ! supercontig
+
+[Term]
+id: SO:0000150
+name: read
+def: "A sequence obtained from a single sequencing experiment. Typically a read is produced when a base calling program interprets information from a chromatogram trace file produced from a sequencing machine." [SO:rd]
+subset: SOFA
+is_a: SO:0000143 ! assembly_component
+relationship: part_of SO:0000149 ! contig
+
+[Term]
+id: SO:0000151
+name: clone
+def: "A piece of DNA that has been inserted in a vector so that it can be propagated in a host bacterium or some other organism." [SO:ke]
+subset: SOFA
+xref: http:http\://en.wikipedia.org/wiki/Clone_(genetics) "wiki"
+is_a: SO:0000695 ! reagent
+
+[Term]
+id: SO:0000152
+name: YAC
+def: "Yeast Artificial Chromosome, a vector constructed from the telomeric, centromeric, and replication origin sequences needed for replication in yeast cells." [SO:ma]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+synonym: "yeast artificial chromosome" EXACT []
+is_a: SO:0000440 ! vector_replicon
+
+[Term]
+id: SO:0000153
+name: BAC
+def: "Bacterial Artificial Chromosome, a cloning vector that can be propagated as mini-chromosomes in a bacterial host." [SO:ma]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+synonym: "bacterial artificial chromosome" EXACT []
+is_a: SO:0000440 ! vector_replicon
+
+[Term]
+id: SO:0000154
+name: PAC
+def: "The P1-derived artificial chromosome are DNA constructs that are derived from the DNA of P1 bacteriophage. They can carry large amounts (about 100-300 kilobases) of other sequences for a variety of bioengineering purposes. It is one type of vector used to clone DNA fragments (100- to 300-kb insert size; average, 150 kb) in Escherichia coli cells." [http://en.wikipedia.org/wiki/P1-derived_artificial_chromosome]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology. Drosophila melanogaster PACs carry an average insert size of 80 kb. The library represents a 6-fold coverage of the genome.
+synonym: "P1" EXACT []
+synonym: "P1 artificial chromosome" EXACT []
+xref: http://en.wikipedia.org/wiki/P1-derived_artificial_chromosome "wiki"
+is_a: SO:0000440 ! vector_replicon
+
+[Term]
+id: SO:0000155
+name: plasmid
+def: "A self replicating, using the hosts cellular machinery, often circular nucleic acid molecule that is distinct from a chromosome in the organism." [SO:ma]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+synonym: "plasmid sequence" EXACT []
+is_a: SO:0001235 ! replicon
+
+[Term]
+id: SO:0000156
+name: cosmid
+def: "A cloning vector that is a hybrid of lambda phages and a plasmid that can be propagated as a plasmid or packaged as a phage,since they retain the lambda cos sites." [SO:ma]
+comment: Paper: vans GA et al. High efficiency vectors for cosmid microcloning and genomic analysis. Gene 1989; 79(1):9-20. This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+synonym: "cosmid vector" EXACT []
+xref: http://en.wikipedia.org/wiki/Cosmid "wiki"
+is_a: SO:0000440 ! vector_replicon
+
+[Term]
+id: SO:0000157
+name: phagemid
+def: "A plasmid which carries within its sequence a bacteriophage replication origin. When the host bacterium is infected with \"helper\" phage, a phagemid is replicated along with the phage DNA and packaged into phage capsids." [SO:ma]
+synonym: "phagemid vector" RELATED []
+xref: http://en.wikipedia.org/wiki/Phagemid "wiki"
+is_a: SO:0000440 ! vector_replicon
+
+[Term]
+id: SO:0000158
+name: fosmid
+def: "A cloning vector that utilizes the E. coli F factor." [SO:ma]
+comment: Birren BW et al. A human chromosome 22 fosmid resource: mapping and analysis of 96 clones. Genomics 1996.
+synonym: "fosmid vector" RELATED []
+xref: http://en.wikipedia.org/wiki/Fosmid "wiki"
+is_a: SO:0000440 ! vector_replicon
+
+[Term]
+id: SO:0000159
+name: deletion
+alt_id: SO:1000033
+def: "The point at which one or more contiguous nucleotides were excised." [SO:ke]
+subset: SOFA
+synonym: "deleted_sequence" EXACT []
+synonym: "nucleotide deletion" EXACT []
+synonym: "nucleotide_deletion" EXACT []
+xref: http://en.wikipedia.org/wiki/Nucleotide_deletion "wiki"
+xref: loinc:LA6692-3 "Deletion"
+is_a: SO:0001059 ! sequence_alteration
+is_a: SO:0001411 ! biological_region
+
+[Term]
+id: SO:0000160
+name: lambda_clone
+def: "A linear clone derived from lambda bacteriophage. The genes involved in the lysogenic pathway are removed from the from the viral DNA. Up to 25 kb of foreign DNA can then be inserted into the lambda genome." [ISBN:0-1767-2380-8]
+is_obsolete: true
+
+[Term]
+id: SO:0000161
+name: methylated_adenine
+def: "A modified base in which adenine has been methylated." [SO:ke]
+subset: SOFA
+synonym: "methylated A" EXACT []
+synonym: "methylated adenine" EXACT []
+synonym: "methylated adenine base" EXACT []
+synonym: "methylated adenine residue" EXACT []
+synonym: "methylated_A" EXACT []
+is_a: SO:0000306 ! methylated_DNA_base_feature
+is_a: SO:0001962 ! modified_adenine
+
+[Term]
+id: SO:0000162
+name: splice_site
+def: "Consensus region of primary transcript bordering junction of splicing. A region that overlaps exactly 2 base and adjacent_to splice_junction." [SO:cjm, SO:ke]
+comment: With spliceosomal introns, the splice sites bind the spliceosomal machinery.
+subset: SOFA
+synonym: "splice site" EXACT []
+xref: http://en.wikipedia.org/wiki/Splice_site "wiki"
+is_a: SO:0000835 ! primary_transcript_region
+
+[Term]
+id: SO:0000163
+name: five_prime_cis_splice_site
+def: "Intronic 2 bp region bordering the exon, at the 5' edge of the intron. A splice_site that is downstream_adjacent_to exon and starts intron." [http://www.ucl.ac.uk/~ucbhjow/b241/glossary.html, SO:cjm, SO:ke]
+subset: SOFA
+synonym: "5' splice site" EXACT []
+synonym: "donor" RELATED []
+synonym: "donor splice site" EXACT []
+synonym: "five prime splice site" EXACT []
+synonym: "splice donor site" EXACT []
+is_a: SO:0001419 ! cis_splice_site
+
+[Term]
+id: SO:0000164
+name: three_prime_cis_splice_site
+def: "Intronic 2 bp region bordering the exon, at the 3' edge of the intron. A splice_site that is upstream_adjacent_to exon and finishes intron." [http://www.ucl.ac.uk/~ucbhjow/b241/glossary.html, SO:cjm, SO:ke]
+subset: SOFA
+synonym: "3' splice site" RELATED []
+synonym: "acceptor" RELATED []
+synonym: "acceptor splice site" EXACT []
+synonym: "splice acceptor site" EXACT []
+synonym: "three prime splice site" EXACT []
+is_a: SO:0001419 ! cis_splice_site
+
+[Term]
+id: SO:0000165
+name: enhancer
+def: "A cis-acting sequence that increases the utilization of (some) eukaryotic promoters, and can function in either orientation and in any location (upstream or downstream) relative to the promoter." [http://www.insdc.org/files/feature_table.html]
+comment: An enhancer may participate in an enhanceosome GO:0034206. A protein-DNA complex formed by the association of a distinct set of general and specific transcription factors with a region of enhancer DNA. The cooperative assembly of an enhanceosome confers specificity of transcriptional regulation. This comment is a place holder should we start to make cross products with GO.
+subset: SOFA
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:enhancer" EXACT []
+xref: http://en.wikipedia.org/wiki/Enhancer_(genetics) "wiki"
+is_a: SO:0000727 ! cis_regulatory_module
+
+[Term]
+id: SO:0000166
+name: enhancer_bound_by_factor
+def: "An enhancer bound by a factor." [SO:xp]
+synonym: "enhancer bound by factor" EXACT []
+is_a: SO:0000165 ! enhancer
+intersection_of: SO:0000165 ! enhancer
+intersection_of: has_quality SO:0000277 ! bound_by_factor
+relationship: has_quality SO:0000277 ! bound_by_factor
+
+[Term]
+id: SO:0000167
+name: promoter
+def: "A regulatory_region composed of the TSS(s) and binding sites for TF_complexes of the core transcription machinery. A region (DNA) to which RNA polymerase binds, to begin transcription." [SO:regcreative]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology. The region on a DNA molecule involved in RNA polymerase binding to initiate transcription. Moved from is_a: SO:0001055 transcriptional_cis_regulatory_region as per request from GREEKC initiative in August 2020. Merged with RNA_polymerase_promoter (SO:0001203) Aug 2020. Moved up one level from is_a CRM (SO:0000727) to is_a transcriptional_cis_regulatory_region (SO:0001055) as part of the GREEKC work January 2021. Pascale Gaudet from Gene Ontology pointed out that CRM can be located upstream of the promoter and therefore cannot include the promoter.
+subset: SOFA
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:promoter" EXACT []
+synonym: "promoter sequence" EXACT []
+xref: http://en.wikipedia.org/wiki/Promoter "wiki"
+is_a: SO:0000842 ! gene_component_region
+is_a: SO:0001055 ! transcriptional_cis_regulatory_region
+
+[Term]
+id: SO:0000168
+name: restriction_enzyme_cut_site
+def: "A specific nucleotide sequence of DNA at or near which a particular restriction enzyme cuts the DNA." [SO:ma]
+is_obsolete: true
+
+[Term]
+id: SO:0000169
+name: RNApol_I_promoter
+def: "A DNA sequence in eukaryotic DNA to which RNA polymerase I binds, to begin transcription." [SO:ke]
+comment: parent term RNA_polymerase_promoter SO:0001203 was obsoleted in Aug 2020, so term has been moved to eukaryotic_promoter SO:0002221.
+synonym: "pol I promoter" EXACT []
+synonym: "polymerase I promoter" EXACT []
+synonym: "RNA polymerase A promoter" EXACT []
+synonym: "RNApol I promoter" EXACT []
+is_a: SO:0002221 ! eukaryotic_promoter
+
+[Term]
+id: SO:0000170
+name: RNApol_II_promoter
+def: "A DNA sequence in eukaryotic DNA to which RNA polymerase II binds, to begin transcription." [SO:ke]
+comment: parent term RNA_polymerase_promoter SO:0001203 was obsoleted in Aug 2020, so term has been moved to eukaryotic_promoter SO:0002221.
+synonym: "pol II promoter" RELATED []
+synonym: "polymerase II promoter" EXACT []
+synonym: "RNA polymerase B promoter" EXACT []
+synonym: "RNApol II promoter" EXACT []
+is_a: SO:0002221 ! eukaryotic_promoter
+
+[Term]
+id: SO:0000171
+name: RNApol_III_promoter
+def: "A DNA sequence in eukaryotic DNA to which RNA polymerase III binds, to begin transcription." [SO:ke]
+comment: parent term RNA_polymerase_promoter SO:0001203 was obsoleted in Aug 2020, so term has been moved to eukaryotic_promoter SO:0002221.
+synonym: "pol III promoter" EXACT []
+synonym: "polymerase III promoter" EXACT []
+synonym: "RNA polymerase C promoter" EXACT []
+synonym: "RNApol III promoter" EXACT []
+is_a: SO:0002221 ! eukaryotic_promoter
+
+[Term]
+id: SO:0000172
+name: CAAT_signal
+def: "Part of a conserved sequence located about 75-bp upstream of the start point of eukaryotic transcription units which may be involved in RNA polymerase binding; consensus=GG(C|T)CAATCT." [http://www.insdc.org/files/feature_table.html]
+synonym: "CAAT box" EXACT []
+synonym: "CAAT signal" EXACT []
+synonym: "CAAT-box" EXACT []
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:CAAT_signal" EXACT []
+xref: http://en.wikipedia.org/wiki/CAAT_box "wiki"
+is_a: SO:0000713 ! DNA_motif
+relationship: part_of SO:0000170 ! RNApol_II_promoter
+
+[Term]
+id: SO:0000173
+name: GC_rich_promoter_region
+def: "A conserved GC-rich region located upstream of the start point of eukaryotic transcription units which may occur in multiple copies or in either orientation; consensus=GGGCGG." [http://www.insdc.org/files/feature_table.html]
+synonym: "GC rich promoter region" EXACT []
+synonym: "GC-rich region" EXACT []
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:GC_rich_promoter_region" EXACT []
+is_a: SO:0001659 ! promoter_element
+relationship: part_of SO:0000170 ! RNApol_II_promoter
+
+[Term]
+id: SO:0000174
+name: TATA_box
+def: "A conserved AT-rich septamer found about 25-bp before the start point of many eukaryotic RNA polymerase II transcript units; may be involved in positioning the enzyme for correct initiation; consensus=TATA(A|T)A(A|T)." [http://www.insdc.org/files/feature_table.html, PMID:16858867]
+comment: Binds TBP.
+synonym: "Goldstein-Hogness box" EXACT []
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:TATA_box" EXACT []
+synonym: "TATA box" EXACT []
+xref: http://en.wikipedia.org/wiki/TATA_box "wiki"
+is_a: SO:0001660 ! core_eukaryotic_promoter_element
+
+[Term]
+id: SO:0000175
+name: minus_10_signal
+def: "A conserved region about 10-bp upstream of the start point of bacterial transcription units which may be involved in binding RNA polymerase; consensus=TAtAaT. This region is associated with sigma factor 70." [http://www.insdc.org/files/feature_table.html]
+comment: Changed from is_a SO:0000713 DNA_motif to is_a SO:0002312 core_prokaryotic_promoter_element in response to GREEKC Initiative Dave Sant Aug 2020. Changed from is_a SO:0002312 core_prokaryotic_promoter_element back to is_a SO:0000713 DNA_motif to be consistent with minus_12_signal and minus_24_signal on 12 July 2021.
+synonym: "-10 signal" EXACT []
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:minus_10_signal" EXACT []
+synonym: "minus 10 signal" EXACT []
+synonym: "Pribnow box" EXACT []
+synonym: "Pribnow Schaller box" EXACT []
+synonym: "Pribnow-Schaller box" EXACT []
+xref: http://en.wikipedia.org/wiki/Pribnow_box "wiki"
+is_a: SO:0000713 ! DNA_motif
+relationship: part_of SO:0001671 ! bacterial_RNApol_promoter_sigma_70_element
+relationship: part_of SO:0001913 ! bacterial_RNApol_promoter_sigma_ecf_element
+
+[Term]
+id: SO:0000176
+name: minus_35_signal
+def: "A conserved hexamer about 35-bp upstream of the start point of bacterial transcription units; consensus=TTGACa or TGTTGACA. This region is associated with sigma factor 70." [http://www.insdc.org/files/feature_table.html]
+comment: Changed from is_a SO:0000713 DNA_motif to is_a SO:0002312 core_prokaryotic_promoter_element in response to GREEKC Initiative Dave Sant Aug 2020. Changed from is_a SO:0002312 core_prokaryotic_promoter_element back to is_a SO:0000713 DNA_motif to be consistent with minus_12_signal and minus_24_signal on 12 July 2021.
+synonym: "-35 signal" EXACT []
+synonym: "INSDC_feature:regulatory" BROAD []
+synonym: "INSDC_qualifier:minus_35_signal" EXACT []
+synonym: "minus 35 signal" EXACT []
+is_a: SO:0000713 ! DNA_motif
+relationship: part_of SO:0001671 ! bacterial_RNApol_promoter_sigma_70_element
+relationship: part_of SO:0001913 ! bacterial_RNApol_promoter_sigma_ecf_element
+
+[Term]
+id: SO:0000177
+name: cross_genome_match
+def: "A nucleotide match against a sequence from another organism." [SO:ma]
+subset: SOFA
+synonym: "cross genome match" EXACT []
+is_a: SO:0000347 ! nucleotide_match
+
+[Term]
+id: SO:0000178
+name: operon
+def: "The DNA region of a group of adjacent genes whose transcription is coordinated on one or several mutually overlapping transcription units transcribed in the same direction and sharing at least one gene." [SO:ma]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology. Definition updated with per Mejia-Almonte et.al Redefining fundamental concepts of transcription initiation in prokaryotes Aug 5 2020.
+subset: SOFA
+synonym: "INSDC_feature:operon" EXACT []
+xref: http://en.wikipedia.org/wiki/Operon "wiki"
+is_a: SO:0005855 ! gene_group
+
+[Term]
+id: SO:0000179
+name: clone_insert_start
+def: "The start of the clone insert." [SO:ke]
+subset: SOFA
+synonym: "clone insert start" EXACT []
+is_a: SO:0000699 ! junction
+relationship: part_of SO:0000753 ! clone_insert
+
+[Term]
+id: SO:0000180
+name: retrotransposon
+def: "A transposable element that is incorporated into a chromosome by a mechanism that requires reverse transcriptase." [http://www.dddmag.com/Glossary.aspx#r]
+synonym: "class I" RELATED []
+synonym: "class I transposon" EXACT []
+synonym: "retrotransposon element" EXACT []
+xref: http://en.wikipedia.org/wiki/Retrotransposon "wiki"
+is_a: SO:0000101 ! transposable_element
+
+[Term]
+id: SO:0000181
+name: translated_nucleotide_match
+def: "A match against a translated sequence." [SO:ke]
+subset: SOFA
+synonym: "translated nucleotide match" EXACT []
+is_a: SO:0000347 ! nucleotide_match
+
+[Term]
+id: SO:0000182
+name: DNA_transposon
+def: "A transposon where the mechanism of transposition is via a DNA intermediate." [SO:ke]
+synonym: "class II" RELATED []
+synonym: "class II transposon" EXACT []
+synonym: "DNA transposon" EXACT []
+is_a: SO:0000101 ! transposable_element
+
+[Term]
+id: SO:0000183
+name: non_transcribed_region
+def: "A region of the gene which is not transcribed." [SO:ke]
+subset: SOFA
+synonym: "non transcribed region" EXACT []
+synonym: "non-transcribed sequence" EXACT []
+synonym: "nontranscribed region" EXACT []
+synonym: "nontranscribed sequence" EXACT []
+is_a: SO:0000842 ! gene_component_region
+
+[Term]
+id: SO:0000184
+name: U2_intron
+def: "A major type of spliceosomal intron spliced by the U2 spliceosome, that includes U1, U2, U4/U6 and U5 snRNAs." [PMID:9428511]
+comment: May have either GT-AG or AT-AG 5' and 3' boundaries.
+synonym: "U2 intron" EXACT []
+is_a: SO:0000662 ! spliceosomal_intron
+
+[Term]
+id: SO:0000185
+name: primary_transcript
+def: "A transcript that in its initial state requires modification to be functional." [SO:ma]
+subset: SOFA
+synonym: "INSDC_feature:precursor_RNA" EXACT []
+synonym: "INSDC_feature:prim_transcript" EXACT []
+synonym: "precursor RNA" EXACT []
+synonym: "primary transcript" EXACT []
+xref: http://en.wikipedia.org/wiki/Primary_transcript "wiki"
+is_a: SO:0000673 ! transcript
+
+[Term]
+id: SO:0000186
+name: LTR_retrotransposon
+def: "A retrotransposon flanked by long terminal repeat sequences." [SO:ke]
+synonym: "long terminal repeat retrotransposon" EXACT []
+synonym: "LTR retrotransposon" EXACT []
+is_a: SO:0000180 ! retrotransposon
+
+[Term]
+id: SO:0000187
+name: repeat_family
+def: "A group of characterized repeat sequences." [SO:ke]
+subset: SOFA
+is_obsolete: true
+
+[Term]
+id: SO:0000188
+name: intron
+def: "A region of a primary transcript that is transcribed, but removed from within the transcript by splicing together the sequences (exons) on either side of it." [http://www.insdc.org/files/feature_table.html]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+subset: SOFA
+synonym: "INSDC_feature:intron" EXACT []
+xref: http://en.wikipedia.org/wiki/Intron "wiki"
+is_a: SO:0000835 ! primary_transcript_region
+
+[Term]
+id: SO:0000189
+name: non_LTR_retrotransposon
+def: "A retrotransposon without long terminal repeat sequences." [SO:ke]
+synonym: "non LTR retrotransposon" EXACT []
+is_a: SO:0000180 ! retrotransposon
+
+[Term]
+id: SO:0000190
+name: five_prime_intron
+def: "An intron that is the most 5-prime in a given transcript." []
+synonym: "5' intron" EXACT []
+synonym: "5' intron sequence" EXACT []
+synonym: "five prime intron" EXACT []
+is_a: SO:0000188 ! intron
+
+[Term]
+id: SO:0000191
+name: interior_intron
+def: "An intron that is not the most 3-prime or the most 5-prime in a given transcript." []
+synonym: "interior intron" EXACT []
+is_a: SO:0000188 ! intron
+
+[Term]
+id: SO:0000192
+name: three_prime_intron
+def: "An intron that is the most 3-prime in a given transcript." []
+synonym: "3' intron" EXACT []
+synonym: "3' intron sequence" RELATED []
+synonym: "three prime intron" EXACT []
+is_a: SO:0000188 ! intron
+
+[Term]
+id: SO:0000193
+name: RFLP_fragment
+def: "A DNA fragment used as a reagent to detect the polymorphic genomic loci by hybridizing against the genomic DNA digested with a given restriction enzyme." [GOC:pj]
+subset: SOFA
+synonym: "restriction fragment length polymorphism" EXACT []
+synonym: "RFLP" EXACT []
+synonym: "RFLP fragment" EXACT []
+xref: http://en.wikipedia.org/wiki/Restriction_fragment_length_polymorphism "wiki"
+is_a: SO:0000412 ! restriction_fragment
+
+[Term]
+id: SO:0000194
+name: LINE_element
+def: "A dispersed repeat family with many copies, each from 1 to 6 kb long. New elements are generated by retroposition of a transcribed copy. Typically the LINE contains 2 ORF's one of which is reverse transcriptase, and 3'and 5' direct repeats." [http://www.ucl.ac.uk/~ucbhjow/b241/glossary.html]
+synonym: "LINE" EXACT []
+synonym: "LINE element" EXACT []
+synonym: "Long interspersed element" EXACT []
+synonym: "Long interspersed nuclear element" EXACT []
+is_a: SO:0000189 ! non_LTR_retrotransposon
+
+[Term]
+id: SO:0000195
+name: coding_exon
+def: "An exon whereby at least one base is part of a codon (here, 'codon' is inclusive of the stop_codon)." [SO:ke]
+subset: SOFA
+synonym: "coding exon" EXACT []
+is_a: SO:0000147 ! exon
+
+[Term]
+id: SO:0000196
+name: five_prime_coding_exon_coding_region
+def: "The sequence of the five_prime_coding_exon that codes for protein." [SO:cjm]
+subset: SOFA
+synonym: "five prime exon coding region" EXACT []
+is_a: SO:0001215 ! coding_region_of_exon
+relationship: part_of SO:0000200 ! five_prime_coding_exon
+
+[Term]
+id: SO:0000197
+name: three_prime_coding_exon_coding_region
+def: "The sequence of the three_prime_coding_exon that codes for protein." [SO:cjm]
+subset: SOFA
+synonym: "three prime exon coding region" EXACT []
+is_a: SO:0001215 ! coding_region_of_exon
+relationship: part_of SO:0000202 ! three_prime_coding_exon
+
+[Term]
+id: SO:0000198
+name: noncoding_exon
+def: "An exon that does not contain any codons." [SO:ke]
+subset: SOFA
+synonym: "noncoding exon" EXACT []
+is_a: SO:0000147 ! exon
+
+[Term]
+id: SO:0000199
+name: translocation
+def: "A region of nucleotide sequence that has translocated to a new position. The observed adjacency of two previously separated regions." [NCBI:th, SO:ke]
+subset: DBVAR
+synonym: "transchr" RELATED [http://www.ncbi.nlm.nih.gov/dbvar/]
+synonym: "translocated sequence" EXACT []
+is_a: SO:0001785 ! structural_alteration
+
+[Term]
+id: SO:0000200
+name: five_prime_coding_exon
+def: "The 5' most coding exon." [SO:ke]
+subset: SOFA
+synonym: "5' coding exon" EXACT []
+synonym: "five prime coding exon" EXACT []
+is_a: SO:0000195 ! coding_exon
+
+[Term]
+id: SO:0000201
+name: interior_exon
+def: "An exon that is bounded by 5' and 3' splice sites." [PMID:10373547]
+synonym: "interior exon" EXACT []
+is_a: SO:0000147 ! exon
+
+[Term]
+id: SO:0000202
+name: three_prime_coding_exon
+def: "The coding exon that is most 3-prime on a given transcript." [SO:ma]
+synonym: "3' coding exon" RELATED []
+synonym: "three prime coding exon" EXACT []
+is_a: SO:0000195 ! coding_exon
+
+[Term]
+id: SO:0000203
+name: UTR
+def: "Messenger RNA sequences that are untranslated and lie five prime or three prime to sequences which are translated." [SO:ke]
+subset: SOFA
+synonym: "untranslated region" EXACT []
+is_a: SO:0000836 ! mRNA_region
+
+[Term]
+id: SO:0000204
+name: five_prime_UTR
+def: "A region at the 5' end of a mature transcript (preceding the initiation codon) that is not translated into a protein." [http://www.insdc.org/files/feature_table.html]
+subset: SOFA
+synonym: "5' UTR" EXACT []
+synonym: "five prime UTR" EXACT []
+synonym: "five_prime_untranslated_region" EXACT []
+synonym: "INSDC_feature:5'UTR" EXACT []
+xref: http://en.wikipedia.org/wiki/5'_UTR "wiki"
+is_a: SO:0000203 ! UTR
+
+[Term]
+id: SO:0000205
+name: three_prime_UTR
+def: "A region at the 3' end of a mature transcript (following the stop codon) that is not translated into a protein." [http://www.insdc.org/files/feature_table.html]
+subset: SOFA
+synonym: "INSDC_feature:3'UTR" EXACT []
+synonym: "three prime untranslated region" EXACT []
+synonym: "three prime UTR" EXACT []
+xref: http://en.wikipedia.org/wiki/Three_prime_untranslated_region "wiki"
+is_a: SO:0000203 ! UTR
+
+[Term]
+id: SO:0000206
+name: SINE_element
+def: "A repetitive element, a few hundred base pairs long, that is dispersed throughout the genome. A common human SINE is the Alu element." [SO:ke]
+synonym: "Short interspersed element" EXACT []
+synonym: "Short interspersed nuclear element" EXACT []
+synonym: "SINE element" EXACT []
+xref: http://en.wikipedia.org/wiki/Short_interspersed_nuclear_element "wiki"
+is_a: SO:0000189 ! non_LTR_retrotransposon
+
+[Term]
+id: SO:0000207
+name: simple_sequence_length_variation
+def: "SSLP are a kind of sequence alteration where the number of repeated sequences in intergenic regions may differ." [SO:ke]
+synonym: "simple sequence length polymorphism" RELATED []
+synonym: "simple sequence length variation" EXACT []
+synonym: "SSLP" RELATED []
+xref: http://en.wikipedia.org/wiki/Simple_sequence_length_polymorphism "WIKI"
+is_a: SO:0000248 ! sequence_length_alteration
+
+[Term]
+id: SO:0000208
+name: terminal_inverted_repeat_element
+def: "A DNA transposable element defined as having termini with perfect, or nearly perfect short inverted repeats, generally 10 - 40 nucleotides long." [http://www.genetics.org/cgi/reprint/156/4/1983.pdf]
+synonym: "terminal inverted repeat element" EXACT []
+synonym: "TIR element" EXACT []
+is_a: SO:0000182 ! DNA_transposon
+
+[Term]
+id: SO:0000209
+name: rRNA_primary_transcript
+def: "A primary transcript encoding a ribosomal RNA." [SO:ke]
+subset: SOFA
+synonym: "ribosomal RNA primary transcript" EXACT []
+synonym: "rRNA primary transcript" EXACT []
+is_a: SO:0000483 ! nc_primary_transcript
+
+[Term]
+id: SO:0000210
+name: tRNA_primary_transcript
+def: "A primary transcript encoding a transfer RNA (SO:0000253)." [SO:ke]
+synonym: "tRNA primary transcript" EXACT []
+is_a: SO:0000483 ! nc_primary_transcript
+
+[Term]
+id: SO:0000211
+name: alanine_tRNA_primary_transcript
+def: "A primary transcript encoding alanyl tRNA." [SO:ke]
+synonym: "alanine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000212
+name: arginine_tRNA_primary_transcript
+def: "A primary transcript encoding arginyl tRNA (SO:0000255)." [SO:ke]
+synonym: "arginine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000213
+name: asparagine_tRNA_primary_transcript
+def: "A primary transcript encoding asparaginyl tRNA (SO:0000256)." [SO:ke]
+synonym: "asparagine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000214
+name: aspartic_acid_tRNA_primary_transcript
+def: "A primary transcript encoding aspartyl tRNA (SO:0000257)." [SO:ke]
+synonym: "aspartic acid tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000215
+name: cysteine_tRNA_primary_transcript
+def: "A primary transcript encoding cysteinyl tRNA (SO:0000258)." [SO:ke]
+synonym: "cysteine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000216
+name: glutamic_acid_tRNA_primary_transcript
+def: "A primary transcript encoding glutaminyl tRNA (SO:0000260)." [SO:ke]
+synonym: "glutamic acid tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000217
+name: glutamine_tRNA_primary_transcript
+def: "A primary transcript encoding glutamyl tRNA (SO:0000260)." [SO:ke]
+synonym: "glutamine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000218
+name: glycine_tRNA_primary_transcript
+def: "A primary transcript encoding glycyl tRNA (SO:0000263)." [SO:ke]
+synonym: "glycine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000219
+name: histidine_tRNA_primary_transcript
+def: "A primary transcript encoding histidyl tRNA (SO:0000262)." [SO:ke]
+synonym: "histidine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000220
+name: isoleucine_tRNA_primary_transcript
+def: "A primary transcript encoding isoleucyl tRNA (SO:0000263)." [SO:ke]
+synonym: "isoleucine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000221
+name: leucine_tRNA_primary_transcript
+def: "A primary transcript encoding leucyl tRNA (SO:0000264)." [SO:ke]
+synonym: "leucine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000222
+name: lysine_tRNA_primary_transcript
+def: "A primary transcript encoding lysyl tRNA (SO:0000265)." [SO:ke]
+synonym: "lysine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000223
+name: methionine_tRNA_primary_transcript
+def: "A primary transcript encoding methionyl tRNA (SO:0000266)." [SO:ke]
+synonym: "methionine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000224
+name: phenylalanine_tRNA_primary_transcript
+def: "A primary transcript encoding phenylalanyl tRNA (SO:0000267)." [SO:ke]
+synonym: "phenylalanine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000225
+name: proline_tRNA_primary_transcript
+def: "A primary transcript encoding prolyl tRNA (SO:0000268)." [SO:ke]
+synonym: "proline tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000226
+name: serine_tRNA_primary_transcript
+def: "A primary transcript encoding seryl tRNA (SO:000269)." [SO:ke]
+synonym: "serine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000227
+name: threonine_tRNA_primary_transcript
+def: "A primary transcript encoding threonyl tRNA (SO:000270)." [SO:ke]
+synonym: "threonine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000228
+name: tryptophan_tRNA_primary_transcript
+def: "A primary transcript encoding tryptophanyl tRNA (SO:000271)." [SO:ke]
+synonym: "tryptophan tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000229
+name: tyrosine_tRNA_primary_transcript
+def: "A primary transcript encoding tyrosyl tRNA (SO:000272)." [SO:ke]
+synonym: "tyrosine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000230
+name: valine_tRNA_primary_transcript
+def: "A primary transcript encoding valyl tRNA (SO:000273)." [SO:ke]
+synonym: "valine tRNA primary transcript" EXACT []
+is_a: SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000231
+name: snRNA_primary_transcript
+def: "A primary transcript encoding a small nuclear RNA (SO:0000274)." [SO:ke]
+synonym: "snRNA primary transcript" EXACT []
+is_a: SO:0000483 ! nc_primary_transcript
+
+[Term]
+id: SO:0000232
+name: snoRNA_primary_transcript
+def: "A primary transcript encoding one or more small nucleolar RNAs (SO:0000275)." [SO:ke]
+comment: This definition was broadened 26 Jan 2021 to reflect that a single transcript can encode one or more snoRNAs. Brought to our attention by FlyBase. GitHub Issue #520 (https://github.com/The-Sequence-Ontology/SO-Ontologies/issues/520).
+synonym: "snoRNA primary transcript" EXACT []
+is_a: SO:0000483 ! nc_primary_transcript
+
+[Term]
+id: SO:0000233
+name: mature_transcript
+def: "A transcript which has undergone the necessary modifications, if any, for its function. In eukaryotes this includes, for example, processing of introns, cleavage, base modification, and modifications to the 5' and/or the 3' ends, other than addition of bases. In bacteria functional mRNAs are usually not modified." [SO:ke]
+comment: A processed transcript cannot contain introns.
+subset: SOFA
+synonym: "mature transcript" EXACT []
+xref: http://en.wikipedia.org/wiki/Mature_transcript "wiki"
+is_a: SO:0000673 ! transcript
+relationship: derives_from SO:0000185 ! primary_transcript
+
+[Term]
+id: SO:0000234
+name: mRNA
+def: "Messenger RNA is the intermediate molecule between DNA and protein. It includes UTR and coding sequences. It does not contain introns." [SO:ma]
+comment: An mRNA does not contain introns as it is a processed_transcript. The equivalent kind of primary_transcript is protein_coding_primary_transcript (SO:0000120) which may contain introns. This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+subset: SOFA
+synonym: "INSDC_feature:mRNA" EXACT []
+synonym: "messenger RNA" EXACT []
+synonym: "protein_coding_transcript" EXACT []
+xref: http://en.wikipedia.org/wiki/MRNA "wiki"
+xref: http://www.gencodegenes.org/gencode_biotypes.html "GENCODE"
+is_a: SO:0000233 ! mature_transcript
+
+[Term]
+id: SO:0000235
+name: TF_binding_site
+def: "A DNA site where a transcription factor binds." [SO:ke]
+comment: Definition updated along with definitions in Mejia-Almonte et.al PMID:32665585. Added relationship part_of SO:0000727 CRM in place of previous CRM relationship has_part TF_binding_site August 2020 in response to requests from GREEKC initiative. Moved from transcription_regulatory_region (SO:0001679) to transcriptional_cis_regulatory_region (SO:0001055) by Dave Sant on Feb 11, 2021 when transcription_regulatory_region was merged into transcriptional_cis_regulatory_region to be consistent with GO and reduce redundancy as part of the GREEKC consortium. See GitHub Issue #527.
+subset: SOFA
+synonym: "TF binding site" EXACT []
+synonym: "transcription factor binding site" EXACT []
+is_a: SO:0001055 ! transcriptional_cis_regulatory_region
+is_a: SO:0001654 ! nucleotide_to_protein_binding_site
+relationship: part_of SO:0000727 ! cis_regulatory_module
+
+[Term]
+id: SO:0000236
+name: ORF
+def: "The in-frame interval between the stop codons of a reading frame which when read as sequential triplets, has the potential of encoding a sequential string of amino acids. TER(NNN)nTER." [SGD:rb, SO:ma]
+comment: The definition was modified by Rama. ORF is defined by the sequence, whereas the CDS is defined according to whether a polypeptide is made. This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+subset: SOFA
+synonym: "open reading frame" EXACT []
+is_a: SO:0000717 ! reading_frame
+
+[Term]
+id: SO:0000237
+name: transcript_attribute
+def: "An attribute describing a transcript." []
+synonym: "transcript attribute" EXACT []
+is_a: SO:0000733 ! feature_attribute
+
+[Term]
+id: SO:0000238
+name: foldback_element
+def: "A transposable element with extensive secondary structure, characterized by large modular imperfect long inverted repeats." [http://www.genetics.org/cgi/reprint/156/4/1983.pdf]
+synonym: "foldback element" EXACT []
+synonym: "long inverted repeat element" RELATED []
+synonym: "LVR element" RELATED []
+is_a: SO:0000182 ! DNA_transposon
+
+[Term]
+id: SO:0000239
+name: flanking_region
+def: "The sequences extending on either side of a specific region." [SO:ke]
+subset: SOFA
+synonym: "flanking region" EXACT []
+is_a: SO:0001412 ! topologically_defined_region
+
+[Term]
+id: SO:0000240
+name: chromosome_variation
+def: "A deviation in chromosome structure or number." []
+synonym: "chromosome variation" EXACT []
+is_a: SO:0001507 ! variant_collection
+relationship: part_of SO:0001524 ! chromosomally_aberrant_genome
+
+[Term]
+id: SO:0000241
+name: internal_UTR
+def: "A UTR bordered by the terminal and initial codons of two CDSs in a polycistronic transcript. Every UTR is either 5', 3' or internal." [SO:cjm]
+synonym: "internal UTR" EXACT []
+is_a: SO:0000203 ! UTR
+
+[Term]
+id: SO:0000242
+name: untranslated_region_polycistronic_mRNA
+def: "The untranslated sequence separating the 'cistrons' of multicistronic mRNA." [SO:ke]
+synonym: "untranslated region polycistronic mRNA" EXACT []
+is_a: SO:0000203 ! UTR
+
+[Term]
+id: SO:0000243
+name: internal_ribosome_entry_site
+def: "Sequence element that recruits a ribosomal subunit to internal mRNA for translation initiation." [SO:ke]
+synonym: "internal ribosomal entry sequence" EXACT []
+synonym: "internal ribosomal entry site" EXACT []
+synonym: "internal ribosome entry sequence" RELATED []
+synonym: "internal ribosome entry site" EXACT []
+synonym: "IRES" EXACT []
+xref: http://en.wikipedia.org/wiki/Internal_ribosome_entry_site "wiki"
+is_a: SO:0000139 ! ribosome_entry_site
+
+[Term]
+id: SO:0000244
+name: four_cutter_restriction_site
+synonym: "4-cutter_restriction_site" RELATED []
+synonym: "four-cutter_restriction_sit" RELATED []
+is_obsolete: true
+
+[Term]
+id: SO:0000245
+name: mRNA_by_polyadenylation_status
+is_obsolete: true
+
+[Term]
+id: SO:0000246
+name: polyadenylated
+def: "A attribute describing the addition of a poly A tail to the 3' end of a mRNA molecule." [SO:ke]
+is_a: SO:0000863 ! mRNA_attribute
+
+[Term]
+id: SO:0000247
+name: mRNA_not_polyadenylated
+is_obsolete: true
+
+[Term]
+id: SO:0000248
+name: sequence_length_alteration
+def: "A kind of kind of sequence alteration where the copies of a region present varies across a population." [SO:ke]
+synonym: "sequence length alteration" EXACT []
+is_a: SO:0001059 ! sequence_alteration
+
+[Term]
+id: SO:0000249
+name: six_cutter_restriction_site
+synonym: "6-cutter_restriction_site" RELATED []
+synonym: "six-cutter_restriction_site" RELATED []
+is_obsolete: true
+
+[Term]
+id: SO:0000250
+name: modified_RNA_base_feature
+def: "A post_transcriptionally modified base." [SO:ke]
+synonym: "modified RNA base feature" EXACT []
+is_a: SO:0001236 ! base
+
+[Term]
+id: SO:0000251
+name: eight_cutter_restriction_site
+synonym: "8-cutter_restriction_site" RELATED []
+synonym: "eight-cutter_restriction_site" RELATED []
+is_obsolete: true
+
+[Term]
+id: SO:0000252
+name: rRNA
+def: "rRNA is an RNA component of a ribosome that can provide both structural scaffolding and catalytic activity." [http://www.insdc.org/files/feature_table.html, ISBN:0198506732]
+comment: Definition updated 10 June 2021 as part of restructuring rRNA terms and reforming definitions to have similar structures. Request from EBI. See GitHub Issue #493
+subset: SOFA
+synonym: "INSDC_feature:rRNA" EXACT []
+synonym: "INSDC_qualifier:unknown" BROAD []
+synonym: "ribosomal ribonucleic acid" EXACT []
+synonym: "ribosomal RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/RRNA "wiki"
+is_a: SO:0000655 ! ncRNA
+relationship: derives_from SO:0000209 ! rRNA_primary_transcript
+
+[Term]
+id: SO:0000253
+name: tRNA
+def: "Transfer RNA (tRNA) molecules are approximately 80 nucleotides in length. Their secondary structure includes four short double-helical elements and three loops (D, anti-codon, and T loops). Further hydrogen bonds mediate the characteristic L-shaped molecular structure. Transfer RNAs have two regions of fundamental functional importance: the anti-codon, which is responsible for specific mRNA codon recognition, and the 3' end, to which the tRNA's corresponding amino acid is attached (by aminoacyl-tRNA synthetases). Transfer RNAs cope with the degeneracy of the genetic code in two manners: having more than one tRNA (with a specific anti-codon) for a particular amino acid; and 'wobble' base-pairing, i.e. permitting non-standard base-pairing at the 3rd anti-codon position." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00005, ISBN:0198506732]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+subset: SOFA
+synonym: "INSDC_feature:tRNA" EXACT []
+synonym: "INSDC_qualifier:unknown" BROAD []
+synonym: "transfer ribonucleic acid" RELATED []
+synonym: "transfer RNA" RELATED []
+xref: http://en.wikipedia.org/wiki/TRNA "wiki"
+is_a: SO:0002247 ! sncRNA
+relationship: derives_from SO:0000210 ! tRNA_primary_transcript
+
+[Term]
+id: SO:0000254
+name: alanyl_tRNA
+def: "A tRNA sequence that has an alanine anticodon, and a 3' alanine binding region." [SO:ke]
+synonym: "alanyl tRNA" EXACT []
+synonym: "alanyl-transfer ribonucleic acid" EXACT []
+synonym: "alanyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000211 ! alanine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000255
+name: rRNA_small_subunit_primary_transcript
+def: "A primary transcript encoding a small ribosomal subunit RNA." [SO:ke]
+synonym: "rRNA small subunit primary transcript" EXACT []
+is_a: SO:0000209 ! rRNA_primary_transcript
+
+[Term]
+id: SO:0000256
+name: asparaginyl_tRNA
+def: "A tRNA sequence that has an asparagine anticodon, and a 3' asparagine binding region." [SO:ke]
+synonym: "asparaginyl tRNA" EXACT []
+synonym: "asparaginyl-transfer ribonucleic acid" EXACT []
+synonym: "asparaginyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000213 ! asparagine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000257
+name: aspartyl_tRNA
+def: "A tRNA sequence that has an aspartic acid anticodon, and a 3' aspartic acid binding region." [SO:ke]
+synonym: "aspartyl tRNA" EXACT []
+synonym: "aspartyl-transfer ribonucleic acid" EXACT []
+synonym: "aspartyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000214 ! aspartic_acid_tRNA_primary_transcript
+
+[Term]
+id: SO:0000258
+name: cysteinyl_tRNA
+def: "A tRNA sequence that has a cysteine anticodon, and a 3' cysteine binding region." [SO:ke]
+synonym: "cysteinyl tRNA" EXACT []
+synonym: "cysteinyl-transfer ribonucleic acid" EXACT []
+synonym: "cysteinyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000215 ! cysteine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000259
+name: glutaminyl_tRNA
+def: "A tRNA sequence that has a glutamine anticodon, and a 3' glutamine binding region." [SO:ke]
+synonym: "glutaminyl tRNA" EXACT []
+synonym: "glutaminyl-transfer ribonucleic acid" EXACT []
+synonym: "glutaminyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000216 ! glutamic_acid_tRNA_primary_transcript
+
+[Term]
+id: SO:0000260
+name: glutamyl_tRNA
+def: "A tRNA sequence that has a glutamic acid anticodon, and a 3' glutamic acid binding region." [SO:ke]
+synonym: "glutamyl tRNA" EXACT []
+synonym: "glutamyl-transfer ribonucleic acid" EXACT []
+synonym: "glutamyl-transfer RNA" RELATED []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000217 ! glutamine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000261
+name: glycyl_tRNA
+def: "A tRNA sequence that has a glycine anticodon, and a 3' glycine binding region." [SO:ke]
+synonym: "glycyl tRNA" EXACT []
+synonym: "glycyl-transfer ribonucleic acid" RELATED []
+synonym: "glycyl-transfer RNA" RELATED []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000218 ! glycine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000262
+name: histidyl_tRNA
+def: "A tRNA sequence that has a histidine anticodon, and a 3' histidine binding region." [SO:ke]
+synonym: "histidyl tRNA" EXACT []
+synonym: "histidyl-transfer ribonucleic acid" EXACT []
+synonym: "histidyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000219 ! histidine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000263
+name: isoleucyl_tRNA
+def: "A tRNA sequence that has an isoleucine anticodon, and a 3' isoleucine binding region." [SO:ke]
+synonym: "isoleucyl tRNA" EXACT []
+synonym: "isoleucyl-transfer ribonucleic acid" EXACT []
+synonym: "isoleucyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000220 ! isoleucine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000264
+name: leucyl_tRNA
+def: "A tRNA sequence that has a leucine anticodon, and a 3' leucine binding region." [SO:ke]
+synonym: "leucyl tRNA" EXACT []
+synonym: "leucyl-transfer ribonucleic acid" EXACT []
+synonym: "leucyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000221 ! leucine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000265
+name: lysyl_tRNA
+def: "A tRNA sequence that has a lysine anticodon, and a 3' lysine binding region." [SO:ke]
+synonym: "lysyl tRNA" EXACT []
+synonym: "lysyl-transfer ribonucleic acid" EXACT []
+synonym: "lysyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000222 ! lysine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000266
+name: methionyl_tRNA
+def: "A tRNA sequence that has a methionine anticodon, and a 3' methionine binding region." [SO:ke]
+synonym: "methionyl tRNA" EXACT []
+synonym: "methionyl-transfer ribonucleic acid" EXACT []
+synonym: "methionyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000223 ! methionine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000267
+name: phenylalanyl_tRNA
+def: "A tRNA sequence that has a phenylalanine anticodon, and a 3' phenylalanine binding region." [SO:ke]
+synonym: "phenylalanyl tRNA" EXACT []
+synonym: "phenylalanyl-transfer ribonucleic acid" EXACT []
+synonym: "phenylalanyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000224 ! phenylalanine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000268
+name: prolyl_tRNA
+def: "A tRNA sequence that has a proline anticodon, and a 3' proline binding region." [SO:ke]
+synonym: "prolyl tRNA" EXACT []
+synonym: "prolyl-transfer ribonucleic acid" EXACT []
+synonym: "prolyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000225 ! proline_tRNA_primary_transcript
+
+[Term]
+id: SO:0000269
+name: seryl_tRNA
+def: "A tRNA sequence that has a serine anticodon, and a 3' serine binding region." [SO:ke]
+synonym: "seryl tRNA" EXACT []
+synonym: "seryl-transfer ribonucleic acid" RELATED []
+synonym: "seryl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000226 ! serine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000270
+name: threonyl_tRNA
+def: "A tRNA sequence that has a threonine anticodon, and a 3' threonine binding region." [SO:ke]
+synonym: "threonyl tRNA" EXACT []
+synonym: "threonyl-transfer ribonucleic acid" EXACT []
+synonym: "threonyl-transfer RNA" RELATED []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000227 ! threonine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000271
+name: tryptophanyl_tRNA
+def: "A tRNA sequence that has a tryptophan anticodon, and a 3' tryptophan binding region." [SO:ke]
+synonym: "tryptophanyl tRNA" EXACT []
+synonym: "tryptophanyl-transfer ribonucleic acid" EXACT []
+synonym: "tryptophanyl-transfer RNA" EXACT []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000228 ! tryptophan_tRNA_primary_transcript
+
+[Term]
+id: SO:0000272
+name: tyrosyl_tRNA
+def: "A tRNA sequence that has a tyrosine anticodon, and a 3' tyrosine binding region." [SO:ke]
+synonym: "tyrosyl tRNA" EXACT []
+synonym: "tyrosyl-transfer ribonucleic acid" EXACT []
+synonym: "tyrosyl-transfer RNA" RELATED []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000229 ! tyrosine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000273
+name: valyl_tRNA
+def: "A tRNA sequence that has a valine anticodon, and a 3' valine binding region." [SO:ke]
+synonym: "valyl tRNA" EXACT []
+synonym: "valyl-transfer ribonucleic acid" EXACT []
+synonym: "valyl-transfer RNA" RELATED []
+is_a: SO:0000253 ! tRNA
+relationship: derives_from SO:0000230 ! valine_tRNA_primary_transcript
+
+[Term]
+id: SO:0000274
+name: snRNA
+def: "A small nuclear RNA molecule involved in pre-mRNA splicing and processing." [http://www.insdc.org/files/feature_table.html, PMID:11733745, WB:ems]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+subset: SOFA
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:snRNA" EXACT []
+synonym: "small nuclear RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/SnRNA "wiki"
+is_a: SO:0002247 ! sncRNA
+relationship: derives_from SO:0000231 ! snRNA_primary_transcript
+
+[Term]
+id: SO:0000275
+name: snoRNA
+def: "Small nucleolar RNAs (snoRNAs) are short non-coding RNAs enriched in the nucleolus as components of small nucleolar ribonucleoproteins. They guide ribose methylation and pseudouridylation of rRNAs and snRNAs, and a subgroup regulate excision of rRNAs from rRNA precursor transcripts. snoRNAs may also guide rRNA acetylation and tRNA methylation, and regulate mRNA abundance and alternative splicing." [GOC:kgc, PMID:31828325]
+comment: Updated the definition of snoRNA (SO:0000275) from "A snoRNA (small nucleolar RNA) is any one of a class of small RNAs that are associated with the eukaryotic nucleus as components of small nucleolar ribonucleoproteins. They participate in the processing or modifications of many RNAs, mostly ribosomal RNAs (rRNAs) though snoRNAs are also known to target other classes of RNA, including spliceosomal RNAs, tRNAs, and mRNAs via a stretch of sequence that is complementary to a sequence in the targeted RNA." to "Small nucleolar RNAs (snoRNAs) are short non-coding RNAs enriched in the nucleolus as components of small nucleolar ribonucleoproteins. They guide ribose methylation and pseudouridylation of rRNAs and snRNAs, and a subgroup regulate excision of rRNAs from rRNA precursor transcripts. snoRNAs may also guide rRNA acetylation and tRNA methylation, and regulate mRNA abundance and alternative splicing." to acknowledge that some snoRNAs functionally localize to other compartments (cytoplasm or even secreted). See GitHub Issue #578.
+subset: SOFA
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:snoRNA" EXACT []
+synonym: "small nucleolar RNA" EXACT []
+is_a: SO:0002247 ! sncRNA
+relationship: derives_from SO:0000232 ! snoRNA_primary_transcript
+
+[Term]
+id: SO:0000276
+name: miRNA
+alt_id: SO:0000649
+def: "Small, ~22-nt, RNA molecule that is the endogenous transcript of a miRNA gene (or the product of other non coding RNA genes. Micro RNAs are produced from precursor molecules (SO:0001244) that can form local hairpin structures, which ordinarily are processed (usually via the Dicer pathway) such that a single miRNA molecule accumulates from one arm of a hairpin precursor molecule. Micro RNAs may trigger the cleavage of their target molecules or act as translational repressors." [PMID:11081512, PMID:12592000]
+subset: SOFA
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:miRNA" EXACT []
+synonym: "micro RNA" EXACT []
+synonym: "microRNA" EXACT []
+synonym: "small temporal RNA" EXACT []
+synonym: "stRNA" EXACT []
+xref: http://en.wikipedia.org/wiki/MiRNA "wiki"
+xref: http://en.wikipedia.org/wiki/StRNA "wiki"
+is_a: SO:0000370 ! small_regulatory_ncRNA
+relationship: derives_from SO:0001244 ! pre_miRNA
+
+[Term]
+id: SO:0000277
+name: bound_by_factor
+def: "An attribute describing a sequence that is bound by another molecule." [SO:ke]
+comment: Formerly called transcript_by_bound_factor.
+synonym: "bound by factor" EXACT []
+is_a: SO:0000733 ! feature_attribute
+
+[Term]
+id: SO:0000278
+name: transcript_bound_by_nucleic_acid
+def: "A transcript that is bound by a nucleic acid." [SO:xp]
+comment: Formerly called transcript_by_bound_nucleic_acid.
+synonym: "transcript bound by nucleic acid" EXACT []
+is_a: SO:0000673 ! transcript
+intersection_of: SO:0000673 ! transcript
+intersection_of: has_quality SO:0000876 ! bound_by_nucleic_acid
+relationship: has_quality SO:0000876 ! bound_by_nucleic_acid
+
+[Term]
+id: SO:0000279
+name: transcript_bound_by_protein
+def: "A transcript that is bound by a protein." [SO:xp]
+comment: Formerly called transcript_by_bound_protein.
+synonym: "transcript bound by protein" EXACT []
+is_a: SO:0000673 ! transcript
+intersection_of: SO:0000673 ! transcript
+intersection_of: has_quality SO:0000875 ! bound_by_protein
+relationship: has_quality SO:0000875 ! bound_by_protein
+
+[Term]
+id: SO:0000280
+name: engineered_gene
+def: "A gene that is engineered." [SO:xp]
+synonym: "engineered gene" EXACT []
+is_a: SO:0000704 ! gene
+is_a: SO:0000804 ! engineered_region
+intersection_of: SO:0000704 ! gene
+intersection_of: has_quality SO:0000783 ! engineered
+relationship: has_quality SO:0000783 ! engineered
+
+[Term]
+id: SO:0000281
+name: engineered_foreign_gene
+def: "A gene that is engineered and foreign." [SO:xp]
+synonym: "engineered foreign gene" EXACT []
+is_a: SO:0000280 ! engineered_gene
+is_a: SO:0000285 ! foreign_gene
+is_a: SO:0000805 ! engineered_foreign_region
+intersection_of: SO:0000280 ! engineered_gene
+intersection_of: has_quality SO:0000783 ! engineered
+intersection_of: has_quality SO:0000784 ! foreign
+relationship: has_quality SO:0000783 ! engineered
+relationship: has_quality SO:0000784 ! foreign
+
+[Term]
+id: SO:0000282
+name: mRNA_with_minus_1_frameshift
+def: "An mRNA with a minus 1 frameshift." [SO:xp]
+synonym: "mRNA with minus 1 frameshift" EXACT []
+is_a: SO:0000108 ! mRNA_with_frameshift
+intersection_of: SO:0000108 ! mRNA_with_frameshift
+intersection_of: has_quality SO:0000866 ! minus_1_frameshift
+relationship: has_quality SO:0000866 ! minus_1_frameshift
+
+[Term]
+id: SO:0000283
+name: engineered_foreign_transposable_element_gene
+def: "A transposable_element that is engineered and foreign." [SO:xp]
+synonym: "engineered foreign transposable element gene" EXACT []
+is_a: SO:0000111 ! transposable_element_gene
+is_a: SO:0000281 ! engineered_foreign_gene
+intersection_of: SO:0000111 ! transposable_element_gene
+intersection_of: has_quality SO:0000783 ! engineered
+intersection_of: has_quality SO:0000784 ! foreign
+relationship: has_quality SO:0000783 ! engineered
+relationship: has_quality SO:0000784 ! foreign
+
+[Term]
+id: SO:0000284
+name: type_I_enzyme_restriction_site
+def: "The recognition site is bipartite and interrupted." [http://www.promega.com]
+is_obsolete: true
+
+[Term]
+id: SO:0000285
+name: foreign_gene
+def: "A gene that is foreign." [SO:xp]
+synonym: "foreign gene" EXACT []
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_quality SO:0000784 ! foreign
+relationship: has_quality SO:0000784 ! foreign
+
+[Term]
+id: SO:0000286
+name: long_terminal_repeat
+def: "A sequence directly repeated at both ends of a defined sequence, of the sort typically found in retroviruses." [http://www.insdc.org/files/feature_table.html]
+synonym: "direct terminal repeat" RELATED []
+synonym: "INSDC_feature:repeat_region" BROAD []
+synonym: "INSDC_qualifier:long_terminal_repeat" EXACT []
+synonym: "long terminal repeat" EXACT []
+synonym: "LTR" EXACT []
+xref: http://en.wikipedia.org/wiki/Long_terminal_repeat "wiki"
+is_a: SO:0000657 ! repeat_region
+relationship: part_of SO:0000186 ! LTR_retrotransposon
+
+[Term]
+id: SO:0000287
+name: fusion_gene
+def: "A gene that is a fusion." [SO:xp]
+synonym: "fusion gene" EXACT []
+xref: http://en.wikipedia.org/wiki/Fusion_gene "wiki"
+is_a: SO:0000704 ! gene
+intersection_of: SO:0000704 ! gene
+intersection_of: has_quality SO:0000806 ! fusion
+relationship: has_quality SO:0000806 ! fusion
+
+[Term]
+id: SO:0000288
+name: engineered_fusion_gene
+def: "A fusion gene that is engineered." [SO:xp]
+synonym: "engineered fusion gene" EXACT []
+is_a: SO:0000280 ! engineered_gene
+is_a: SO:0000287 ! fusion_gene
+intersection_of: SO:0000287 ! fusion_gene
+intersection_of: has_quality SO:0000783 ! engineered
+relationship: has_quality SO:0000783 ! engineered
+
+[Term]
+id: SO:0000289
+name: microsatellite
+def: "A repeat_region containing repeat_units of 2 to 10 bp repeated in tandem." [http://www.informatics.jax.org/silver/glossary.shtml, NCBI:th]
+subset: SOFA
+synonym: "INSDC_feature:repeat_region" BROAD []
+synonym: "INSDC_qualifier:microsatellite" EXACT []
+synonym: "microsatellite locus" EXACT []
+synonym: "microsatellite marker" EXACT []
+synonym: "short tandem repeat" EXACT []
+synonym: "STR" EXACT [http://www.ncbi.nlm.nih.gov/books/NBK21126/def-item/A9651/]
+xref: http://en.wikipedia.org/wiki/Microsatellite "wiki"
+is_a: SO:0000005 ! satellite_DNA
+
+[Term]
+id: SO:0000290
+name: dinucleotide_repeat_microsatellite_feature
+def: "A region of a repeating dinucleotide sequence (two bases)." []
+synonym: "dinucleotide repeat microsatellite" EXACT []
+synonym: "dinucleotide repeat microsatellite feature" EXACT []
+synonym: "dinucleotide repeat microsatellite locus" EXACT []
+synonym: "dinucleotide repeat microsatellite marker" EXACT []
+is_a: SO:0000289 ! microsatellite
+
+[Term]
+id: SO:0000291
+name: trinucleotide_repeat_microsatellite_feature
+def: "A region of a repeating trinucleotide sequence (three bases)." []
+synonym: "dinucleotide repeat microsatellite marker" RELATED []
+synonym: "rinucleotide repeat microsatellite" EXACT []
+synonym: "trinucleotide repeat microsatellite feature" EXACT []
+synonym: "trinucleotide repeat microsatellite locus" EXACT []
+is_a: SO:0000289 ! microsatellite
+
+[Term]
+id: SO:0000292
+name: repetitive_element
+is_obsolete: true
+
+[Term]
+id: SO:0000293
+name: engineered_foreign_repetitive_element
+def: "A repetitive element that is engineered and foreign." [SO:xp]
+synonym: "engineered foreign repetitive element" EXACT []
+is_a: SO:0000657 ! repeat_region
+is_a: SO:0000805 ! engineered_foreign_region
+intersection_of: SO:0000657 ! repeat_region
+intersection_of: has_quality SO:0000783 ! engineered
+intersection_of: has_quality SO:0000784 ! foreign
+relationship: has_quality SO:0000783 ! engineered
+relationship: has_quality SO:0000784 ! foreign
+
+[Term]
+id: SO:0000294
+name: inverted_repeat
+def: "The sequence is complementarily repeated on the opposite strand. It is a palindrome, and it may, or may not be hyphenated. Examples: GCTGATCAGC, or GCTGA-----TCAGC." [SO:ke]
+subset: SOFA
+synonym: "INSDC_feature:repeat_region" BROAD []
+synonym: "INSDC_qualifier:inverted" EXACT []
+synonym: "inverted repeat" EXACT []
+synonym: "inverted repeat sequence" EXACT []
+xref: http://en.wikipedia.org/wiki/Inverted_repeat "wiki"
+is_a: SO:0000657 ! repeat_region
+
+[Term]
+id: SO:0000295
+name: U12_intron
+def: "A type of spliceosomal intron spliced by the U12 spliceosome, that includes U11, U12, U4atac/U6atac and U5 snRNAs." [PMID:9428511]
+comment: May have either GT-AC or AT-AC 5' and 3' boundaries.
+synonym: "U12 intron" EXACT []
+synonym: "U12-dependent intron" EXACT []
+is_a: SO:0000662 ! spliceosomal_intron
+
+[Term]
+id: SO:0000296
+name: origin_of_replication
+def: "A region of nucleic acid from which replication initiates; includes sequences that are recognized by replication proteins, the site from which the first separation of complementary strands occurs, and specific replication start sites." [http://www.insdc.org/files/feature_table.html, NCBI:cf]
+subset: SOFA
+synonym: "INSDC_feature:rep_origin" EXACT []
+synonym: "ori" EXACT []
+synonym: "origin of replication" EXACT []
+xref: http://en.wikipedia.org/wiki/Origin_of_replication "wiki"
+is_a: SO:0001411 ! biological_region
+relationship: part_of SO:0001235 ! replicon
+
+[Term]
+id: SO:0000297
+name: D_loop
+def: "Displacement loop; a region within mitochondrial DNA in which a short stretch of RNA is paired with one strand of DNA, displacing the original partner DNA strand in this region; also used to describe the displacement of a region of one strand of duplex DNA by a single stranded invader in the reaction catalyzed by RecA protein." [http://www.insdc.org/files/feature_table.html]
+comment: Moved from is_a: SO:0000296 origin_of_replication to is_a: SO:0001411 biological_region after Terrence Murphy (INSDC) pointed out that the D loop can also refer to a loop in DNA repair, which is not an origin of replication. See GitHub Issue #417 (https://github.com/The-Sequence-Ontology/SO-Ontologies/issues/417)
+synonym: "D-loop" EXACT []
+synonym: "displacement loop" RELATED []
+synonym: "INSDC_feature:D-loop" EXACT []
+xref: http://en.wikipedia.org/wiki/D_loop "wiki"
+is_a: SO:0001411 ! biological_region
+
+[Term]
+id: SO:0000298
+name: recombination_feature
+def: "A feature where there has been exchange of genetic material in the event of mitosis or meiosis" []
+synonym: "INSDC_feature:misc_recomb" BROAD []
+synonym: "INSDC_qualifier:other" EXACT []
+synonym: "recombination feature" EXACT []
+is_a: SO:0001411 ! biological_region
+
+[Term]
+id: SO:0000299
+name: specific_recombination_site
+def: "A location where recombination or occurs during mitosis or meiosis." []
+synonym: "specific recombination site" EXACT []
+is_a: SO:0000669 ! sequence_rearrangement_feature
+
+[Term]
+id: SO:0000300
+name: recombination_feature_of_rearranged_gene
+def: "A location where a gene is rearranged due to recombination during mitosis or meiosis." []
+synonym: "recombination feature of rearranged gene" EXACT []
+is_a: SO:0000299 ! specific_recombination_site
+
+[Term]
+id: SO:0000301
+name: vertebrate_immune_system_gene_recombination_feature
+def: "A feature where recombination has occurred for the purpose of generating a diversity in the immune system." []
+synonym: "vertebrate immune system gene recombination feature" EXACT []
+is_a: SO:0000300 ! recombination_feature_of_rearranged_gene
+
+[Term]
+id: SO:0000302
+name: J_gene_recombination_feature
+def: "Recombination signal including J-heptamer, J-spacer and J-nonamer in 5' of J-region of a J-gene or J-sequence." [http://www.imgt.org/cgi-bin/IMGTlect.jv?query=7#]
+synonym: "J gene recombination feature" EXACT []
+synonym: "J-RS" EXACT []
+is_a: SO:0000939 ! vertebrate_immune_system_gene_recombination_signal_feature
+
+[Term]
+id: SO:0000303
+name: clip
+def: "Part of the primary transcript that is clipped off during processing." [SO:ke]
+subset: SOFA
+is_a: SO:0000835 ! primary_transcript_region
+
+[Term]
+id: SO:0000304
+name: type_II_enzyme_restriction_site
+def: "The recognition site is either palindromic, partially palindromic or an interrupted palindrome. Cleavage occurs within the recognition site." [http://www.promega.com]
+is_obsolete: true
+
+[Term]
+id: SO:0000305
+name: modified_DNA_base
+def: "A modified nucleotide, i.e. a nucleotide other than A, T, C. G." [http://www.insdc.org/files/feature_table.html]
+comment: Modified base:<modified_base>.
+subset: SOFA
+synonym: "INSDC_feature:modified_base" EXACT []
+synonym: "modified base site" EXACT []
+is_a: SO:0001236 ! base
+is_a: SO:0001720 ! epigenetically_modified_region
+
+[Term]
+id: SO:0000306
+name: methylated_DNA_base_feature
+def: "A nucleotide modified by methylation." [SO:ke]
+subset: SOFA
+synonym: "methylated base feature" EXACT []
+is_a: SO:0000305 ! modified_DNA_base
+
+[Term]
+id: SO:0000307
+name: CpG_island
+def: "Regions of a few hundred to a few thousand bases in vertebrate genomes that are relatively GC and CpG rich; they are typically unmethylated and often found near the 5' ends of genes." [SO:rd]
+subset: SOFA
+synonym: "CG island" EXACT []
+synonym: "CpG island" EXACT []
+xref: http://en.wikipedia.org/wiki/CpG_island "wiki"
+is_a: SO:0001411 ! biological_region
+
+[Term]
+id: SO:0000308
+name: sequence_feature_locating_method
+is_obsolete: true
+
+[Term]
+id: SO:0000309
+name: computed_feature
+is_obsolete: true
+
+[Term]
+id: SO:0000310
+name: predicted_ab_initio_computation
+is_obsolete: true
+
+[Term]
+id: SO:0000311
+name: computed_feature_by_similarity
+def: "." [SO:ma]
+comment: similar to:<sequence_id>
+is_obsolete: true
+
+[Term]
+id: SO:0000312
+name: experimentally_determined
+def: "Attribute to describe a feature that has been experimentally verified." [SO:ke]
+synonym: "experimentally determined" EXACT []
+is_a: SO:0000789 ! validated
+
+[Term]
+id: SO:0000313
+name: stem_loop
+alt_id: SO:0000019
+def: "A double-helical region of nucleic acid formed by base-pairing between adjacent (inverted) complementary sequences." [http://www.insdc.org/files/feature_table.html]
+synonym: "INSDC_feature:stem_loop" EXACT []
+synonym: "RNA_hairpin_loop" EXACT []
+synonym: "stem loop" EXACT []
+synonym: "stem-loop" EXACT []
+xref: http://en.wikipedia.org/wiki/Stem_loop "wiki"
+is_a: SO:0000122 ! RNA_sequence_secondary_structure
+
+[Term]
+id: SO:0000314
+name: direct_repeat
+def: "A repeat where the same sequence is repeated in the same direction. Example: GCTGA-followed by-GCTGA." [SO:ke]
+subset: SOFA
+synonym: "direct repeat" EXACT []
+synonym: "INSDC_feature:repeat_region" BROAD []
+synonym: "INSDC_qualifier:direct" EXACT []
+xref: http://en.wikipedia.org/wiki/Direct_repeat "wiki"
+is_a: SO:0000657 ! repeat_region
+
+[Term]
+id: SO:0000315
+name: TSS
+def: "The first base where RNA polymerase begins to synthesize the RNA transcript." [SO:ke]
+comment: Added relationship is_a SO:0002309 core_promoter_element with the creation of core_promoter_element as part of GREEKC initiative August 2020 - Dave Sant.
+subset: SOFA
+synonym: "INSDC_feature:misc_feature" BROAD []
+synonym: "INSDC_note:transcription_start_site" EXACT []
+synonym: "transcription start site" EXACT []
+synonym: "transcription_start_site" EXACT []
+is_a: SO:0000835 ! primary_transcript_region
+is_a: SO:0002309 ! core_promoter_element
+
+[Term]
+id: SO:0000316
+name: CDS
+def: "A contiguous sequence which begins with, and includes, a start codon and ends with, and includes, a stop codon." [SO:ma]
+subset: SOFA
+synonym: "coding sequence" EXACT []
+synonym: "coding_sequence" EXACT []
+synonym: "INSDC_feature:CDS" EXACT []
+is_a: SO:0000836 ! mRNA_region
+
+[Term]
+id: SO:0000317
+name: cDNA_clone
+def: "Complementary DNA; A piece of DNA copied from an mRNA and spliced into a vector for propagation in a suitable host." [http://seqcore.brcf.med.umich.edu/doc/educ/dnapr/mbglossary/mbgloss.html]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+synonym: "cDNA clone" EXACT []
+is_a: SO:0000151 ! clone
+intersection_of: SO:0000151 ! clone
+intersection_of: has_quality SO:0000756 ! cDNA
+relationship: has_quality SO:0000756 ! cDNA
+
+[Term]
+id: SO:0000318
+name: start_codon
+def: "First codon to be translated by a ribosome." [SO:ke]
+subset: SOFA
+synonym: "initiation codon" EXACT []
+synonym: "start codon" EXACT []
+xref: http://en.wikipedia.org/wiki/Start_codon "wiki"
+is_a: SO:0000360 ! codon
+
+[Term]
+id: SO:0000319
+name: stop_codon
+def: "In mRNA, a set of three nucleotides that indicates the end of information for protein synthesis." [SO:ke]
+subset: SOFA
+synonym: "stop codon" EXACT []
+xref: http://en.wikipedia.org/wiki/Stop_codon "wiki"
+is_a: SO:0000360 ! codon
+
+[Term]
+id: SO:0000320
+name: intronic_splice_enhancer
+def: "Sequences within the intron that modulate splice site selection for some introns." [SO:ke]
+synonym: "intronic splice enhancer" EXACT []
+is_a: SO:0000344 ! splice_enhancer
+relationship: part_of SO:0000841 ! spliceosomal_intron_region
+
+[Term]
+id: SO:0000321
+name: mRNA_with_plus_1_frameshift
+def: "An mRNA with a plus 1 frameshift." [SO:ke]
+synonym: "mRNA with plus 1 frameshift" EXACT []
+is_a: SO:0000108 ! mRNA_with_frameshift
+intersection_of: SO:0000108 ! mRNA_with_frameshift
+intersection_of: has_quality SO:0000868 ! plus_1_frameshift
+relationship: has_quality SO:0000868 ! plus_1_frameshift
+
+[Term]
+id: SO:0000322
+name: nuclease_hypersensitive_site
+def: "A region of nucleotide sequence targeted by a nuclease enzyme that is found cleaved more than would be expected by chance." []
+comment: Relationship to accessible_DNA_region added 11 Feb 2021. GREEKC pointed out that this is an assay based term, but we need a biological term for the accessible DNA. See GitHub Issue #531.
+synonym: "nuclease hypersensitive site" EXACT []
+is_a: SO:0000684 ! nuclease_sensitive_site
+is_a: SO:0002331 ! accessible_DNA_region
+
+[Term]
+id: SO:0000323
+name: coding_start
+def: "The first base to be translated into protein." [SO:ke]
+synonym: "coding start" EXACT []
+synonym: "translation initiation site" EXACT []
+synonym: "translation start" RELATED []
+is_a: SO:0000851 ! CDS_region
+
+[Term]
+id: SO:0000324
+name: tag
+def: "A nucleotide sequence that may be used to identify a larger sequence." [SO:ke]
+subset: SOFA
+is_a: SO:0000696 ! oligo
+
+[Term]
+id: SO:0000325
+name: rRNA_large_subunit_primary_transcript
+def: "A primary transcript encoding a large ribosomal subunit RNA." [SO:ke]
+subset: SOFA
+synonym: "35S rRNA primary transcript" EXACT []
+synonym: "rRNA large subunit primary transcript" EXACT []
+is_a: SO:0000209 ! rRNA_primary_transcript
+
+[Term]
+id: SO:0000326
+name: SAGE_tag
+def: "A short diagnostic sequence tag, serial analysis of gene expression (SAGE), that allows the quantitative and simultaneous analysis of a large number of transcripts." [http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=7570003&dopt=Abstract]
+subset: SOFA
+synonym: "SAGE tag" EXACT []
+is_a: SO:0000324 ! tag
+
+[Term]
+id: SO:0000327
+name: coding_end
+def: "The last base to be translated into protein. It does not include the stop codon." [SO:ke]
+synonym: "coding end" EXACT []
+synonym: "translation termination site" EXACT []
+synonym: "translation_end" EXACT []
+is_a: SO:0000851 ! CDS_region
+
+[Term]
+id: SO:0000328
+name: microarray_oligo
+def: "A DNA sequence used experimentally to detect the presence or absence of a complementary nucleic acid." []
+synonym: "microarray oligo" EXACT []
+synonym: "microarray oligonucleotide" EXACT []
+is_a: SO:0000051 ! probe
+
+[Term]
+id: SO:0000329
+name: mRNA_with_plus_2_frameshift
+def: "An mRNA with a plus 2 frameshift." [SO:xp]
+synonym: "mRNA with plus 2 frameshift" EXACT []
+is_a: SO:0000108 ! mRNA_with_frameshift
+intersection_of: SO:0000108 ! mRNA_with_frameshift
+intersection_of: has_quality SO:0000869 ! plus_2_framshift
+relationship: has_quality SO:0000869 ! plus_2_framshift
+
+[Term]
+id: SO:0000330
+name: conserved_region
+def: "Region of sequence similarity by descent from a common ancestor." [SO:ke]
+subset: SOFA
+synonym: "conserved region" EXACT []
+synonym: "INSDC_feature:misc_feature" BROAD []
+synonym: "INSDC_note:conserved_region" EXACT []
+xref: http://en.wikipedia.org/wiki/Conserved_region "wiki"
+is_a: SO:0001410 ! experimental_feature
+
+[Term]
+id: SO:0000331
+name: STS
+def: "Short (typically a few hundred base pairs) DNA sequence that has a single occurrence in a genome and whose location and base sequence are known." [http://www.biospace.com]
+subset: SOFA
+synonym: "INSDC_feature:STS" EXACT []
+synonym: "sequence tag site" EXACT []
+is_a: SO:0000324 ! tag
+
+[Term]
+id: SO:0000332
+name: coding_conserved_region
+def: "Coding region of sequence similarity by descent from a common ancestor." [SO:ke]
+subset: SOFA
+synonym: "coding conserved region" EXACT []
+is_a: SO:0000330 ! conserved_region
+
+[Term]
+id: SO:0000333
+name: exon_junction
+def: "The boundary between two exons in a processed transcript." [SO:ke]
+subset: SOFA
+synonym: "exon junction" EXACT []
+is_a: SO:0000699 ! junction
+relationship: part_of SO:0000233 ! mature_transcript
+
+[Term]
+id: SO:0000334
+name: nc_conserved_region
+def: "Non-coding region of sequence similarity by descent from a common ancestor." [SO:ke]
+subset: SOFA
+synonym: "conserved non-coding element" EXACT []
+synonym: "conserved non-coding sequence" EXACT []
+synonym: "nc conserved region" EXACT []
+synonym: "noncoding conserved region" EXACT []
+is_a: SO:0000330 ! conserved_region
+
+[Term]
+id: SO:0000335
+name: mRNA_with_minus_2_frameshift
+def: "A mRNA with a minus 2 frameshift." [SO:ke]
+synonym: "mRNA with minus 2 frameshift" EXACT []
+is_a: SO:0000108 ! mRNA_with_frameshift
+intersection_of: SO:0000108 ! mRNA_with_frameshift
+intersection_of: has_quality SO:0000867 ! minus_2_frameshift
+relationship: has_quality SO:0000867 ! minus_2_frameshift
+
+[Term]
+id: SO:0000336
+name: pseudogene
+def: "A sequence that closely resembles a known functional gene, at another locus within a genome, that is non-functional as a consequence of (usually several) mutations that prevent either its transcription or translation (or both). In general, pseudogenes result from either reverse transcription of a transcript of their \"normal\" paralog (SO:0000043) (in which case the pseudogene typically lacks introns and includes a poly(A) tail) or from recombination (SO:0000044) (in which case the pseudogene is typically a tandem duplication of its \"normal\" paralog)." [http://www.ucl.ac.uk/~ucbhjow/b241/glossary.html]
+subset: Alliance_of_Genome_Resources
+subset: SOFA
+synonym: "INSDC_feature:gene" BROAD []
+synonym: "INSDC_qualifier:pseudo" EXACT []
+synonym: "INSDC_qualifier:unknown" EXACT []
+xref: http://en.wikipedia.org/wiki/Pseudogene "wiki"
+is_a: SO:0001411 ! biological_region
+relationship: non_functional_homolog_of SO:0000704 ! gene
+
+[Term]
+id: SO:0000337
+name: RNAi_reagent
+def: "A double stranded RNA duplex, at least 20bp long, used experimentally to inhibit gene function by RNA interference." [SO:rd]
+subset: SOFA
+synonym: "RNAi reagent" EXACT []
+is_a: SO:0000442 ! ds_oligo
+
+[Term]
+id: SO:0000338
+name: MITE
+def: "A highly repetitive and short (100-500 base pair) transposable element with terminal inverted repeats (TIR) and target site duplication (TSD). MITEs do not encode proteins." [http://www.pnas.org/cgi/content/full/97/18/10083]
+synonym: "miniature inverted repeat transposable element" EXACT []
+is_a: SO:0000208 ! terminal_inverted_repeat_element
+
+[Term]
+id: SO:0000339
+name: recombination_hotspot
+def: "A region in a genome which promotes recombination." [SO:rd]
+synonym: "recombination hotspot" EXACT []
+xref: http://en.wikipedia.org/wiki/Recombination_hotspot "wiki"
+is_a: SO:0000298 ! recombination_feature
+
+[Term]
+id: SO:0000340
+name: chromosome
+def: "Structural unit composed of a nucleic acid molecule which controls its own replication through the interaction of specific proteins at one or more origins of replication." [SO:ma]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+subset: SOFA
+xref: http://en.wikipedia.org/wiki/Chromosome "wiki"
+is_a: SO:0001235 ! replicon
+
+[Term]
+id: SO:0000341
+name: chromosome_band
+def: "A cytologically distinguishable feature of a chromosome, often made visible by staining, and usually alternating light and dark." [SO:ma]
+subset: SOFA
+synonym: "chromosome band" EXACT []
+synonym: "cytoband" EXACT []
+synonym: "cytological band" EXACT []
+xref: http://en.wikipedia.org/wiki/Cytological_band "wiki"
+is_a: SO:0000830 ! chromosome_part
+
+[Term]
+id: SO:0000342
+name: site_specific_recombination_target_region
+def: "A region specifically recognised by a recombinase where recombination can occur during mitosis or meiosis." []
+synonym: "site specific recombination target region" EXACT []
+is_a: SO:0000299 ! specific_recombination_site
+
+[Term]
+id: SO:0000343
+name: match
+def: "A region of sequence, aligned to another sequence with some statistical significance, using an algorithm such as BLAST or SIM4." [SO:ke]
+subset: SOFA
+is_a: SO:0001410 ! experimental_feature
+
+[Term]
+id: SO:0000344
+name: splice_enhancer
+def: "Region of a transcript that regulates splicing." [SO:ke]
+subset: SOFA
+synonym: "splice enhancer" EXACT []
+is_a: SO:0001056 ! splicing_regulatory_region
+
+[Term]
+id: SO:0000345
+name: EST
+def: "A tag produced from a single sequencing read from a cDNA clone or PCR product; typically a few hundred base pairs long." [SO:ke]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+subset: SOFA
+synonym: "expressed sequence tag" EXACT []
+is_a: SO:0000324 ! tag
+relationship: derives_from SO:0000234 ! mRNA
+
+[Term]
+id: SO:0000346
+name: loxP_site
+def: "Cre-Recombination target sequence." []
+synonym: "Cre-recombination target region" RELATED []
+synonym: "loxP site" EXACT []
+is_a: SO:0000947 ! resolution_site
+
+[Term]
+id: SO:0000347
+name: nucleotide_match
+def: "A match against a nucleotide sequence." [SO:ke]
+subset: SOFA
+synonym: "nucleotide match" EXACT []
+is_a: SO:0000343 ! match
+
+[Term]
+id: SO:0000348
+name: nucleic_acid
+def: "An attribute describing a sequence consisting of nucleobases bound to repeating units. The forms found in nature are deoxyribonucleic acid (DNA), where the repeating units are 2-deoxy-D-ribose rings connected to a phosphate backbone, and ribonucleic acid (RNA), where the repeating units are D-ribose rings connected to a phosphate backbone." [CHEBI:33696, RSC:cb]
+synonym: "nucleic acid" EXACT []
+xref: http://en.wikipedia.org/wiki/Nucleic_acid "wiki"
+is_a: SO:0000443 ! polymer_attribute
+
+[Term]
+id: SO:0000349
+name: protein_match
+def: "A match against a protein sequence." [SO:ke]
+subset: SOFA
+synonym: "protein match" EXACT []
+is_a: SO:0000343 ! match
+
+[Term]
+id: SO:0000350
+name: FRT_site
+def: "An inversion site found on the Saccharomyces cerevisiae 2 micron plasmid." [SO:ma]
+synonym: "FLP recombination target region" EXACT []
+synonym: "FRT site" EXACT []
+is_a: SO:0000948 ! inversion_site
+
+[Term]
+id: SO:0000351
+name: synthetic_sequence
+def: "An attribute to decide a sequence of nucleotides, nucleotide analogs, or amino acids that has been designed by an experimenter and which may, or may not, correspond with any natural sequence." [SO:ma]
+synonym: "synthetic sequence" EXACT []
+is_a: SO:0000443 ! polymer_attribute
+
+[Term]
+id: SO:0000352
+name: DNA
+def: "An attribute describing a sequence consisting of nucleobases bound to a repeating unit made of a 2-deoxy-D-ribose ring connected to a phosphate backbone." [RSC:cb]
+is_a: SO:0000348 ! nucleic_acid
+
+[Term]
+id: SO:0000353
+name: sequence_assembly
+def: "A sequence of nucleotides that has been algorithmically derived from an alignment of two or more different sequences." [SO:ma]
+subset: SOFA
+synonym: "sequence assembly" EXACT []
+xref: http://en.wikipedia.org/wiki/Sequence_assembly "wiki"
+is_a: SO:0001248 ! assembly
+
+[Term]
+id: SO:0000354
+name: group_1_intron_homing_endonuclease_target_region
+def: "A region of intronic nucleotide sequence targeted by a nuclease enzyme." [SO:ke]
+synonym: "group 1 intron homing endonuclease target region" EXACT []
+is_a: SO:0000684 ! nuclease_sensitive_site
+
+[Term]
+id: SO:0000355
+name: haplotype_block
+def: "A region of the genome which is co-inherited as the result of the lack of historic recombination within it." [SO:ma]
+synonym: "haplotype block" EXACT []
+is_a: SO:0000298 ! recombination_feature
+
+[Term]
+id: SO:0000356
+name: RNA
+def: "An attribute describing a sequence consisting of nucleobases bound to a repeating unit made of a D-ribose ring connected to a phosphate backbone." [RSC:cb]
+comment: This term is mapped to MGED. Do not obsolete without consulting MGED ontology.
+is_a: SO:0000348 ! nucleic_acid
+
+[Term]
+id: SO:0000357
+name: flanked
+def: "An attribute describing a region that is bounded either side by a particular kind of region." [SO:ke]
+is_a: SO:0000733 ! feature_attribute
+
+[Term]
+id: SO:0000359
+name: floxed
+def: "An attribute describing sequence that is flanked by Lox-P sites." [SO:ke]
+xref: http://en.wikipedia.org/wiki/Floxed "wiki"
+is_a: SO:0000357 ! flanked
+
+[Term]
+id: SO:0000360
+name: codon
+def: "A set of (usually) three nucleotide bases in a DNA or RNA sequence, which together code for a unique amino acid or the termination of translation and are contained within the CDS." [SO:ke]
+subset: SOFA
+xref: http://en.wikipedia.org/wiki/Codon "wiki"
+is_a: SO:0000851 ! CDS_region
+
+[Term]
+id: SO:0000361
+name: FRT_flanked
+def: "An attribute to describe sequence that is flanked by the FLP recombinase recognition site, FRT." [SO:ke]
+synonym: "FRT flanked" EXACT []
+is_a: SO:0000357 ! flanked
+
+[Term]
+id: SO:0000362
+name: invalidated_by_chimeric_cDNA
+def: "A cDNA clone constructed from more than one mRNA. Usually an experimental artifact." [SO:ma]
+synonym: "invalidated by chimeric cDNA" EXACT []
+is_a: SO:0000790 ! invalidated
+
+[Term]
+id: SO:0000363
+name: floxed_gene
+def: "A transgene that is floxed." [SO:xp]
+synonym: "floxed gene" EXACT []
+is_a: SO:0000902 ! transgene
+intersection_of: SO:0000902 ! transgene
+intersection_of: has_quality SO:0000359 ! floxed
+relationship: has_quality SO:0000359 ! floxed
+
+[Term]
+id: SO:0000364
+name: transposable_element_flanking_region
+def: "The region of sequence surrounding a transposable element." [SO:ke]
+synonym: "transposable element flanking region" EXACT []
+is_a: SO:0000239 ! flanking_region
+
+[Term]
+id: SO:0000365
+name: integron
+def: "A region encoding an integrase which acts at a site adjacent to it (attI_site) to insert DNA which must include but is not limited to an attC_site." [SO:as]
+xref: http://en.wikipedia.org/wiki/Integron "wiki"
+is_a: SO:0001039 ! integrated_mobile_genetic_element
+
+[Term]
+id: SO:0000366
+name: insertion_site
+def: "The junction where an insertion occurred." [SO:ke]
+subset: SOFA
+synonym: "insertion site" EXACT []
+is_a: SO:0000699 ! junction
+
+[Term]
+id: SO:0000367
+name: attI_site
+def: "A region within an integron, adjacent to an integrase, at which site specific recombination involving an attC_site takes place." [SO:as]
+synonym: "attI site" EXACT []
+is_a: SO:0000946 ! integration_excision_site
+relationship: part_of SO:0000365 ! integron
+
+[Term]
+id: SO:0000368
+name: transposable_element_insertion_site
+def: "The junction in a genome where a transposable_element has inserted." [SO:ke]
+subset: SOFA
+synonym: "transposable element insertion site" EXACT []
+is_a: SO:0000366 ! insertion_site
+
+[Term]
+id: SO:0000369
+name: integrase_coding_region
+is_obsolete: true
+
+[Term]
+id: SO:0000370
+name: small_regulatory_ncRNA
+def: "A non-coding RNA less than 200 nucleotides long, usually with a specific secondary structure, that acts to regulate gene expression. These include short ncRNAs such as piRNA, miRNA and siRNAs (among others)." [PMID:28541282, PomBase:al, SO:ma]
+subset: SOFA
+synonym: "small regulatory ncRNA" EXACT []
+is_a: SO:0002247 ! sncRNA
+
+[Term]
+id: SO:0000371
+name: conjugative_transposon
+def: "A transposon that encodes function required for conjugation." [http://www.sci.sdsu.edu/~smaloy/Glossary/C.html]
+synonym: "conjugative transposon" EXACT []
+is_a: SO:0000182 ! DNA_transposon
+
+[Term]
+id: SO:0000372
+name: enzymatic_RNA
+def: "An RNA sequence that has catalytic activity with or without an associated ribonucleoprotein." [RSC:cb]
+comment: This was moved to be a child of transcript (SO:0000673) because some enzymatic RNA regions are part of primary transcripts and some are part of processed transcripts. Moved under ncRNA on 18 Nov 2021. See GitHub Issue #533.
+subset: SOFA
+synonym: "enzymatic RNA" EXACT []
+is_a: SO:0000655 ! ncRNA
+relationship: has_quality SO:0001185 ! enzymatic
+
+[Term]
+id: SO:0000373
+name: recombinationally_inverted_gene
+def: "A recombinationally rearranged gene by inversion." [SO:xp]
+synonym: "recombinationally inverted gene" EXACT []
+is_a: SO:0000456 ! recombinationally_rearranged_gene
+intersection_of: SO:0000456 ! recombinationally_rearranged_gene
+intersection_of: has_quality SO:1000036 ! inversion
+relationship: has_quality SO:1000036 ! inversion
+
+[Term]
+id: SO:0000374
+name: ribozyme
+def: "An RNA with catalytic activity." [SO:ma]
+subset: SOFA
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:ribozyme" EXACT []
+xref: http://en.wikipedia.org/wiki/Ribozyme "wiki"
+is_a: SO:0000372 ! enzymatic_RNA
+intersection_of: SO:0000372 ! enzymatic_RNA
+intersection_of: has_quality SO:0001186 ! ribozymic
+relationship: has_quality SO:0001186 ! ribozymic
+
+[Term]
+id: SO:0000375
+name: cytosolic_5_8S_rRNA
+def: "Cytosolic 5.8S rRNA is an RNA component of the large subunit of cytosolic ribosomes in eukaryotes." [https://rfam.xfam.org/family/RF00002]
+comment: Dave Sant removed '5_8S rRNA is also found in archaea.' from definition due to lack of references mentioning this on 1 Feb 2021. See GitHub Issue #505. Renamed from rRNA_5_8S to cytosolic_5_8S_rRNA on 10 June 2021 with the restructuring of rRNA child terms. Updated definition to be consistent with format of other rRNA definitions. Requested by EBI. See GitHub Issue #493.
+subset: SOFA
+synonym: "cytosolic 5.8S LSU rRNA" EXACT []
+synonym: "cytosolic 5.8S ribosomal RNA" EXACT []
+synonym: "cytosolic 5.8S rRNA" EXACT []
+synonym: "cytosolic rRNA 5 8S" EXACT []
+xref: http://en.wikipedia.org/wiki/5.8S_ribosomal_RNA "wiki"
+is_a: SO:0000651 ! cytosolic_LSU_rRNA
+relationship: derives_from SO:0002240 ! cytosolic_rRNA_5_8S_gene
+
+[Term]
+id: SO:0000376
+name: RNA_6S
+def: "A small (184-nt in E. coli) RNA that forms a hairpin type structure. 6S RNA associates with RNA polymerase in a highly specific manner. 6S RNA represses expression from a sigma70-dependent promoter during stationary phase." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00013]
+synonym: "6S RNA" EXACT []
+synonym: "RNA 6S" EXACT []
+xref: http://en.wikipedia.org/wiki/6S_RNA "wiki"
+is_a: SO:0000370 ! small_regulatory_ncRNA
+
+[Term]
+id: SO:0000377
+name: CsrB_RsmB_RNA
+def: "An enterobacterial RNA that binds the CsrA protein. The CsrB RNAs contain a conserved motif CAGGXXG that is found in up to 18 copies and has been suggested to bind CsrA. The Csr regulatory system has a strong negative regulatory effect on glycogen biosynthesis, glyconeogenesis and glycogen catabolism and a positive regulatory effect on glycolysis. In other bacteria such as Erwinia caratovara the RsmA protein has been shown to regulate the production of virulence determinants, such extracellular enzymes. RsmA binds to RsmB regulatory RNA which is also a member of this family." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00018]
+synonym: "CsrB RsmB RNA" EXACT []
+synonym: "CsrB-RsmB RNA" EXACT []
+is_a: SO:0000370 ! small_regulatory_ncRNA
+
+[Term]
+id: SO:0000378
+name: DsrA_RNA
+def: "DsrA RNA regulates both transcription, by overcoming transcriptional silencing by the nucleoid-associated H-NS protein, and translation, by promoting efficient translation of the stress sigma factor, RpoS. These two activities of DsrA can be separated by mutation: the first of three stem-loops of the 85 nucleotide RNA is necessary for RpoS translation but not for anti-H-NS action, while the second stem-loop is essential for antisilencing and less critical for RpoS translation. The third stem-loop, which behaves as a transcription terminator, can be substituted by the trp transcription terminator without loss of either DsrA function. The sequence of the first stem-loop of DsrA is complementary with the upstream leader portion of RpoS messenger RNA, suggesting that pairing of DsrA with the RpoS message might be important for translational regulation." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00014]
+synonym: "DsrA RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/DsrA_RNA "wiki"
+is_a: SO:0000370 ! small_regulatory_ncRNA
+
+[Term]
+id: SO:0000379
+name: GcvB_RNA
+def: "A small untranslated RNA involved in expression of the dipeptide and oligopeptide transport systems in Escherichia coli." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00022]
+synonym: "GcvB RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/GcvB_RNA "wiki"
+is_a: SO:0000378 ! DsrA_RNA
+
+[Term]
+id: SO:0000380
+name: hammerhead_ribozyme
+def: "A small catalytic RNA motif that catalyzes self-cleavage reaction. Its name comes from its secondary structure which resembles a carpenter's hammer. The hammerhead ribozyme is involved in the replication of some viroid and some satellite RNAs." [PMID:2436805]
+subset: SOFA
+synonym: "hammerhead ribozyme" EXACT []
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:hammerhead_ribozyme" EXACT []
+xref: http://en.wikipedia.org/wiki/Hammerhead_ribozyme "wiki"
+is_a: SO:0000715 ! RNA_motif
+intersection_of: SO:0000715 ! RNA_motif
+intersection_of: has_quality SO:0001186 ! ribozymic
+relationship: has_quality SO:0001186 ! ribozymic
+
+[Term]
+id: SO:0000381
+name: group_IIA_intron
+def: "A group II intron that recognizes IBS1/EBS1 and IBS2/EBS2 for the 5-prime exon and gamma/gamma-prime for the 3-prime exon." [PMID:20463000]
+synonym: "group IIA intron" EXACT []
+is_a: SO:0000603 ! group_II_intron
+
+[Term]
+id: SO:0000382
+name: group_IIB_intron
+def: "A group II intron that recognizes IBS1/EBS1 and IBS2/EBS2 for the 5-prime exon and IBS3/EBS3 for the 3-prime exon." [PMID:20463000]
+synonym: "group IIB intron" EXACT []
+is_a: SO:0000603 ! group_II_intron
+
+[Term]
+id: SO:0000383
+name: MicF_RNA
+def: "A non-translated 93 nt antisense RNA that binds its target ompF mRNA and regulates ompF expression by inhibiting translation and inducing degradation of the message." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00033]
+synonym: "MicF RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/MicF_RNA "wiki"
+is_a: SO:0000644 ! antisense_RNA
+
+[Term]
+id: SO:0000384
+name: OxyS_RNA
+def: "A small untranslated RNA which is induced in response to oxidative stress in Escherichia coli. Acts as a global regulator to activate or repress the expression of as many as 40 genes, including the fhlA-encoded transcriptional activator and the rpoS-encoded sigma(s) subunit of RNA polymerase. OxyS is bound by the Hfq protein, that increases the OxyS RNA interaction with its target messages." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00035]
+synonym: "OxyS RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/OxyS_RNA "wiki"
+is_a: SO:0000370 ! small_regulatory_ncRNA
+
+[Term]
+id: SO:0000385
+name: RNase_MRP_RNA
+def: "The RNA molecule essential for the catalytic activity of RNase MRP, an enzymatically active ribonucleoprotein with two distinct roles in eukaryotes. In mitochondria it plays a direct role in the initiation of mitochondrial DNA replication. In the nucleus it is involved in precursor rRNA processing, where it cleaves the internal transcribed spacer 1 between 18S and 5.8S rRNAs." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00030]
+comment: Moved under enzymatic_RNA on 18 Nov 2021. See GitHub Issue #533.
+subset: SOFA
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:RNase_MRP_RNA" EXACT []
+synonym: "RNase MRP RNA" EXACT []
+is_a: SO:0000372 ! enzymatic_RNA
+
+[Term]
+id: SO:0000386
+name: RNase_P_RNA
+def: "The RNA component of Ribonuclease P (RNase P), a ubiquitous endoribonuclease, found in archaea, bacteria and eukarya as well as chloroplasts and mitochondria. Its best characterized activity is the generation of mature 5 prime ends of tRNAs by cleaving the 5 prime leader elements of precursor-tRNAs. Cellular RNase Ps are ribonucleoproteins. RNA from bacterial RNase Ps retains its catalytic activity in the absence of the protein subunit, i.e. it is a ribozyme. Isolated eukaryotic and archaeal RNase P RNA has not been shown to retain its catalytic function, but is still essential for the catalytic activity of the holoenzyme. Although the archaeal and eukaryotic holoenzymes have a much greater protein content than the bacterial ones, the RNA cores from all the three lineages are homologous. Helices corresponding to P1, P2, P3, P4, and P10/11 are common to all cellular RNase P RNAs. Yet, there is considerable sequence variation, particularly among the eukaryotic RNAs." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00010]
+comment: Moved under enzymatic_RNA on 18 Nov 2021. See GitHub Issue #533.
+subset: SOFA
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:RNase_P_RNA" EXACT []
+synonym: "RNase P RNA" EXACT []
+is_a: SO:0000372 ! enzymatic_RNA
+
+[Term]
+id: SO:0000387
+name: RprA_RNA
+def: "Translational regulation of the stationary phase sigma factor RpoS is mediated by the formation of a double-stranded RNA stem-loop structure in the upstream region of the rpoS messenger RNA, occluding the translation initiation site. Clones carrying rprA (RpoS regulator RNA) increased the translation of RpoS. The rprA gene encodes a 106 nucleotide regulatory RNA. As with DsrA Rfam:RF00014, RprA is predicted to form three stem-loops. Thus, at least two small RNAs, DsrA and RprA, participate in the positive regulation of RpoS translation. Unlike DsrA, RprA does not have an extensive region of complementarity to the RpoS leader, leaving its mechanism of action unclear. RprA is non-essential." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00034]
+synonym: "RprA RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/RprA_RNA "wiki"
+is_a: SO:0000370 ! small_regulatory_ncRNA
+
+[Term]
+id: SO:0000388
+name: RRE_RNA
+def: "The Rev response element (RRE) is encoded within the HIV-env gene. Rev is an essential regulatory protein of HIV that binds an internal loop of the RRE leading, encouraging further Rev-RRE binding. This RNP complex is critical for mRNA export and hence for expression of the HIV structural proteins." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00036]
+synonym: "RRE RNA" EXACT []
+is_a: SO:0000370 ! small_regulatory_ncRNA
+
+[Term]
+id: SO:0000389
+name: spot_42_RNA
+def: "A 109-nucleotide RNA of E. coli that seems to have a regulatory role on the galactose operon. Changes in Spot 42 levels are implicated in affecting DNA polymerase I levels." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00021]
+synonym: "spot-42 RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/Spot_42_RNA "wiki"
+is_a: SO:0000370 ! small_regulatory_ncRNA
+
+[Term]
+id: SO:0000390
+name: telomerase_RNA
+def: "The RNA component of telomerase, a reverse transcriptase that synthesizes telomeric DNA." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00025]
+subset: SOFA
+synonym: "INSDC_feature:ncRNA" BROAD []
+synonym: "INSDC_qualifier:telomerase_RNA" EXACT []
+synonym: "telomerase RNA" EXACT []
+xref: http://en.wikipedia.org/wiki/Telomerase_RNA "wiki"
+is_a: SO:0000655 ! ncRNA
+
+[Term]
+id: SO:0000391
+name: U1_snRNA
+def: "U1 is a small nuclear RNA (snRNA) component of the spliceosome (involved in pre-mRNA splicing). Its 5' end forms complementary base pairs with the 5' splice junction, thus defining the 5' donor site of an intron. There are significant differences in sequence and secondary structure between metazoan and yeast U1 snRNAs, the latter being much longer (568 nucleotides as compared to 164 nucleotides in human). Nevertheless, secondary structure predictions suggest that all U1 snRNAs share a 'common core' consisting of helices I, II, the proximal region of III, and IV." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00003]
+subset: SOFA
+synonym: "small nuclear RNA U1" EXACT [RSC:cb]
+synonym: "snRNA U1" EXACT [RSC:cb]
+synonym: "U1 small nuclear RNA" EXACT [RSC:cb]
+synonym: "U1 snRNA" EXACT []
+xref: http://en.wikipedia.org/wiki/U1_snRNA "wiki"
+is_a: SO:0000274 ! snRNA
+
+[Term]
+id: SO:0000392
+name: U2_snRNA
+def: "U2 is a small nuclear RNA (snRNA) component of the spliceosome (involved in pre-mRNA splicing). Complementary binding between U2 snRNA (in an area lying towards the 5' end but 3' to hairpin I) and the branchpoint sequence (BPS) of the intron results in the bulging out of an unpaired adenine, on the BPS, which initiates a nucleophilic attack at the intronic 5' splice site, thus starting the first of two transesterification reactions that mediate splicing." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00004]
+subset: SOFA
+synonym: "small nuclear RNA U2" EXACT [RSC:CB]
+synonym: "snRNA U2" EXACT [RSC:CB]
+synonym: "U2 small nuclear RNA" EXACT [RSC:CB]
+synonym: "U2 snRNA" EXACT []
+xref: http://en.wikipedia.org/wiki/U2_snRNA "wiki"
+is_a: SO:0000274 ! snRNA
+
+[Term]
+id: SO:0000393
+name: U4_snRNA
+def: "U4 small nuclear RNA (U4 snRNA) is a component of the major U2-dependent spliceosome. It forms a duplex with U6, and with each splicing round, it is displaced from U6 (and the spliceosome) in an ATP-dependent manner, allowing U6 to refold and create the active site for splicing catalysis. A recycling process involving protein Prp24 re-anneals U4 and U6." [http://www.sanger.ac.uk/cgi-bin/Rfam/getacc?RF00015]
+subset: SOFA
+synonym: "small nuclear RNA U4" EXACT [RSC:cb]
+synonym: "snRNA U4" EXACT [RSC:cb]
+synonym: "U4 small nuclear RNA" EXACT [RSC:cb]
+synonym: "U4 snRNA" EXACT []
+xref: http://en.wikipedia.org/wiki/U4_snRNA "wiki"
+is_a: SO:0000274 ! snRNA
+
+[Term]
+id: SO:0000394
+name: U4atac_snRNA
+def: "An snRNA required for the splicing of the minor U12-dependent class of eukaryotic nuclear introns. It forms a base paired complex with U6atac_snRNA (SO:0000397)." [PMID:12409455]
+subset: SOFA
+synonym: "small nuclear RNA U4atac" EXACT [RSC:cb]
+synonym: "snRNA U4atac" EXACT [RSC:cb]
+synonym: "U4atac small nuclear RNA" EXACT [RSC:cb]
+synonym: "U4atac snRNA" EXACT []
+is_a: SO:0000274 ! snRNA
