@@ -1,12 +1,43 @@
 from networkx.classes.graph import Graph
 from linkml_runtime.linkml_model.meta import ClassDefinition
 import pytest
+import networkx as nx
 
 from biocypher._config import module_data_path
 from biocypher._entity import Edge, Node
 from biocypher._translate import Translator
 from biocypher._biolink import BiolinkAdapter
 from biocypher._meta import VersionNode
+from biocypher._ontology import OntologyAdapter
+
+__all__ = [
+    'biolink_adapter',
+    'test_ad_hoc_children_node',
+    'test_adapter',
+    'test_biolink_yaml_extension',
+    'test_custom_bmt_yaml',
+    'test_exclude_properties',
+    'test_inherit_properties',
+    'test_leaves_of_ad_hoc_child',
+    'test_log_missing_nodes',
+    'test_merge_multiple_inputs_edge',
+    'test_merge_multiple_inputs_node',
+    'test_multiple_inheritance',
+    'test_multiple_inputs_multiple_virtual_leaves_rel_as_node',
+    'test_properties_from_config',
+    'test_reverse_translate_query',
+    'test_reverse_translate_term',
+    'test_specific_and_generic_ids',
+    'test_translate_edges',
+    'test_translate_identifiers',
+    'test_translate_nodes',
+    'test_translate_query',
+    'test_translate_term',
+    'test_virtual_leaves_inherit_is_a',
+    'test_virtual_leaves_inherit_properties',
+    'translator',
+    'version_node',
+]
 
 
 @pytest.fixture
@@ -33,6 +64,16 @@ def biolink_adapter(version_node):
         model="biocypher",  # this is the default
         # unstable, move to test yaml
         use_cache = False,
+    )
+
+
+@pytest.fixture
+def ontology_adapter(biolink_adapter):
+    return OntologyAdapter(
+        head_join_node='sequence variant',
+        tail_join_node='protein_coding',
+        biolink_adapter=biolink_adapter,
+        tail_ontology_url='test/so.obo',
     )
 
 
@@ -564,3 +605,10 @@ def test_networkx_from_treedict(biolink_adapter):
     graph = biolink_adapter.get_networkx_graph()
 
     assert isinstance(graph, Graph)
+    assert 'sequence variant' in graph.nodes
+
+
+def test_generic_ontology_adapter(ontology_adapter):
+    assert isinstance(ontology_adapter, OntologyAdapter)
+    assert len(ontology_adapter.tail_ontology) == 481
+    assert nx.is_directed_acyclic_graph(ontology_adapter.tail_ontology)
