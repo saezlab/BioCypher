@@ -31,6 +31,7 @@ import bmt
 from . import _misc
 from ._config import module_data_path
 from . import _cache
+from . import _ontology
 
 __all__ = ['BiolinkAdapter']
 
@@ -39,7 +40,7 @@ if TYPE_CHECKING:
     from ._translate import Translator
 
 
-class BiolinkAdapter:
+class BiolinkAdapter(_ontology.Tree):
     """
     Performs various functions to integrate the Biolink ontology.
 
@@ -503,57 +504,3 @@ class BiolinkAdapter:
                 )
 
         self._tree = tree
-
-
-    def ensure_tree(self):
-        """
-        Create the ontology tree if not available yet.
-        """
-
-        if not getattr(self, '_tree', None):
-
-            self.update_tree()
-
-
-    def nested_tree(self) -> dict[str, dict]:
-        """
-        Ontology tree in nested representation, suitable for NetworkX.
-        """
-
-        self.ensure_tree()
-
-        return _misc.nested_tree(self._tree)
-
-
-    @property
-    def tree(self) -> 'treelib.Tree':
-        """
-        Ontology tree as an ASCII printable string.
-        """
-
-        self.ensure_tree()
-
-        return _misc.tree_figure(self._tree)
-
-
-    def show(self):
-        """
-        Show the ontology tree using treelib.
-        """
-
-        logger.info(
-            'Showing ontology structure, '
-            f'based on Biolink {self.biolink_version}:'
-        )
-
-        self.tree.show()
-
-
-    def networkx_tree(self) -> 'nx.DiGraph':
-        """
-        The ontology tree as a directed NetworkX graph.
-        """
-
-        nx = _misc.try_import('networkx')
-
-        return nx.Graph(self.nested_tree()) if nx else None

@@ -519,11 +519,10 @@ def test_log_missing_nodes(translator):
     assert m.get("missing_pathway") == 1
 
 
-def test_show_tree(biolink_adapter):
 
-    treevis = biolink_adapter.show()
+def test_show_ontology(ontology_adapter):
 
-    assert treevis is not None
+    assert ontology_adapter.tree is not None
 
 
 def test_strict_mode_error(translator):

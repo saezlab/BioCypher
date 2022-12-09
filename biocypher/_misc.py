@@ -1,4 +1,14 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import (
+    Any,
+    Mapping,
+    KeysView,
+    Generator,
+    ItemsView,
+    TYPE_CHECKING,
+    ValuesView,
+)
 from collections.abc import Iterable
 import re
 
@@ -6,6 +16,10 @@ from neo4j_utils._misc import LIST_LIKE, if_none, to_list  # noqa: F401
 import treelib
 
 from ._logger import logger
+
+if TYPE_CHECKING:
+
+    import networkx as nx
 
 __all__ = [
     'SIMPLE_TYPES',
@@ -135,10 +149,18 @@ def first(value: Any) -> Any:
         return next(iter(value), None)
 
 
-def tree_figure(tree: dict) -> treelib.Tree:
+def tree_figure(tree: dict | 'nx.Graph') -> treelib.Tree:
     """
     Creates a visualisation of the inheritance tree using treelib.
     """
+
+    nx = try_import('networkx')
+
+    if isinstance(inheritance_tree, nx.Graph):
+
+        inheritance_tree = nx.to_dict_of_lists(inheritance_tree)
+        # unlist values
+        inheritance_tree = {k: v[0] for k, v in inheritance_tree.items() if v}
 
     # ugly, imperfect solution, to be fixed later
     # find root node

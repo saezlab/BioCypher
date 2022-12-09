@@ -1,4 +1,5 @@
 import pytest
+import networkx as nx
 
 import biocypher._misc as _misc
 
@@ -34,6 +35,17 @@ def test_tree_vis():
     assert tree_vis.root == 'A'
 
 
+def test_tree_vis_from_networkx():
+
+    G = nx.DiGraph(example_tree)
+
+    tree_vis = _misc.tree_figure(G)
+
+    assert tree_vis.DEPTH == 1
+    assert tree_vis.WIDTH == 2
+    assert tree_vis.root == 'A'
+
+
 def test_disjoint_tree():
 
     with pytest.raises(ValueError):
@@ -44,3 +56,4 @@ def test_disjoint_tree():
 if __name__ == '__main__':
     # to look at it
     print(_misc.tree_figure(example_tree).show())
+    print(_misc.tree_figure(nx.DiGraph(example_tree)).show())
