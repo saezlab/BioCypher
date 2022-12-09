@@ -93,8 +93,8 @@ __all__ = ['BatchWriter', 'ENTITIES']
 
 if TYPE_CHECKING:
 
-    from ._biolink import BiolinkAdapter
     from ._translate import Translator
+    from ._ontology import OntologyAdapter
 
 N4_ALL_TYPES = {
     'int',
@@ -135,15 +135,15 @@ class BatchWriter:
     format specified by Neo4j for the use of admin import. Each batch
     writer instance has a fixed representation that needs to be passed
     at instantiation via the :py:attr:`schema` argument. The instance
-    also expects a biolink adapter via :py:attr:`biolink_adapter` to be able
+    also expects an ontology adapter via :py:attr:`ontology_adapter` to be able
     to convert and extend the hierarchy.
     """
 
     def __init__(
         self,
         schema: dict,
-        biolink_adapter: 'BiolinkAdapter',
-        translator: 'Translator',
+        ontology_adapter: OntologyAdapter,
+        translator: Translator,
         delimiter: str | None = None,
         array_delimiter: str | None = None,
         quote: str | None = None,
@@ -208,7 +208,7 @@ class BatchWriter:
         self.skip_duplicate_nodes = skip_duplicate_nodes
         self.schema = schema
         self.wipe = wipe
-        self.biolink_adapter = biolink_adapter
+        self.ontology_adapter = ontology_adapter
         self.translator = translator
         self.set_outdir(dirname)
         self.reset()
@@ -438,7 +438,7 @@ class BatchWriter:
         what = what or getattr(instance, 'entity', 'node')
 
         # get properties from config if present
-        from_conf = self.biolink_adapter.schema.get(label, {}).get('properties')
+        from_conf = self.ontology_adapter.schema.get(label, {}).get('properties')
 
         if what != 'node' and not from_conf:
 
@@ -468,7 +468,7 @@ class BatchWriter:
         Looks up property types for label as edge schema.
         """
 
-        for leaf in self.biolink_adapter.schema.values():
+        for leaf in self.ontology_adapter.schema.values():
 
             if (
                 isinstance(leaf, dict) and
@@ -608,7 +608,7 @@ class BatchWriter:
                     # write_single_node_list_to_file) TODO if it occurs, ask
                     # user to select desired properties and restart the process
                     all_labels = (
-                        self.biolink_adapter.biolink_schema.
+                        self.ontology_adapter.biolink_schema.
                         get(label, {}).
                         get('ancestors')
                     ) or (label,)

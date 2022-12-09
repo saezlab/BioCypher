@@ -16,6 +16,7 @@ from biocypher._meta import VersionNode
 from biocypher._driver import Driver
 from biocypher._biolink import BiolinkAdapter
 from biocypher._translate import Translator
+from biocypher._ontology import OntologyAdapter
 
 
 def get_random_string(length):
@@ -187,8 +188,11 @@ def bw(version_node, translator, translator):
         translator=translator,
     )
 
+    ontology_adapter = OntologyAdapter(biolink_adapter=biolink_adapter, )
+
     bw = BatchWriter(
         schema=version_node.schema,
+        ontology_adapter=ontology_adapter,
         translator=translator,
         biolink_adapter=biolink_adapter,
         dirname=path,
@@ -216,9 +220,11 @@ def bw_strict(version_node, translator):
         use_cache = False,
     )
 
+    ontology_adapter = OntologyAdapter(biolink_adapter=biolink_adapter, )
+
     bw = BatchWriter(
         schema=version_node.leaves,
-        biolink_adapter=biolink_adapter,
+        ontology_adapter=ontology_adapter,
         translator=translator,
         dirname=path_strict,
         delimiter=';',
@@ -245,9 +251,13 @@ def tab_bw(version_node, translator):
         use_cache = False,
     )
 
+    tmp_ontology_adapter = OntologyAdapter(
+        biolink_adapter=tmp_biolink_adapter,
+    )
+
     tab_bw = BatchWriter(
         leaves=version_node.leaves,
-        biolink_adapter=tmp_biolink_adapter,
+        ontology_adapter=tmp_ontology_adapter,
         translator=translator,
         dirname=path,
         delimiter='\t',

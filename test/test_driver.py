@@ -12,6 +12,7 @@ def init_driver():
         wipe=True,
         increment_version=False,
         user_schema_config_path="biocypher/_config/test_schema_config.yaml",
+        clear_cache=True,
     )
 
 
@@ -359,7 +360,11 @@ def test_pretty_explain(driver):
 
 @requires_neo4j
 def test_access_translate(driver):
+
+    driver.start_ontology_adapter()
+
     assert driver.translate_term("mirna") == "MicroRNA"
+
     assert (driver.reverse_translate_term('SideEffect') == 'sider')
     assert (
         driver.translate_query("MATCH (n:reactome) RETURN n")

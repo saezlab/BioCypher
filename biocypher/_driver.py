@@ -41,6 +41,7 @@ from ._config import argconf as _argconf
 from ._config import neo4j_config as _neo4j_config
 from ._entity import BC_TYPES, Edge, Node
 from ._biolink import BiolinkAdapter
+from ._ontology import OntologyAdapter
 from ._translate import Translator
 
 __all__ = ['Driver']
@@ -172,7 +173,7 @@ class Driver(neo4j_utils.Driver):
         # likely this will be refactored soon
         self._create_constraints()
 
-        self.biolink_adapter = None
+        self.ontology_adapter = None
         self.batch_writer = None
         self._update_translator()
         self._reset_insert_buffer()
@@ -592,7 +593,7 @@ class Driver(neo4j_utils.Driver):
 
         # instantiate adapter on demand because it takes time to load
         # the biolink model toolkit
-        self.start_biolink_adapter()
+        self.start_ontology_adapter()
         self.start_batch_writer(dirname, db_name)
 
         items = self.translator.translate(items)
@@ -621,7 +622,7 @@ class Driver(neo4j_utils.Driver):
 
             self.batch_writer = BatchWriter(
                 schema=self.db_meta.schema,
-                biolink_adapter=self.biolink_adapter,
+                ontology_adapter=self.ontology_adapter,
                 translator=self.translator,
                 delimiter=self.csv_delim,
                 array_delimiter=self.csv_adelim,
@@ -637,25 +638,29 @@ class Driver(neo4j_utils.Driver):
         self.batch_writer.db_name = db_name
 
 
-    def start_biolink_adapter(self):
+    def start_ontology_adapter(self):
         """
         Makes sure a Biolink adapter is available.
 
-        Instantiate the :class:`biocypher.adapter.BioLinkAdapter` if not
-        existing.
+        Instantiate the :class:`biocypher._ontology.OntologyAdapter`.
 
         Attributes:
-            biolink_adapter:
-                An instance of :class:`biocypher.adapter.BioLinkAdapter`.
+            ontology_adapter:
+                An instance of :class:`biocypher._ontology.OntologyAdapter`.
         """
 
-        if not self.biolink_adapter:
+        if not self.ontology_adapter:
 
-            self.biolink_adapter = BiolinkAdapter(
+            biolink_adapter = BiolinkAdapter(
                 schema = self.db_meta.schema,
                 model = self._biolink_model,
                 use_cache = self._biolink_use_cache,
                 translator=self.translator,
+                clear_cache=self.clear_cache,
+            )
+            # standard use case; TODO options for hybrids
+            self.ontology_adapter = OntologyAdapter(
+                biolink_adapter=biolink_adapter,
             )
 
 
@@ -780,7 +785,7 @@ class Driver(neo4j_utils.Driver):
         schema and treelib.
         """
 
-        self.start_biolink_adapter()
+        self.start_ontology_adapter()
         self.biolink_adapter.show()
 
 
@@ -790,7 +795,7 @@ class Driver(neo4j_utils.Driver):
         """
 
         # instantiate adapter if not exists
-        self.start_biolink_adapter()
+        self.start_ontology_adapter()
 
         return self.translator.translate_term(term)
 
@@ -800,7 +805,7 @@ class Driver(neo4j_utils.Driver):
         """
 
         # instantiate adapter if not exists
-        self.start_biolink_adapter()
+        self.start_ontology_adapter()
 
         return self.translator.reverse_translate_term(term)
 
@@ -810,7 +815,7 @@ class Driver(neo4j_utils.Driver):
         """
 
         # instantiate adapter if not exists
-        self.start_biolink_adapter()
+        self.start_ontology_adapter()
 
         return self.translator.translate(query)
 
@@ -820,7 +825,7 @@ class Driver(neo4j_utils.Driver):
         """
 
         # instantiate adapter if not exists
-        self.start_biolink_adapter()
+        self.start_ontology_adapter()
 
         return self.translator.reverse_translate(query)
 
