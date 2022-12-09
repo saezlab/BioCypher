@@ -13,7 +13,7 @@ from biocypher._ontology import OntologyAdapter
 __all__ = [
     'biolink_adapter',
     'test_ad_hoc_children_node',
-    'test_adapter',
+    'test_biolink_adapter',
     'test_biolink_yaml_extension',
     'test_custom_bmt_yaml',
     'test_exclude_properties',
@@ -84,6 +84,7 @@ def test_translate_nodes(translator):
         ("hsa-miR-132-3p", "mirna", {"taxon": 9606}),
         ("ASDB_OSBS", "complex", {"taxon": 9606}),
         ("REACT:25520", "reactome", {}),
+        ('agpl:001524', 'agpl', {}),
     ]
 
     t = translator.translate(items = items)
@@ -95,6 +96,8 @@ def test_translate_nodes(translator):
     assert next(t).label == "Protein"
     assert next(t).label == "Microrna"
     assert next(t).label == "Complex"
+    assert next(t).label == "Reactome.pathway"
+    assert next(t).label == "AlteredGeneProductLevel"
 
 
 def test_specific_and_generic_ids(translator):
@@ -162,12 +165,15 @@ def test_translate_edges(translator):
     assert n.target.label == "IS_TARGET_OF"
 
 
-def test_adapter(version_node):
+def test_biolink_adapter(version_node):
+
     ad = BiolinkAdapter(
         schema = version_node.schema,
         model="biolink",
         use_cache = False,
     )
+
+    ver = ad.biolink_version
 
     assert isinstance(
         ad.biolink_schema["protein"]["class_definition"],
@@ -353,7 +359,7 @@ def test_synonym(biolink_adapter):
     assert 'MacromolecularComplexMixin' in comp['ancestors']
 
 
-def test_properties_from_config(version_node, translator):
+def test_properties_from_config(translator):
 
     items = [
         ("G49205", "protein", {"taxon": 9606, "name": "test"}),
@@ -364,6 +370,7 @@ def test_properties_from_config(version_node, translator):
             {"taxon": 9606, "name": "test2", "test": "should_not_be_returned"},
         ),
     ]
+
     t = translator.translate(items = items)
 
     r = list(t)

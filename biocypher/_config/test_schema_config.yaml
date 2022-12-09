@@ -81,6 +81,10 @@ sequence variant:
     effect: str
     biotype: str
 
+altered_gene_product_level:
+  represented_as: node
+  label_in_input: agpl
+
 # virtual leaves of ad hoc child
 snRNA sequence:
   is_a: nucleic acid entity
