@@ -71,7 +71,7 @@ def biolink_adapter(version_node):
 def ontology_adapter(biolink_adapter):
     return OntologyAdapter(
         head_join_node='sequence variant',
-        tail_join_node='protein_coding',
+        tail_join_node='sequence_variant',
         biolink_adapter=biolink_adapter,
         tail_ontology_url='test/so.obo',
     )
@@ -610,5 +610,5 @@ def test_networkx_from_treedict(biolink_adapter):
 
 def test_generic_ontology_adapter(ontology_adapter):
     assert isinstance(ontology_adapter, OntologyAdapter)
-    assert len(ontology_adapter.tail_ontology) == 481
+    assert len(ontology_adapter.tail_ontology) == 8
     assert nx.is_directed_acyclic_graph(ontology_adapter.tail_ontology)
