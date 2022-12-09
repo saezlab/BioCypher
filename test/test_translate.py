@@ -1,3 +1,4 @@
+from networkx.classes.graph import Graph
 from linkml_runtime.linkml_model.meta import ClassDefinition
 import pytest
 
@@ -557,3 +558,9 @@ def test_strict_mode_property_filter(translator):
     assert 'source' in l[0].get_properties().keys()
     assert 'licence' in l[0].get_properties().keys()
     assert 'version' in l[0].get_properties().keys()
+
+
+def test_networkx_from_treedict(biolink_adapter):
+    graph = biolink_adapter.get_networkx_graph()
+
+    assert isinstance(graph, Graph)

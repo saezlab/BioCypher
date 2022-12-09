@@ -5,6 +5,8 @@ import re
 from neo4j_utils._misc import LIST_LIKE, if_none, to_list  # noqa: F401
 import treelib
 
+from ._logger import logger
+
 __all__ = [
     'SIMPLE_TYPES',
     'cc',
@@ -178,3 +180,56 @@ def tree_figure(tree: dict) -> treelib.Tree:
                 classes.remove(node)
 
     return _tree
+
+
+def try_import(module):
+    """
+    Import a module, send warning if not available.
+
+    Returns:
+        The module object on successful import, otherwise None.
+    """
+
+    try:
+
+        the_module = __import__(module, fromlist = [module.split('.')[0]])
+
+    except ModuleNotFoundError:
+
+        msg = f'Module `{module}` not available.'
+        warnings.warn(msg)
+        logger.warning(msg)
+        the_module = None
+
+    return the_module
+
+
+def nested_tree(tree: dict[str, str], root: Any = None) -> dict[str, dict]:
+    """
+    Nested dict representation of a tree, from a dict of child->parent pairs.
+
+    Args:
+        tree:
+            Child parent pairs.
+    """
+
+    flat_stack = collections.defaultdict(dict)
+    tree_stack = {}
+
+    roots = set(tree.values()) - set(tree.keys())
+    tree = tree.copy()
+    tree.update({k: root for k in roots})
+
+    for child, parent in tree.items():
+
+        _ = flat_stack[child]
+
+        if parent:
+
+            flat_stack[parent][child] = flat_stack[child]
+
+        elif child:
+
+            tree_stack[child] = flat_stack[child]
+
+    return tree_stack

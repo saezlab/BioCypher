@@ -29,22 +29,20 @@ neo4j = ">=4.4.0"
 PyYAML = ">=5.0"
 click = ">=7.0"
 bmt = "0.8.12"
-# bmt = { path = "../biolink-model-toolkit/", develop = true }
 more_itertools = "*"
 toml = "*"
 appdirs = "*"
 neo4j-utils = { git = "https://github.com/saezlab/neo4j-utils.git" }
-# for local development one can switch to local path:
-# neo4j-utils = { path = "../neo4j-utils/", develop = true }
 myst-parser = "^0.18.0"
-black = "^22.6.0"
+black = ">=21.0.0"
 matplotlib = "^3.5.2"
+treelib = "^1.6.1"
+obonet = "^0.3.1"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.0"
 tox = ">=3.20.1"
-pre-commit = ">=2.17.0"
-treelib = "^1.6.1"
+pre-commit = "^2.20.0"
 bump2version = "*"
 coverage = ">=6.0"
 sphinx = ">=5.0.0"
@@ -54,6 +52,10 @@ sphinx-autodoc-typehints = ">=1.18.0"
 pytest-cov = "^3.0.0"
 hypothesis = "^6.50.1"
 isort = "^5.10.1"
+yapf = "^0.32.0"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.7.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

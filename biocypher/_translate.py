@@ -52,7 +52,6 @@ from ._config import config, argconf
 
 __all__ = ['Translator']
 
-
 PROP_SYNONYMS = {
     'licence': 'license',
 }

@@ -23,6 +23,7 @@ import re
 import json
 import pickle
 import hashlib
+import collections
 
 from linkml_runtime.linkml_model import meta as lml_meta
 import bmt
@@ -531,19 +532,27 @@ class BiolinkAdapter:
         children = set(tree.keys())
 
         # while there are still parents that are not in the tree
+        # but why? and why we don't build the whole tree this way?
+        # now we build it twice -- denes
         while parents - children:
+
             missing = parents - children
 
             # add missing parents to tree
             for child in missing:
+
                 parent = self.toolkit.get_parent(child)
+
                 if parent:
+
                     tree[child] = parent
 
                 # remove root and mixins
                 if self.toolkit.is_mixin(child):
+
                     tree[child] = 'mixin'
 
+            # updating these seems redundant -- denes
             parents = set(tree.values())
             parents.discard(None)
             children = set(tree.keys())
@@ -561,15 +570,33 @@ class BiolinkAdapter:
         self._tree = tree
 
 
+    def ensure_tree(self):
+        """
+        Create the ontology tree if not available yet.
+        """
+
+        if not getattr(self, '_tree', None):
+
+            self.update_tree()
+
+
+    def nested_tree(self) -> dict[str, dict]:
+        """
+        Ontology tree in nested representation, suitable for NetworkX.
+        """
+
+        self.ensure_tree()
+
+        return _misc.nested_tree(self._tree)
+
+
     @property
     def tree(self) -> 'treelib.Tree':
         """
         Ontology tree as an ASCII printable string.
         """
 
-        if not getattr(self, '_tree', None):
-
-            self.update_tree()
+        self.ensure_tree()
 
         return _misc.tree_figure(self._tree)
 
@@ -585,3 +612,13 @@ class BiolinkAdapter:
         )
 
         self.tree.show()
+
+
+    def networkx_tree(self) -> 'nx.DiGraph':
+        """
+        The ontology tree as a directed NetworkX graph.
+        """
+
+        nx = _misc.try_import('networkx')
+
+        return nx.Graph(self.nested_tree()) if nx else None
