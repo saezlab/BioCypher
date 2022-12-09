@@ -32,7 +32,6 @@ name: region
 def: "A sequence_feature with an extent greater than zero. A nucleotide region is composed of bases and a polypeptide region is composed of amino acids." [SO:ke]
 subset: SOFA
 synonym: "sequence" EXACT []
-is_a: SO:0000110 ! sequence_feature
 
 [Term]
 id: SO:0001060
