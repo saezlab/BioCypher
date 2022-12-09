@@ -610,5 +610,10 @@ def test_networkx_from_treedict(biolink_adapter):
 
 def test_generic_ontology_adapter(ontology_adapter):
     assert isinstance(ontology_adapter, OntologyAdapter)
-    assert len(ontology_adapter.tail_ontology) == 8
+    assert len(ontology_adapter.tail_ontology) == 7
     assert nx.is_directed_acyclic_graph(ontology_adapter.tail_ontology)
+
+    # subgraph combination
+    combined_length = len(ontology_adapter.head_ontology
+                         ) + len(ontology_adapter.tail_ontology)
+    assert len(ontology_adapter.hybrid_ontology) == combined_length - 2
