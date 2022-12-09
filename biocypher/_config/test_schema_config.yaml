@@ -81,9 +81,17 @@ sequence variant:
     effect: str
     biotype: str
 
-altered_gene_product_level:
+altered gene product level:
   represented_as: node
   label_in_input: agpl
+
+decreased gene product level:
+  represented_as: node
+  label_in_input: agpl_decreased
+
+lethal variant:
+  represented_as: node
+  label_in_input: lethal
 
 # virtual leaves of ad hoc child
 snRNA sequence:

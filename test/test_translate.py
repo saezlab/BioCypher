@@ -1,5 +1,6 @@
 from networkx.classes.graph import Graph
 from linkml_runtime.linkml_model.meta import ClassDefinition
+from networkx.algorithms.traversal.depth_first_search import dfs_tree
 import pytest
 import networkx as nx
 
@@ -617,3 +618,24 @@ def test_generic_ontology_adapter(ontology_adapter):
     combined_length = len(ontology_adapter.head_ontology
                          ) + len(ontology_adapter.tail_ontology)
     assert len(ontology_adapter.hybrid_ontology) == combined_length - 2
+
+    # get predecessors of terminal node from hybrid ontology (successors because
+    # of inverted graph)
+    predecessors = list(
+        dfs_tree(
+            ontology_adapter.hybrid_ontology, 'decreased gene product level'
+        )
+    )
+    assert len(predecessors) == 7
+    assert 'altered gene product level' in predecessors
+    assert 'sequence variant' in predecessors
+    assert 'entity' in predecessors
+
+    # test node properties
+    entity = ontology_adapter.hybrid_ontology.nodes['entity']
+    assert entity['name'] == 'entity'
+    assert 'exact_mappings' in entity.keys()
+
+    lethal_var = ontology_adapter.hybrid_ontology.nodes['lethal variant']
+    assert lethal_var['accession'] == 'SO:0001773'
+    assert 'def' in lethal_var.keys()

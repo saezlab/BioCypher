@@ -402,4 +402,4 @@ def test_schema_config_from_web():
         )
     )
 
-    assert driver.translator._biolink_types
+    assert driver.translator._ontology_mapping

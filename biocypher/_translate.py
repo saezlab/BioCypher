@@ -60,6 +60,16 @@ PROP_SYNONYMS = {
 class Translator:
     """
     Translate components to their biocypher representations.
+
+    Executes the translation process as it is  configured in the
+    schema_config.yaml file. Creates a mapping dictionary from that file,
+    and, given nodes and edges, translates them into BioCypherNodes and
+    BioCypherEdges. During this process, can also filter the properties of the
+    entities if the schema_config.yaml file specifies a property whitelist or
+    blacklist.
+
+    Provides utility functions for translating between input and output labels
+    and cypher queries.
     """
 
     INPUT_TYPES = (
@@ -188,28 +198,31 @@ class Translator:
 
         # match the input label (_type) to
         # a Biolink label from schema_config
-        bl_type = self._get_biolink_type(_type)
+        ontology_class = self._get_ontology_mapping(_type)
 
-        if not bl_type:
+        if not ontology_class:
 
             self._record_no_type(_type, (source, target))
 
         else:
 
-            filtered_props = self._filter_props(bl_type, props)
-            rep = self.schema[bl_type]['represented_as']
+            filtered_props = self._filter_props(ontology_class, props)
+            rep = self.schema[ontology_class]['represented_as']
 
             if rep == 'node':
 
                 return self._rel_as_node(
                     source = source,
                     target = target,
-                    bl_type = bl_type,
+                    ontology_class = ontology_class,
                     _id = _id,
                     props = filtered_props,
                 )
 
-            edge_label = self.schema[bl_type].get('label_as_edge') or bl_type
+            edge_label = (
+                self.schema[ontology_class].get('label_as_edge') or
+                ontology_class
+            )
 
             return Edge(
                 source = source,
@@ -222,7 +235,7 @@ class Translator:
             self,
             source: str,
             target: str,
-            bl_type: str,
+            ontology_class: str,
             props: dict,
             _id: str | None = None,
         ) -> RelAsNode:
@@ -234,8 +247,8 @@ class Translator:
                 ID of the source node.
             target:
                 ID of the target node.
-            bl_type:
-                The Biolink type to be used as node label.
+            ontology_class:
+                The ontology node to be used as node label.
             props:
                 Arbitrary properties, already filtered by ``_filter_props``.
             _id:
@@ -259,7 +272,7 @@ class Translator:
 
         n = Node(
             id = node_id,
-            label = bl_type,
+            label = ontology_class,
             props = props,
         )
 
@@ -314,32 +327,32 @@ class Translator:
         """
 
         # find the node in schema that represents biolink node type
-        bl_type = self._get_biolink_type(_type)
+        ontology_class = self._get_ontology_mapping(_type)
 
-        if not bl_type:
+        if not ontology_class:
 
             self._record_no_type(_type, _id)
 
         else:
 
             # filter properties for those specified in schema_config if any
-            filtered_props = self._filter_props(bl_type, props)
-            id_type = self._id_type(bl_type)
+            filtered_props = self._filter_props(ontology_class, props)
+            id_type = self._id_type(ontology_class)
 
             return Node(
                 id = _id,
-                label = bl_type,
+                label = ontology_class,
                 id_type = id_type,
                 props = filtered_props,
             )
 
 
-    def _id_type(self, _bl_type: str) -> str:
+    def _id_type(self, _ontology_class: str) -> str:
         """
         Returns the preferred id for the given Biolink type.
         """
 
-        return self.schema.get(_bl_type, {}).get('id_type', 'id')
+        return self.schema.get(_ontology_class, {}).get('id_type', 'id')
 
 
     def _property_synonyms(props: dict[str, str]) -> dict[str, str]:
@@ -347,12 +360,12 @@ class Translator:
         return {PROP_SYNONYMS.get(k, k): v for k, v in props.items()}
 
 
-    def _filter_props(self, bl_type: str, props: dict) -> dict:
+    def _filter_props(self, ontology_class: str, props: dict) -> dict:
         """
         Filters properties for those specified in schema_config if any.
         """
 
-        filter_props = self.schema[bl_type].get('properties', {})
+        filter_props = self.schema[ontology_class].get('properties', {})
 
         if self.strict_mode:
 
@@ -360,7 +373,7 @@ class Translator:
 
         exclude_props = set(
             _misc.to_list(
-                self.schema[bl_type].get('exclude_properties', []),
+                self.schema[ontology_class].get('exclude_properties', []),
             ),
         )
 
@@ -388,7 +401,7 @@ class Translator:
             missing_required = missing_keys & self._required_props
             err = (
                 'Missing mandatory properties for entity of BioLink type '
-                f'{bl_type}: {", ".join(missing_required)}'
+                f'{ontology_class}: {", ".join(missing_required)}'
             )
             logger.error(err)
             raise ValueError(err)
@@ -409,13 +422,15 @@ class Translator:
 
         self.notype[_type] += 1
 
-    def get_missing_biolink_types(self) -> dict:
+
+    def get_missing_ontology_classes(self) -> dict:
         """
         Returns a dictionary of types that were not represented in the
         schema_config.
         """
 
         return self.notype
+
 
     @staticmethod
     def _log_begin_translate(_input: Iterable, what: str):
@@ -424,10 +439,12 @@ class Translator:
 
         logger.debug(f'Translating {n}{what} to BioCypher')
 
+
     @staticmethod
     def _log_finish_translate(what: str):
 
         logger.debug(f'Finished translating {what} to BioCypher.')
+
 
     def _update_ontology_types(self):
         """
@@ -436,22 +453,22 @@ class Translator:
         If multiple input labels, creates mapping for each.
         """
 
-        self._biolink_types = {}
+        self._ontology_mapping = {}
 
         for key, value in self.schema.items():
 
             if isinstance(value.get('label_in_input'), str):
-                self._biolink_types[value.get('label_in_input')] = key
+                self._ontology_mapping[value.get('label_in_input')] = key
 
             elif isinstance(value.get('label_in_input'), list):
                 for label in value['label_in_input']:
-                    self._biolink_types[label] = key
+                    self._ontology_mapping[label] = key
 
 
-    def _get_biolink_type(self, label: str) -> str | None:
+    def _get_ontology_mapping(self, label: str) -> str | None:
         """
         For each given input type ("label_in_input"), find the corresponding
-        Biolink type in the schema dictionary.
+        Biolink type in the schema dictionary (from the `schema_config.yam`).
 
         Args:
             label:
@@ -459,8 +476,7 @@ class Translator:
                 `schema_config.yaml`).
         """
 
-        # commented out until behaviour of _update_bl_types is fixed
-        return self._biolink_types.get(label, None)
+        return self._ontology_mapping.get(label, None)
 
 
     def translate_term(self, term):

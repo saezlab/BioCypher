@@ -62,7 +62,7 @@ class BiolinkAdapter(_ontology.Tree):
     def __init__(
         self,
         schema: dict,
-        translator: 'Translator',
+        translator: Translator,
         model: Literal['biocypher', 'biolink'] | str | dict | None = None,
         use_cache: bool = True,
     ):
@@ -292,6 +292,32 @@ class BiolinkAdapter(_ontology.Tree):
         self._log_ad_hoc_inheritance()
 
 
+    def _get_biolink_properties(self, class_name):
+        """
+        Get the properties of a Biolink class. Inserted into the nested
+        treedict for networkx creation.
+        """
+
+        keys = (
+            'broad_mappings',
+            'class_uri',
+            'close_mappings',
+            'description',
+            'exact_mappings',
+            'id_prefixes',
+            'is_a',
+            'name',
+            'narrow_mappings',
+        )
+
+        values = self.schema.get(class_name, {})
+        class_name = values.get('synonym_for', class_name)
+        classdef = self.toolkit.get_element(class_name) or {}
+        props = {k: classdef[k] for k in keys if k in classdef}
+
+        return props
+
+
     def _build_biolink_class(self, entity, values):
         """
         Build a Biolink class definition from a Biolink entity name and
@@ -301,6 +327,7 @@ class BiolinkAdapter(_ontology.Tree):
             return self._build_biolink_node_class(entity, values)
         else:
             return self._build_biolink_edge_class(entity, values)
+
 
     def _build_biolink_node_class(self, entity: str, values: dict) -> None:
         """
