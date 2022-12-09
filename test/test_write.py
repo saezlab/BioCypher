@@ -15,27 +15,7 @@ from biocypher._entity import (
 from biocypher._meta import VersionNode
 from biocypher._driver import Driver
 from biocypher._biolink import BiolinkAdapter
-
-__all__ = [
-    "bw",
-    "get_random_string",
-    "test_RelAsNode_implementation",
-    "test_accidental_exact_batch_size",
-    "test_create_import_call",
-    "test_inconsistent_properties",
-    "test_write_edge_data_and_headers",
-    "test_write_edge_data_from_gen",
-    "test_write_edge_data_from_large_gen",
-    "test_write_edge_data_from_list",
-    "test_write_edge_data_from_list_no_props",
-    "test_write_mixed_edges",
-    "test_write_node_data_and_headers",
-    "test_write_node_data_from_gen",
-    "test_write_node_data_from_gen_no_props",
-    "test_write_node_data_from_large_gen",
-    "test_write_node_data_from_list",
-    "test_writer_and_output_dir",
-]
+from biocypher._translate import Translator
 
 
 def get_random_string(length):
@@ -45,6 +25,7 @@ def get_random_string(length):
     return "".join(random.choice(letters) for _ in range(length))
 
 
+# temporary output paths
 path = os.path.join(
     tempfile.gettempdir(),
     f"biocypher-test-{get_random_string(5)}",
@@ -184,6 +165,7 @@ def unformat(s: str) -> str:
 
 @pytest.fixture
 def version_node():
+
     return VersionNode(
         from_config=True,
         config_file="biocypher/_config/test_schema_config.yaml",
@@ -192,12 +174,23 @@ def version_node():
 
 
 @pytest.fixture
-def bw(version_node):
+def translator(version_node):
 
-    bl_adapter = BiolinkAdapter(schema=version_node.schema)
+    return Translator(leaves=version_node.leaves)
+
+
+@pytest.fixture
+def bw(version_node, translator, translator):
+
+    biolink_adapter = BiolinkAdapter(
+        schema=version_node.leaves,
+        translator=translator,
+    )
+
     bw = BatchWriter(
         schema=version_node.schema,
-        bl_adapter=bl_adapter,
+        translator=translator,
+        biolink_adapter=biolink_adapter,
         dirname=path,
         delimiter=";",
         array_delimiter="|",
@@ -208,20 +201,54 @@ def bw(version_node):
 
     # teardown
     for f in os.listdir(path):
+
         os.remove(os.path.join(path, f))
+
     os.rmdir(path)
 
 
-@pytest.fixture
-def tab_bw(version_node):
-    tmp_bl_adapter = BiolinkAdapter(
-        leaves=version_node.leaves,
-        schema=module_data_path('test-biolink-model'),
-        clear_cache=True,
+def bw_strict(version_node, translator):
+
+    biolink_adapter = BiolinkAdapter(
+        schema=version_node.schema,
+        translator=translator,
+        model=module_data_path('test-biolink-model'),
+        use_cache = False,
     )
+
+    bw = BatchWriter(
+        schema=version_node.leaves,
+        biolink_adapter=biolink_adapter,
+        translator=translator,
+        dirname=path_strict,
+        delimiter=';',
+        array_delimiter='|',
+        quote="'",
+        strict_mode=True,
+    )
+
+    yield bw
+
+    # teardown
+    for f in os.listdir(path_strict):
+        os.remove(os.path.join(path_strict, f))
+    os.rmdir(path_strict)
+
+
+@pytest.fixture
+def tab_bw(version_node, translator):
+
+    tmp_biolink_adapter = BiolinkAdapter(
+        schema=version_node.schema,
+        translator=translator,
+        model=module_data_path('test-biolink-model'),
+        use_cache = False,
+    )
+
     tab_bw = BatchWriter(
         leaves=version_node.leaves,
-        bl_adapter=tmp_bl_adapter,
+        biolink_adapter=tmp_biolink_adapter,
+        translator=translator,
         dirname=path,
         delimiter='\t',
         array_delimiter='|',

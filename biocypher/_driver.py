@@ -172,7 +172,7 @@ class Driver(neo4j_utils.Driver):
         # likely this will be refactored soon
         self._create_constraints()
 
-        self.bl_adapter = None
+        self.biolink_adapter = None
         self.batch_writer = None
         self._update_translator()
         self._reset_insert_buffer()
@@ -592,7 +592,7 @@ class Driver(neo4j_utils.Driver):
 
         # instantiate adapter on demand because it takes time to load
         # the biolink model toolkit
-        self.start_bl_adapter()
+        self.start_biolink_adapter()
         self.start_batch_writer(dirname, db_name)
 
         items = self.translator.translate(items)
@@ -621,7 +621,8 @@ class Driver(neo4j_utils.Driver):
 
             self.batch_writer = BatchWriter(
                 schema=self.db_meta.schema,
-                bl_adapter=self.bl_adapter,
+                biolink_adapter=self.biolink_adapter,
+                translator=self.translator,
                 delimiter=self.csv_delim,
                 array_delimiter=self.csv_adelim,
                 quote=self.csv_quote,
@@ -636,7 +637,7 @@ class Driver(neo4j_utils.Driver):
         self.batch_writer.db_name = db_name
 
 
-    def start_bl_adapter(self):
+    def start_biolink_adapter(self):
         """
         Makes sure a Biolink adapter is available.
 
@@ -644,16 +645,17 @@ class Driver(neo4j_utils.Driver):
         existing.
 
         Attributes:
-            bl_adapter:
+            biolink_adapter:
                 An instance of :class:`biocypher.adapter.BioLinkAdapter`.
         """
 
-        if not self.bl_adapter:
+        if not self.biolink_adapter:
 
-            self.bl_adapter = BiolinkAdapter(
+            self.biolink_adapter = BiolinkAdapter(
                 schema = self.db_meta.schema,
                 model = self._biolink_model,
-                use_caceh = self._biolink_use_cache,
+                use_cache = self._biolink_use_cache,
+                translator=self.translator,
             )
 
 
@@ -778,9 +780,8 @@ class Driver(neo4j_utils.Driver):
         schema and treelib.
         """
 
-        self.start_bl_adapter()
-
-        self.bl_adapter.show()
+        self.start_biolink_adapter()
+        self.biolink_adapter.show()
 
 
     def translate_term(self, term: str) -> str:
@@ -789,9 +790,9 @@ class Driver(neo4j_utils.Driver):
         """
 
         # instantiate adapter if not exists
-        self.start_bl_adapter()
+        self.start_biolink_adapter()
 
-        return self.bl_adapter.translate_term(term)
+        return self.translator.translate_term(term)
 
     def reverse_translate_term(self, term: str) -> str:
         """
@@ -799,9 +800,9 @@ class Driver(neo4j_utils.Driver):
         """
 
         # instantiate adapter if not exists
-        self.start_bl_adapter()
+        self.start_biolink_adapter()
 
-        return self.bl_adapter.reverse_translate_term(term)
+        return self.translator.reverse_translate_term(term)
 
     def translate_query(self, query: str) -> str:
         """
@@ -809,9 +810,9 @@ class Driver(neo4j_utils.Driver):
         """
 
         # instantiate adapter if not exists
-        self.start_bl_adapter()
+        self.start_biolink_adapter()
 
-        return self.bl_adapter.translate(query)
+        return self.translator.translate(query)
 
     def reverse_translate_query(self, query: str) -> str:
         """
@@ -819,9 +820,9 @@ class Driver(neo4j_utils.Driver):
         """
 
         # instantiate adapter if not exists
-        self.start_bl_adapter()
+        self.start_biolink_adapter()
 
-        return self.bl_adapter.reverse_translate(query)
+        return self.translator.reverse_translate(query)
 
     def __repr__(self):
 

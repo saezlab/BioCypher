@@ -90,10 +90,14 @@ class Translator:
         self._required_props = config('required_props')
         self.strict_mode = argconf('strict_mode')
         self.schema = schema
-        self._update_bl_types()
+        self._update_ontology_types()
 
         # record nodes without biolink type configured in schema_config.yaml
         self.notype = collections.defaultdict(int)
+
+        # mapping functionality for translating terms and queries
+        self.mappings = {}
+        self.reverse_mappings = {}
 
     def reload(self):
         """
@@ -184,7 +188,7 @@ class Translator:
 
         # match the input label (_type) to
         # a Biolink label from schema_config
-        bl_type = self._get_bl_type(_type)
+        bl_type = self._get_biolink_type(_type)
 
         if not bl_type:
 
@@ -310,7 +314,7 @@ class Translator:
         """
 
         # find the node in schema that represents biolink node type
-        bl_type = self._get_bl_type(_type)
+        bl_type = self._get_biolink_type(_type)
 
         if not bl_type:
 
@@ -394,6 +398,7 @@ class Translator:
 
         return props
 
+
     def _record_no_type(self, _type: Any, what: Any) -> None:
         """
         Records the type of a node or edge that is not represented in the
@@ -404,7 +409,7 @@ class Translator:
 
         self.notype[_type] += 1
 
-    def get_missing_bl_types(self) -> dict:
+    def get_missing_biolink_types(self) -> dict:
         """
         Returns a dictionary of types that were not represented in the
         schema_config.
@@ -424,25 +429,26 @@ class Translator:
 
         logger.debug(f'Finished translating {what} to BioCypher.')
 
-    def _update_bl_types(self):
+    def _update_ontology_types(self):
         """
-        Creates a dictionary to translate from input labels to Biolink labels.
+        Creates a dictionary to translate from input labels to ontology labels.
 
         If multiple input labels, creates mapping for each.
         """
 
-        self._bl_types = {}
+        self._biolink_types = {}
 
         for key, value in self.schema.items():
 
             if isinstance(value.get('label_in_input'), str):
-                self._bl_types[value.get('label_in_input')] = key
+                self._biolink_types[value.get('label_in_input')] = key
 
             elif isinstance(value.get('label_in_input'), list):
                 for label in value['label_in_input']:
-                    self._bl_types[label] = key
+                    self._biolink_types[label] = key
 
-    def _get_bl_type(self, label: str) -> str | None:
+
+    def _get_biolink_type(self, label: str) -> str | None:
         """
         For each given input type ("label_in_input"), find the corresponding
         Biolink type in the schema dictionary.
@@ -454,4 +460,93 @@ class Translator:
         """
 
         # commented out until behaviour of _update_bl_types is fixed
-        return self._bl_types.get(label, None)
+        return self._biolink_types.get(label, None)
+
+
+    def translate_term(self, term):
+        """
+        Translate a single term.
+        """
+
+        return self.mappings.get(term, None)
+
+    def reverse_translate_term(self, term):
+        """
+        Reverse translate a single term.
+        """
+
+        return self.reverse_mappings.get(term, None)
+
+    def translate(self, query):
+        """
+        Translate a cypher query. Only translates labels as of now.
+        """
+
+        for key in self.mappings:
+
+            query = query.replace(f':{key}', f':{self.mappings[key]}')
+
+        return query
+
+    def reverse_translate(self, query):
+        """
+        Reverse translate a cypher query.
+
+        Only translates labels as of now.
+        """
+
+        for key in self.reverse_mappings:
+
+            key_par = ':' + key + ')'
+            key_sqb = ':' + key + ']'
+
+            # TODO this conditional probably does not cover all cases
+            if a in query or b in query:
+
+                rev_key = self.reverse_mappings[key]
+
+                if isinstance(rev_key, list):
+
+                    raise NotImplementedError(
+                        'Reverse translation of multiple inputs not '
+                        'implemented yet. Many-to-one mappings are '
+                        'not reversible. '
+                        f'({key} -> {rev_key})',
+                    )
+
+                else:
+
+                    query = query.replace(key_par, f':{rev_key})')
+                    query = query.replace(key_sqb, f':{rev_key}]')
+
+        return query
+
+    def _add_translation_mappings(self, original_name, biocypher_name):
+        """
+        Add translation mappings for a label and name. We use here the
+        PascalCase version of the BioCypher name, since sentence case is
+        not useful for Cypher queries.
+        """
+
+        for on in _misc.to_list(original_name):
+
+            self.mappings[on] = self.name_sentence_to_pascal(biocypher_name)
+
+        for bn in _misc.to_list(biocypher_name):
+
+            name = self.name_sentence_to_pascal(bn)
+            self.reverse_mappings[name] = original_name
+
+    @staticmethod
+    def name_sentence_to_pascal(name: str) -> str:
+        """
+        Converts a name in sentence case to pascal case.
+        """
+
+        # split on dots if dot is present
+        if '.' in name:
+            return '.'.join(
+                [_misc.cc(n) for n in name.split('.')],
+            )
+        else:
+            return _misc.cc(name)

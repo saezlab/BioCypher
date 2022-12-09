@@ -94,6 +94,7 @@ __all__ = ['BatchWriter', 'ENTITIES']
 if TYPE_CHECKING:
 
     from ._biolink import BiolinkAdapter
+    from ._translate import Translator
 
 N4_ALL_TYPES = {
     'int',
@@ -134,14 +135,15 @@ class BatchWriter:
     format specified by Neo4j for the use of admin import. Each batch
     writer instance has a fixed representation that needs to be passed
     at instantiation via the :py:attr:`schema` argument. The instance
-    also expects a biolink adapter via :py:attr:`bl_adapter` to be able
+    also expects a biolink adapter via :py:attr:`biolink_adapter` to be able
     to convert and extend the hierarchy.
     """
 
     def __init__(
         self,
         schema: dict,
-        bl_adapter: 'BiolinkAdapter',
+        biolink_adapter: 'BiolinkAdapter',
+        translator: 'Translator',
         delimiter: str | None = None,
         array_delimiter: str | None = None,
         quote: str | None = None,
@@ -159,7 +161,7 @@ class BatchWriter:
         Args:
             schema:
                 The BioCypher graph schema (from :py:class:`VersionNode`).
-            bl_adapter:
+            biolink_adapter:
                 Instance of :py:class:`BiolinkAdapter` to enable translation
                 and ontology queries
             delimiter:
@@ -206,7 +208,8 @@ class BatchWriter:
         self.skip_duplicate_nodes = skip_duplicate_nodes
         self.schema = schema
         self.wipe = wipe
-        self.bl_adapter = bl_adapter
+        self.biolink_adapter = biolink_adapter
+        self.translator = translator
         self.set_outdir(dirname)
         self.reset()
 
@@ -435,7 +438,7 @@ class BatchWriter:
         what = what or getattr(instance, 'entity', 'node')
 
         # get properties from config if present
-        from_conf = self.bl_adapter.schema.get(label, {}).get('properties')
+        from_conf = self.biolink_adapter.schema.get(label, {}).get('properties')
 
         if what != 'node' and not from_conf:
 
@@ -465,7 +468,7 @@ class BatchWriter:
         Looks up property types for label as edge schema.
         """
 
-        for leaf in self.bl_adapter.schema.values():
+        for leaf in self.biolink_adapter.schema.values():
 
             if (
                 isinstance(leaf, dict) and
@@ -605,7 +608,7 @@ class BatchWriter:
                     # write_single_node_list_to_file) TODO if it occurs, ask
                     # user to select desired properties and restart the process
                     all_labels = (
-                        self.bl_adapter.biolink_schema.
+                        self.biolink_adapter.biolink_schema.
                         get(label, {}).
                         get('ancestors')
                     ) or (label,)
@@ -700,7 +703,7 @@ class BatchWriter:
             # via the schema_config.yaml.
 
             # translate label to PascalCase
-            label = self.bl_adapter.name_sentence_to_pascal(label)
+            label = self.translator.name_sentence_to_pascal(label)
             hdr_path = os.path.join(self.outdir, f'{label}-header.csv')
             prt_path = os.path.join(self.outdir, f'{label}-part.*')
 
