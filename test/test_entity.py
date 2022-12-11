@@ -3,7 +3,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 import pytest
 
-from biocypher._create import (
+from biocypher._entity import (
     Edge,
     Node,
     RelAsNode,
@@ -29,7 +29,7 @@ def test_virtual_leaves_node(version_node):
 
 
 def test_getting_properties_via_config(version_node):
-    assert "name" in version_node.schema["protein"].get("properties").keys()
+    assert "name" in version_node.schema["protein"].get("props")
 
 
 @given(st.builds(Node))

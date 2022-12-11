@@ -7,7 +7,7 @@ from genericpath import isfile
 import pytest
 
 from biocypher._write import BatchWriter
-from biocypher._create import (
+from biocypher._entity import (
     Edge,
     Node,
     RelAsNode,

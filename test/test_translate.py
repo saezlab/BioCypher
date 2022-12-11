@@ -2,7 +2,7 @@ from linkml_runtime.linkml_model.meta import ClassDefinition
 import pytest
 
 from biocypher._config import module_data_path
-from biocypher._create import Edge, Node
+from biocypher._entity import Edge, Node
 from biocypher._translate import Translator
 from biocypher._biolink import BiolinkAdapter
 from biocypher._meta import VersionNode

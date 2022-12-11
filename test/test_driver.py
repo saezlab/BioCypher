@@ -1,7 +1,7 @@
 import neo4j
 import pytest
 
-from biocypher._create import Edge, Node, RelAsNode
+from biocypher._entity import Edge, Node, RelAsNode
 from biocypher._driver import Driver
 
 
