@@ -159,7 +159,8 @@ def unformat(s: str) -> str:
     Removes whitespace and line breaks from a string.
     """
 
-    rewhite = re.compile(r'[\s\n\t\r]+')
+    rewhite = re.compile(r'[\s\n"
+        "\t\r]+')
 
     return rewhite.sub(' ', s)
 
@@ -188,7 +189,12 @@ def bw(version_node, translator, translator):
         translator=translator,
     )
 
-    ontology_adapter = OntologyAdapter(biolink_adapter=biolink_adapter, )
+    ontology_adapter = OntologyAdapter(
+        tail_ontology_url='test/so.obo',
+        head_join_node='sequence variant',
+        tail_join_node='sequence_variant',
+        biolink_adapter=biolink_adapter,
+    )
 
     bw = BatchWriter(
         schema=version_node.schema,
@@ -317,6 +323,50 @@ def test_write_node_data_headers_import_call(bw):
     )
 
 
+def test_write_hybrid_ontology_nodes(bw):
+    nodes = []
+    for i in range(4):
+        nodes.append(
+            BioCypherNode(
+                node_id=f'agpl:000{i}',
+                node_label='altered gene product level',
+                properties={}
+            )
+        )
+
+    passed = bw.write_nodes(nodes)
+
+    h_csv = os.path.join(path, 'AlteredGeneProductLevel-header.csv')
+    p_csv = os.path.join(path, 'AlteredGeneProductLevel-part000.csv')
+
+    with open(h_csv) as f:
+        header = f.read()
+
+    with open(p_csv) as f:
+        part = f.read()
+
+    assert passed
+    assert header == ':ID;id;preferred_id;:LABEL'
+    assert part == (
+        "agpl:0000;'agpl:0000';'id';AlteredGeneProductLevel|"
+        "BiologicalEntity|Entity|FunctionalEffectVariant|GenomicEntity|"
+        "Mixin|NamedThing|OntologyClass|PhysicalEssence|"
+        "PhysicalEssenceOrOccurrent|SequenceVariant|ThingWithTaxon\n"
+        "agpl:0001;'agpl:0001';'id';AlteredGeneProductLevel|BiologicalEntity|"
+        "Entity|FunctionalEffectVariant|GenomicEntity|Mixin|NamedThing|"
+        "OntologyClass|PhysicalEssence|PhysicalEssenceOrOccurrent|"
+        "SequenceVariant|ThingWithTaxon\n"
+        "agpl:0002;'agpl:0002';'id';AlteredGeneProductLevel|BiologicalEntity|"
+        "Entity|FunctionalEffectVariant|GenomicEntity|Mixin|NamedThing|"
+        "OntologyClass|PhysicalEssence|PhysicalEssenceOrOccurrent|"
+        "SequenceVariant|ThingWithTaxon\n"
+        "agpl:0003;'agpl:0003';'id';AlteredGeneProductLevel|BiologicalEntity|"
+        "Entity|FunctionalEffectVariant|GenomicEntity|Mixin|NamedThing|"
+        "OntologyClass|PhysicalEssence|PhysicalEssenceOrOccurrent|"
+        "SequenceVariant|ThingWithTaxon\n"
+    )
+
+
 def test_tab_delimiter(tab_bw):
 
     nodes = _get_nodes(8)
@@ -364,14 +414,30 @@ def test_property_types(bw):
 
     assert passed
     assert header == (
-        ':ID;id:string;id_type:string;name:string;'
-        'score:double;taxon:long;:LABEL'
+        ':ID;name;score:double;taxon:long;'
+        'genes:string[];id;preferred_id;:LABEL'
     )
     assert data == (
-        'p1;p1;id;StringProperty1;4.0;9606;Protein\n'
-        'p2;p2;id;StringProperty1;2.0;9606;Protein\n'
-        'p3;p3;id;StringProperty1;1.3333333333333333;9606;Protein\n'
-        'p4;p4;id;StringProperty1;1.0;9606;Protein'
+        "p1;'StringProperty1';4.0;9606;'gene1|gene2';"
+        "'p1';'id';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p2;'StringProperty1';2.0;9606;'gene1|gene2';"
+        "'p2';'id';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p3;'StringProperty1';1.3333333333333333;9606;'gene1|gene2';"
+        "'p3';'id';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p4;'StringProperty1';1.0;9606;'gene1|gene2';"
+        "'p4';'id';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
     )
 
 
@@ -390,17 +456,63 @@ def test_write_node_data_from_list(bw):
         mi = f.read()
 
     assert passed
+
     assert pr == (
-        'p1;p1;uniprot;StringProperty1;4.0;9606;Protein\n'
-        'p2;p2;uniprot;StringProperty1;2.0;9606;Protein\n'
-        'p3;p3;uniprot;StringProperty1;1.3333333333333333;9606;Protein\n'
-        'p4;p4;uniprot;StringProperty1;1.0;9606;Protein'
+        "p1;'StringProperty1';4.0;9606;'gene1|gene2';"
+        "'p1';'uniprot';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p2;'StringProperty1';2.0;9606;'gene1|gene2';"
+        "'p2';'uniprot';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p3;'StringProperty1';1.3333333333333333;9606;'gene1|gene2';"
+        "'p3';'uniprot';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p4;'StringProperty1';1.0;9606;'gene1|gene2';"
+        "'p4';'uniprot';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
     )
+
     assert mi == (
-        'm1;m1;mirbase;StringProperty1;9606;Microrna\n'
-        'm2;m2;mirbase;StringProperty1;9606;Microrna\n'
-        'm3;m3;mirbase;StringProperty1;9606;Microrna\n'
-        'm4;m4;mirbase;StringProperty1;9606;Microrna'
+        "m1;'StringProperty1';9606;"
+        "'m1';'mirbase';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m2;'StringProperty1';9606;"
+        "'m2';'mirbase';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m3;'StringProperty1';9606;"
+        "'m3';'mirbase';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m4;'StringProperty1';9606;'m4';'mirbase';ChemicalEntity|"
+        "ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
     )
 
 
@@ -421,17 +533,63 @@ def test_write_node_data_from_gen(bw):
         mi = f.read()
 
     assert passed
+
     assert pr == (
-        'p1;p1;uniprot;StringProperty1;4.0;9606;Protein\n'
-        'p2;p2;uniprot;StringProperty1;2.0;9606;Protein\n'
-        'p3;p3;uniprot;StringProperty1;1.3333333333333333;9606;Protein\n'
-        'p4;p4;uniprot;StringProperty1;1.0;9606;Protein'
+        "p1;'StringProperty1';4.0;9606;'gene1|gene2';"
+        "'p1';'uniprot';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p2;'StringProperty1';2.0;9606;'gene1|gene2';"
+        "'p2';'uniprot';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p3;'StringProperty1';1.3333333333333333;9606;'gene1|gene2';"
+        "'p3';'uniprot';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p4;'StringProperty1';1.0;9606;'gene1|gene2';"
+        "'p4';'uniprot';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
     )
+
     assert mi == (
-        'm1;m1;mirbase;StringProperty1;9606;Microrna\n'
-        'm2;m2;mirbase;StringProperty1;9606;Microrna\n'
-        'm3;m3;mirbase;StringProperty1;9606;Microrna\n'
-        'm4;m4;mirbase;StringProperty1;9606;Microrna'
+        "m1;'StringProperty1';9606;"
+        "'m1';'mirbase';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m2;'StringProperty1';9606;"
+        "'m2';'mirbase';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m3;'StringProperty1';9606;"
+        "'m3';'mirbase';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m4;'StringProperty1';9606;"
+        "'m4';'mirbase';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
     )
 
 
@@ -465,17 +623,59 @@ def test_write_node_data_from_gen_no_props(bw):
         mi = f.read()
 
     assert passed
+
     assert pr == (
-        'p1;p1;id;StringProperty1;4.0;9606;Protein\n'
-        'p2;p2;id;StringProperty1;2.0;9606;Protein\n'
-        'p3;p3;id;StringProperty1;1.3333333333333333;9606;Protein\n'
-        'p4;p4;id;StringProperty1;1.0;9606;Protein'
+        "p1;'StringProperty1';4.0;9606;'gene1|gene2';"
+        "'p1';'id';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p2;'StringProperty1';2.0;9606;'gene1|gene2';"
+        "'p2';'id';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p3;'StringProperty1';1.3333333333333333;9606;'gene1|gene2';"
+        "'p3';'id';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p4;'StringProperty1';1.0;9606;'gene1|gene2';"
+        "'p4';'id';BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
     )
+
     assert mi == (
-        'm1;m1;id;Microrna\n'
-        'm2;m2;id;Microrna\n'
-        'm3;m3;id;Microrna\n'
-        'm4;m4;id;Microrna'
+        "m1;'m1';'id';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m2;'m2';'id';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m3;'m3';'id';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
+        "m4;'m4';'id';ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|"
+        "Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|"
+        "MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|"
+        "NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|"
+        "PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|"
+        "ThingWithTaxon|Transcript\n"
     )
 
 
@@ -581,9 +781,18 @@ def test_write_none_type_property_and_order_invariance(bw):
         p = f.read()
 
     assert passed
+
     assert p == (
-        'p1;p1;id;;1;9606;Protein\n'
-        'p2;p2;id;;2;9606;Protein'
+        "p1;;1;9606;;'p1';'id';BiologicalEntity|"
+        "ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+        "p2;;2;9606;'gene1|gene2';'p2';'id';BiologicalEntity|"
+        "ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
     )
 
 
@@ -647,15 +856,21 @@ def test_write_edge_data_from_gen(bw):
     assert passed
 
     assert pid_contents == (
-        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n'
-        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n'
-        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n'
+        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n"
+        "'
+        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n"
+        "'
+        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n"
+        "'
         'p3;True;4;T253;0.78;p4;PERTURBED_IN_DISEASE'
     )
     assert imi_contents == (
-        'm0;1;3-UTR;p1;IS_MUTATED_IN\n'
-        'm1;1;3-UTR;p2;IS_MUTATED_IN\n'
-        'm2;1;3-UTR;p3;IS_MUTATED_IN\n'
+        'm0;1;3-UTR;p1;IS_MUTATED_IN\n"
+        "'
+        'm1;1;3-UTR;p2;IS_MUTATED_IN\n"
+        "'
+        'm2;1;3-UTR;p3;IS_MUTATED_IN\n"
+        "'
         'm3;1;3-UTR;p4;IS_MUTATED_IN'
     )
 
@@ -701,15 +916,21 @@ def test_write_edge_data_from_list(bw):
 
     assert passed
     assert pid_contents == (
-        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n'
-        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n'
-        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n'
+        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n"
+        "'
+        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n"
+        "'
+        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n"
+        "'
         'p3;True;4;T253;0.78;p4;PERTURBED_IN_DISEASE'
     )
     assert imi_contents == (
-        'm0;1;3-UTR;p1;IS_MUTATED_IN\n'
-        'm1;1;3-UTR;p2;IS_MUTATED_IN\n'
-        'm2;1;3-UTR;p3;IS_MUTATED_IN\n'
+        'm0;1;3-UTR;p1;IS_MUTATED_IN\n"
+        "'
+        'm1;1;3-UTR;p2;IS_MUTATED_IN\n"
+        "'
+        'm2;1;3-UTR;p3;IS_MUTATED_IN\n"
+        "'
         'm3;1;3-UTR;p4;IS_MUTATED_IN'
     )
 
@@ -826,23 +1047,34 @@ def test_relasnode_implementation(bw):
         pti_contents = f.read()
 
     assert passed
+
     assert iso_contents == (
         'i1;p1;IS_SOURCE_OF\n'
         'i2;p2;IS_SOURCE_OF\n'
         'i3;p3;IS_SOURCE_OF\n'
         'i4;p4;IS_SOURCE_OF'
     )
+
     assert ito_contents == (
         'i0;p2;IS_TARGET_OF\n'
         'i1;p3;IS_TARGET_OF\n'
         'i2;p4;IS_TARGET_OF\n'
         'i3;p5;IS_TARGET_OF'
     )
+
     assert pti_contents == (
-        'i1;True;-1;i1;id;Post translational interaction\n'
-        'i2;True;-1;i2;id;Post translational interaction\n'
-        'i3;True;-1;i3;id;Post translational interaction\n'
-        'i4;True;-1;i4;id;Post translational interaction'
+        "i1;True;-1;'i1';'id';Association|Entity|GeneToGeneAssociation|"
+        "PairwiseGeneToGeneInteraction|PairwiseMolecularInteraction|"
+        "PostTranslationalInteraction\n"
+        "i2;True;-1;'i2';'id';Association|Entity|GeneToGeneAssociation|"
+        "PairwiseGeneToGeneInteraction|PairwiseMolecularInteraction|"
+        "PostTranslationalInteraction\n"
+        "i3;True;-1;'i3';'id';Association|Entity|GeneToGeneAssociation|"
+        "PairwiseGeneToGeneInteraction|PairwiseMolecularInteraction|"
+        "PostTranslationalInteraction\n"
+        "i4;True;-1;'i4';'id';Association|Entity|GeneToGeneAssociation|"
+        "PairwiseGeneToGeneInteraction|PairwiseMolecularInteraction|"
+        "PostTranslationalInteraction\n"
     )
 
 
@@ -928,17 +1160,63 @@ def test_write_offline():
         mi = f.read()
 
     assert passed
+
     assert pr == (
-        'p1,p1,uniprot,StringProperty1,4.0,9606,Protein\n'
-        'p2,p2,uniprot,StringProperty1,2.0,9606,Protein\n'
-        'p3,p3,uniprot,StringProperty1,1.3333333333333333,9606,Protein\n'
-        'p4,p4,uniprot,StringProperty1,1.0,9606,Protein'
+        'p1,"StringProperty1",4.0,9606,"gene1|gene2",'
+        '"p1","uniprot",BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|'
+        'ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|'
+        'GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|'
+        'Polypeptide|Protein|ThingWithTaxon\n"'
+        '"p2,"StringProperty1",2.0,9606,"gene1|gene2",'
+        '"p2","uniprot",BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|'
+        'ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|'
+        'GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|'
+        'Polypeptide|Protein|ThingWithTaxon\n"'
+        '"p3,"StringProperty1",1.3333333333333333,9606,"gene1|gene2",'
+        '"p3","uniprot",BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|'
+        'ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|'
+        'GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|'
+        'Polypeptide|Protein|ThingWithTaxon\n"'
+        '"p4,"StringProperty1",1.0,9606,"gene1|gene2",'
+        '"p4","uniprot",BiologicalEntity|ChemicalEntityOrGeneOrGeneProduct|'
+        'ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|'
+        'GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|'
+        'Polypeptide|Protein|ThingWithTaxon\n"'
     )
+
     assert mi == (
-        'm1,m1,mirbase,StringProperty1,9606,Microrna\n'
-        'm2,m2,mirbase,StringProperty1,9606,Microrna\n'
-        'm3,m3,mirbase,StringProperty1,9606,Microrna\n'
-        'm4,m4,mirbase,StringProperty1,9606,Microrna'
+        'm1,"StringProperty1",9606,'
+        '"m1","mirbase",ChemicalEntity|ChemicalEntityOrGeneOrGeneProduct|'
+        'ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|'
+        'Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|'
+        'MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|'
+        'NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|'
+        'PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|'
+        'ThingWithTaxon|Transcript\n"'
+        '"m2,"StringProperty1",9606,"m2","mirbase",ChemicalEntity|'
+        'ChemicalEntityOrGeneOrGeneProduct|'
+        'ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|'
+        'Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|'
+        'MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|'
+        'NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|'
+        'PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|'
+        'ThingWithTaxon|Transcript\n"'
+        '"m3,"StringProperty1",9606,"m3","mirbase",ChemicalEntity|'
+        'ChemicalEntityOrGeneOrGeneProduct|'
+        'ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|'
+        'Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|'
+        'MacromolecularMachineMixin|MicroRNA|Mixin|'
+        'MolecularEntity|NamedThing|NoncodingRNAProduct|NucleicAcidEntity|'
+        'OntologyClass|PhysicalEssence|PhysicalEssenceOrOccurrent|'
+        'RNAProduct|ThingWithTaxon|Transcript\n"'
+        '"m4,"StringProperty1",9606,"m4","mirbase",ChemicalEntity|'
+        'ChemicalEntityOrGeneOrGeneProduct|'
+        'ChemicalEntityOrProteinOrPolypeptide|ChemicalOrDrugOrTreatment|'
+        'Entity|GeneOrGeneProduct|GeneProductMixin|GenomicEntity|'
+        'MacromolecularMachineMixin|MicroRNA|Mixin|MolecularEntity|'
+        'NamedThing|NoncodingRNAProduct|NucleicAcidEntity|OntologyClass|'
+        'PhysicalEssence|PhysicalEssenceOrOccurrent|RNAProduct|'
+        'ThingWithTaxon|Transcript\n"'
     )
 
 
@@ -1002,9 +1280,16 @@ def test_write_synonym(bw):
 
     assert passed
     assert os.path.exists(csv)
+
     assert comp == (
-        # this looks really ugly
-        "p1;'StringProperty1';4.32;9606;'p1';'id';Complex|MacromolecularComplexMixin|MacromolecularMachineMixin\np2;'StringProperty1';4.32;9606;'p2';'id';Complex|MacromolecularComplexMixin|MacromolecularMachineMixin\np3;'StringProperty1';4.32;9606;'p3';'id';Complex|MacromolecularComplexMixin|MacromolecularMachineMixin\np4;'StringProperty1';4.32;9606;'p4';'id';Complex|MacromolecularComplexMixin|MacromolecularMachineMixin\n"
+        "p1;'StringProperty1';4.32;9606;'p1';'id';"
+        "Complex|Entity|MacromolecularMachineMixin|Mixin\n"
+        "p2;'StringProperty1';4.32;9606;'p2';'id';"
+        "Complex|Entity|MacromolecularMachineMixin|Mixin\n"
+        "p3;'StringProperty1';4.32;9606;'p3';'id';"
+        "Complex|Entity|MacromolecularMachineMixin|Mixin\n"
+        "p4;'StringProperty1';4.32;9606;'p4';'id';"
+        "Complex|Entity|MacromolecularMachineMixin|Mixin\n"
     )
 
 
@@ -1043,3 +1328,59 @@ def test_duplicate_edges(bw):
 
     assert 'PERTURBED_IN_DISEASE' in bw.duplicate_edge_types
     assert 'p1_p2' in bw.duplicate_edge_ids
+
+
+
+def test_get_duplicate_edges(bw):
+    edges = _get_edges(4)
+    edges.append(
+        BioCypherEdge(
+            source_id='p1',
+            target_id='p2',
+            relationship_label='PERTURBED_IN_DISEASE',
+        )
+    )
+
+    bw.write_edges(edges)
+
+    d = bw.get_duplicate_edges()
+    types = d[0]
+    ids = d[1]
+
+    assert 'PERTURBED_IN_DISEASE' in types
+    assert 'p1_p2' in ids
+
+
+def test_write_strict(bw_strict):
+
+    n1 = BioCypherNode(
+        node_id='p1',
+        node_label='protein',
+        properties={
+            'name': 'StringProperty1',
+            'score': 4.32,
+            'taxon': 9606,
+            'genes': ['gene1', 'gene2'],
+            'source': 'source1',
+            'version': 'version1',
+            'licence': 'licence1',
+        },
+    )
+
+    passed = bw_strict.write_nodes([n1])
+
+    assert passed
+
+    csv = os.path.join(path_strict, 'Protein-part000.csv')
+
+    with open(csv) as f:
+        prot = f.read()
+
+    assert prot == (
+        "p1;'StringProperty1';4.32;9606;'gene1|gene2';"
+        "'p1';'id';'source1';'version1';'licence1';BiologicalEntity|"
+        "ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|Entity|GeneOrGeneProduct|"
+        "GeneProductMixin|MacromolecularMachineMixin|Mixin|NamedThing|"
+        "Polypeptide|Protein|ThingWithTaxon\n"
+    )

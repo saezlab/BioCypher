@@ -608,10 +608,10 @@ class BatchWriter:
                     # write_single_node_list_to_file) TODO if it occurs, ask
                     # user to select desired properties and restart the process
                     all_labels = (
-                        self.ontology_adapter.biolink_schema.
-                        get(label, {}).
-                        get('ancestors')
-                    ) or (label,)
+                        self.ontology_adapter.get_node_ancestry(label) or
+                        (label,)
+                    )
+                    all_labels = sorted(_misc.cc(l) for l in all_labels)
                     all_labels = OrderedDict.fromkeys(all_labels)
                     all_labels = self.adelim.join(all_labels)
                     labels[label] = all_labels
