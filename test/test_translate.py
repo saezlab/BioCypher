@@ -43,9 +43,9 @@ def test_translate_nodes(translator):
     assert all(isinstance(n, Node) for n in t)
 
     t = translator.translate(items = items)
-    assert next(t).label == "protein"
-    assert next(t).label == "microRNA"
-    assert next(t).label == "macromolecular complex mixin"
+    assert next(t).label == "Protein"
+    assert next(t).label == "Microrna"
+    assert next(t).label == "Macromolecular complex mixin"
 
 
 def test_specific_and_generic_ids(translator):
