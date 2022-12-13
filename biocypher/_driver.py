@@ -177,7 +177,7 @@ class Driver(neo4j_utils.Driver):
         Checks for full queues in the insert buffer and inserts their contents.
         """
 
-        self.flush(batch_size = _conf('insert_batch_size'))
+        self.flush(batch_size = _config('insert_batch_size'))
 
 
     def init_db(self):
