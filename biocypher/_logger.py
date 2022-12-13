@@ -84,9 +84,12 @@ def get_logger(name: str = 'biocypher') -> logging.Logger:
 
         file_handler.setFormatter(file_formatter)
 
-        # add handlers
-        logger.addHandler(file_handler)
-        logger.addHandler(stdout_handler)
+        neo4ju_logger = logging.getLogger('neo4ju')
+
+        for _logger in (logger, neo4ju_logger):
+
+            _logger.addHandler(file_handler)
+            _logger.addHandler(stdout_handler)
 
         # startup message
         logger.info(f'This is BioCypher version `{__version__}`.')
