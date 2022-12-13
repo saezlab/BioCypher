@@ -65,16 +65,15 @@ def test_specific_and_generic_ids(translator):
 
 def test_translate_edges(translator):
     # edge type association (defined in `schema_config.yaml`)
-    src_tar_type_edge = [
+    src_tar_type_edge = (
         ("G15258", "MONDO1", "gene_disease", {}),
         ("G15258", "MONDO2", "protein_disease", {}),
         ("G15258", "G15242", "phosphorylation", {}),
-    ]
+    )
 
-    def gen_edges():
-        yield from src_tar_type_edge
+    gen_edges = (e for e in src_tar_type_edge)
 
-    t = translator.translate_edges(gen_edges())
+    t = translator.translate(items = gen_edges)
 
     assert type(next(t)) == Edge
     assert next(t).label == "PERTURBED_IN_DISEASE"
@@ -172,7 +171,7 @@ def test_merge_multiple_inputs_node(version_node, translator):
     assert not any([s for s in version_node.schema.keys() if ".gene" in s])
     assert any([s for s in version_node.schema.keys() if ".pathway" in s])
 
-    # check translator.translate_nodes for unique return type
+    # check translator.translate for unique return type
     assert all([type(n) == Node for n in t])
     assert all([n.label == "gene" for n in t])
 
@@ -332,7 +331,7 @@ def test_properties_from_config(version_node, translator):
         ),
     ]
 
-    t = translator.translate_edges(src_tar_type)
+    t = translator.translate(items = src_tar_type)
 
     r = list(t)
     assert (
@@ -385,7 +384,7 @@ def test_exclude_properties(translator):
         ),
     ]
 
-    t = translator.translate_edges(src_tar_type)
+    t = translator.translate(items = src_tar_type)
 
     r = list(t)
     assert (
