@@ -41,19 +41,22 @@ def ensure_iterable_2(value: Any) -> Iterable:
 
     return (
         (value,)
-            if isinstance(value, SIMPLE_TYPES) or not plain_tuple(value) else
+            if isinstance(value, SIMPLE_TYPES) or tuple_child(value) else
         value
             if isinstance(value, LIST_LIKE) else
         (value,)
     )
 
 
-def plain_tuple(value: Any) -> bool:
+def tuple_child(value: Any) -> bool:
     """
     Tells if ``value`` is just a tuple, or some fancy subclass of it.
+
+    Returns:
+        *True* if ``value`` is a tuple, but not just a plain tuple.
     """
 
-    return isinstance(value, tuple) and value.__class__.__mro__[0] == tuple
+    return isinstance(value, tuple) and value.__class__.__mro__[0] != tuple
 
 
 def prettyfloat(n: float) -> str:
