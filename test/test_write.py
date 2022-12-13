@@ -178,7 +178,7 @@ def test_property_types(bw):
 def test_write_node_data_from_list(bw):
     nodes = _get_nodes(4)
 
-    passed = bw._write_node_data(nodes, batch_size=1e6)
+    passed = bw._write_records(nodes, batch_size=1e6)
 
     p_csv = os.path.join(path, "Protein-part000.csv")
     m_csv = os.path.join(path, "MicroRNA-part000.csv")
@@ -204,7 +204,7 @@ def test_write_node_data_from_gen(bw):
     def node_gen(nodes):
         yield from nodes
 
-    passed = bw._write_node_data(node_gen(nodes), batch_size=1e6)
+    passed = bw._write_records(node_gen(nodes), batch_size=1e6)
 
     p_csv = os.path.join(path, "Protein-part000.csv")
     m_csv = os.path.join(path, "MicroRNA-part000.csv")
@@ -247,7 +247,7 @@ def test_write_node_data_from_gen_no_props(bw):
     def node_gen(nodes):
         yield from nodes
 
-    passed = bw._write_node_data(node_gen(nodes), batch_size=1e6)
+    passed = bw._write_records(node_gen(nodes), batch_size=1e6)
 
     p_csv = os.path.join(path, "Protein-part000.csv")
     m_csv = os.path.join(path, "microRNA-part000.csv")
@@ -273,7 +273,7 @@ def test_write_node_data_from_large_gen(bw):
     def node_gen(nodes):
         yield from nodes
 
-    passed = bw._write_node_data(
+    passed = bw._write_records(
         node_gen(nodes),
         batch_size=int(1e4),
     )  # reduce test time
@@ -315,7 +315,7 @@ def test_too_many_properties(bw):
     def node_gen(nodes):
         yield from nodes
 
-    passed = bw._write_node_data(
+    passed = bw._write_records(
         node_gen(nodes),
         batch_size=int(1e4),
     )  # reduce test time
@@ -336,7 +336,7 @@ def test_not_enough_properties(bw):
     def node_gen(nodes):
         yield from nodes
 
-    passed = bw._write_node_data(
+    passed = bw._write_records(
         node_gen(nodes),
         batch_size=int(1e4),
     )  # reduce test time
@@ -372,7 +372,7 @@ def test_write_none_type_property_and_order_invariance(bw):
     def node_gen(nodes):
         yield from nodes
 
-    passed = bw._write_node_data(
+    passed = bw._write_records(
         node_gen(nodes),
         batch_size=int(1e4),
     )  # reduce test time
@@ -432,7 +432,7 @@ def test_write_edge_data_from_gen(bw):
     def edge_gen(edges):
         yield from edges
 
-    passed = bw._write_edge_data(edge_gen(edges), batch_size=int(1e4))
+    passed = bw._write_records(edge_gen(edges), batch_size=int(1e4))
 
     pid_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
     imi_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
@@ -482,7 +482,7 @@ def test_write_edge_data_from_large_gen(bw):
     def edge_gen(edges):
         yield from edges
 
-    passed = bw._write_edge_data(edge_gen(edges), batch_size=int(1e4))
+    passed = bw._write_records(edge_gen(edges), batch_size=int(1e4))
 
     apl0_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
     ips0_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
@@ -506,7 +506,7 @@ def test_write_edge_data_from_large_gen(bw):
 def test_write_edge_data_from_list(bw):
     edges = _get_edges(4)
 
-    passed = bw._write_edge_data(edges, batch_size=int(1e4))
+    passed = bw._write_records(edges, batch_size=int(1e4))
 
     apl_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
     ips_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
@@ -542,7 +542,7 @@ def test_write_edge_data_from_list_no_props(bw):
         )
         edges.append(e2)
 
-    passed = bw._write_edge_data(edges, batch_size=int(1e4))
+    passed = bw.write(edges, batch_size=int(1e4))
 
     ptl_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
     pts_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
