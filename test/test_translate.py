@@ -32,28 +32,28 @@ def biolink_adapter(version_node):
 
 
 def test_translate_nodes(translator):
-    id_type = [
+    items = [
         ("G9205", "protein", {"taxon": 9606}),
         ("hsa-miR-132-3p", "mirna", {"taxon": 9606}),
         ("ASDB_OSBS", "complex", {"taxon": 9606}),
         ("REACT:25520", "reactome", {}),
     ]
-    t = translator.translate_nodes(id_type)
+    t = translator.translate(items = items)
 
-    assert all(type(n) == Node for n in t)
+    assert all(isinstance(n, Node) for n in t)
 
-    t = translator.translate_nodes(id_type)
+    t = translator.translate(items = items)
     assert next(t).label == "protein"
     assert next(t).label == "microRNA"
     assert next(t).label == "macromolecular complex mixin"
 
 
 def test_specific_and_generic_ids(translator):
-    id_type = [
+    items = [
         ("CHAT", "hgnc", {"taxon": 9606}),
         ("REACT:25520", "reactome", {}),
     ]
-    t = list(translator.translate_nodes(id_type))
+    t = list(translator.translate(items = items))
 
     assert t[0].id == "CHAT"
     assert t[0].props.get("id_type") == "hgnc"
@@ -96,7 +96,7 @@ def test_translate_edges(translator):
             {"directed": True, "effect": -1},
         ),
     ]
-    t = translator.translate_edges(src_tar_type_node)
+    t = translator.translate(items = src_tar_type_node)
 
     n = next(t)
     n = next(t)
@@ -160,11 +160,11 @@ def test_merge_multiple_inputs_node(version_node, translator):
     # both inputs should lead to creation of the same node type
 
     # define nodes
-    id_type = [
+    items = [
         ("CHAT", "hgnc", {"taxon": 9606}),
         ("CHRNA4", "ensg", {"taxon": 9606}),
     ]
-    t = list(translator.translate_nodes(id_type))
+    t = list(translator.translate(items = items))
 
     assert t
 
@@ -188,7 +188,7 @@ def test_merge_multiple_inputs_edge(version_node, translator):
         ("CHAT", "AD", "gene_disease", {"taxon": 9606}),
         ("CHRNA4", "AD", "protein_disease", {"taxon": 9606}),
     ]
-    t = list(translator.translate_edges(src_tar_type))
+    t = list(translator.translate(items = src_tar_type))
 
     # check unique edge type
     assert not any(
@@ -202,7 +202,7 @@ def test_merge_multiple_inputs_edge(version_node, translator):
         [s for s in version_node.schema.keys() if ".sequence variant" in s]
     )
 
-    # check translator.translate_nodes for unique return type
+    # check translator.translate for unique return type
     assert all([type(e) == Edge for e in t])
     assert all([e.label == "PERTURBED_IN_DISEASE" for e in t])
 
@@ -291,7 +291,7 @@ def test_multiple_inheritance(biolink_adapter):
 
 def test_properties_from_config(version_node, translator):
 
-    id_type = [
+    items = [
         ("G49205", "protein", {"taxon": 9606, "name": "test"}),
         ("G92035", "protein", {"taxon": 9606}),
         (
@@ -300,7 +300,7 @@ def test_properties_from_config(version_node, translator):
             {"taxon": 9606, "name": "test2", "test": "should_not_be_returned"},
         ),
     ]
-    t = translator.translate_nodes(id_type)
+    t = translator.translate(items = items)
 
     r = list(t)
     assert (
@@ -346,7 +346,7 @@ def test_properties_from_config(version_node, translator):
 
 
 def test_exclude_properties(translator):
-    id_type = [
+    items = [
         (
             "CHAT",
             "ensg",
@@ -354,7 +354,7 @@ def test_exclude_properties(translator):
         ),
         ("ACHE", "ensg", {"taxon": 9606}),
     ]
-    t = translator.translate_nodes(id_type)
+    t = translator.translate(items = items)
 
     r = list(t)
     assert (
@@ -437,13 +437,14 @@ def test_reverse_translate_query(biolink_adapter):
 
 
 def test_log_missing_nodes(translator):
-    tn = translator.translate_nodes(
-        [
-            ("G49205", "missing_protein", {"taxon": 9606}),
-            ("G92035", "missing_protein", {}),
-            ("REACT:25520", "missing_pathway", {}),
-        ]
-    )
+
+    items = [
+        ("G49205", "missing_protein", {"taxon": 9606}),
+        ("G92035", "missing_protein", {}),
+        ("REACT:25520", "missing_pathway", {}),
+    ]
+
+    tn = translator.translate(items = items)
 
     tn = list(tn)
 
