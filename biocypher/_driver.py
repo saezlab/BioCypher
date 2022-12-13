@@ -616,7 +616,9 @@ class Driver(neo4j_utils.Driver):
         Returns:
             A *neo4j-admin* import call.
         """
+
         return self.batch_writer.get_import_call()
+
 
     def write_import_call(self) -> bool:
         """
@@ -630,7 +632,9 @@ class Driver(neo4j_utils.Driver):
         Returns:
             The write was successful.
         """
+
         return self.batch_writer.write_import_call()
+
 
     def log_missing_bl_types(self) -> Optional[set[str]]:
         """
@@ -643,15 +647,18 @@ class Driver(neo4j_utils.Driver):
             A set of missing Biolink types
         """
 
-        mt = self.translator.get_missing_bl_types()
+        missing = self.translator.get_missing_bl_types()
 
-        if mt:
+        if missing:
+
             msg = (
                 'Input entities not accounted for due to them not being '
                 'present in the `schema_config.yaml` configuration file '
                 '(see log for details): \n'
             )
-            for k, v in mt.items():
+
+            for k, v in missing.items():
+
                 msg += f'    {k}: {v} \n'
 
             logger.warning(msg)
@@ -659,6 +666,9 @@ class Driver(neo4j_utils.Driver):
         else:
 
             logger.info('No missing Biolink types in input.')
+
+        return missing
+
 
     def log_duplicates(self):
         """
