@@ -385,7 +385,7 @@ class Driver(neo4j_utils.Driver):
         try:
 
             entities = [
-                node._asdict() for node in _misc.ensure_iterable(nodes)
+                node._asdict() for node in _misc.ensure_iterable_2(nodes)
             ]
 
         except AttributeError as e:
