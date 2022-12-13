@@ -84,7 +84,7 @@ def test_add_invalid_biocypher_node(driver):
 
 def test_add_single_biocypher_node(driver):
     # neo4j database needs to be running!
-    n = Node(node_id="test_id1", node_label="Test")
+    n = Node(id="test_id1", label="Test")
     driver.add_biocypher_nodes(n)
     r, summary = driver.query(
         "MATCH (n:Test) " "WITH n, n.id AS id " "RETURN id "
@@ -94,8 +94,8 @@ def test_add_single_biocypher_node(driver):
 
 def test_add_biocypher_node_list(driver):
     # neo4j database needs to be running!
-    n1 = Node(node_id="test_id1", node_label="Test")
-    n2 = Node(node_id="test_id2", node_label="Test")
+    n1 = Node(id="test_id1", label="Test")
+    n2 = Node(id="test_id2", label="Test")
     driver.add_biocypher_nodes([n1, n2])
     r, summary = driver.query(
         "MATCH (n:Test) " "WITH n, n.id AS id " "RETURN id "
