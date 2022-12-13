@@ -93,8 +93,8 @@ def test_write_node_data_headers_import_call(bw):
     # four proteins, four miRNAs
     nodes = _get_nodes(8)
 
-    passed = bw.write_nodes(nodes[:4])
-    passed = bw.write_nodes(nodes[4:])
+    passed = bw.write(nodes[:4])
+    passed = bw.write(nodes[4:])
     bw.write_import_call()
 
     p_csv = os.path.join(path, "Protein-header.csv")
@@ -156,7 +156,7 @@ def test_property_types(bw):
         )
         nodes.append(bnp)
 
-    passed = bw.write_nodes(nodes, batch_size=1e6)
+    passed = bw.write(nodes, batch_size=1e6)
 
     d_csv = os.path.join(path, "Protein-part000.csv")
     h_csv = os.path.join(path, "Protein-header.csv")
@@ -394,7 +394,7 @@ def test_accidental_exact_batch_size(bw):
     def node_gen(nodes):
         yield from nodes
 
-    passed = bw.write_nodes(
+    passed = bw.write(
         node_gen(nodes),
         batch_size=int(1e4),
     )  # reduce test time
@@ -572,9 +572,9 @@ def test_write_edge_data_headers_import_call(bw):
     def edge_gen2(edges):
         yield from edges[4:]
 
-    passed = bw.write_edges(edge_gen1(edges))
-    passed = bw.write_edges(edge_gen2(edges))
-    passed = bw.write_nodes(nodes)
+    passed = bw.write(edge_gen1(edges))
+    passed = bw.write(edge_gen2(edges))
+    passed = bw.write(nodes)
 
     bw.write_import_call()
 
@@ -602,7 +602,7 @@ def test_write_duplicate_edges(bw):
     edges = _get_edges(4)
     edges.append(edges[0])
 
-    passed = bw.write_edges(edges)
+    passed = bw.write(edges)
 
     ptl_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
     pts_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
@@ -619,7 +619,7 @@ def test_RelAsNode_implementation(bw):
     def gen(lis):
         yield from lis
 
-    passed = bw.write_edges(gen(trips))
+    passed = bw.write(gen(trips))
 
     iso_csv = os.path.join(path, "IS_SOURCE_OF-part000.csv")
     ito_csv = os.path.join(path, "IS_TARGET_OF-part000.csv")
@@ -680,8 +680,8 @@ def test_RelAsNode_overwrite_behaviour(bw):
     def gen2(lis):
         yield from lis[5:]
 
-    passed1 = bw.write_edges(gen1(trips))
-    passed2 = bw.write_edges(gen2(trips))
+    passed1 = bw.write(gen1(trips))
+    passed2 = bw.write(gen2(trips))
 
     iso_csv = os.path.join(path, "IS_SOURCE_OF-part001.csv")
 
@@ -718,7 +718,7 @@ def test_write_mixed_edges(bw):
     def gen(lis):
         yield from lis
 
-    passed = bw.write_edges(gen(mixed))
+    passed = bw.write(gen(mixed))
 
     pmi_csv = os.path.join(path, "PostTranslationalInteraction-header.csv")
     iso_csv = os.path.join(path, "IS_SOURCE_OF-header.csv")
@@ -764,7 +764,7 @@ def test_create_import_call(bw):
     def gen(lis):
         yield from lis
 
-    passed = bw.write_edges(gen(mixed))
+    passed = bw.write(gen(mixed))
 
     call = bw.get_import_call()
 
@@ -828,7 +828,7 @@ def test_duplicate_id(bw):
         )
         nodes.append(bnp)
 
-    passed = bw.write_nodes(nodes)
+    passed = bw.write(nodes)
 
     with open(csv, 'r') as fp:
 
