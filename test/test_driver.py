@@ -5,19 +5,25 @@ from biocypher._entity import Edge, Node, RelAsNode
 from biocypher._driver import Driver
 
 
-@pytest.fixture
-def driver():
+def init_driver():
+
     # neo4j database needs to be running!
     # there needs to be a database called "test" in the neo4j instance
-    d = Driver(
+
+    return Driver(
         db_name="test",
         db_passwd="your_password_here",
         wipe=True,
         increment_version=False,
         user_schema_config_path="biocypher/_config/test_schema_config.yaml",
     )
-    # create single node in case of empty DB for testing?
-    # d.add_biocypher_nodes(Node("TestID", "Test"))
+
+
+@pytest.fixture
+def driver():
+
+    d = init_driver()
+
     yield d
 
     # teardown
@@ -32,9 +38,16 @@ def driver():
     d.close()
 
 
+requires_neo4j = pytest.mark.skipif(
+    init_driver().db_status() != 'online',
+    reason='This test requires connection to a Neo4j server.'
+)
+
+
+@requires_neo4j
 def test_wipe():
     # just convenience function to wipe the database in testing env
-    d = Driver(db_name="test", db_passwd="your_password_here", wipe=True)
+    d = Driver(wipe=True)
     d.close()
 
     assert True
@@ -51,11 +64,13 @@ def test_create_offline():
     d.close()
 
 
+@requires_neo4j
 def test_connect_to_db(driver):
 
     assert isinstance(driver.driver, neo4j.Neo4jDriver)
 
 
+@requires_neo4j
 def test_explain(driver):
     query = "MATCH (n) WITH n LIMIT 25 MATCH (n)--(m)--(f) RETURN n, m, f"
     e = driver.explain(query)
@@ -64,6 +79,7 @@ def test_explain(driver):
     assert "args" in t and "identifiers" in t
 
 
+@requires_neo4j
 def test_profile(driver):
     query = "MATCH (n) RETURN n LIMIT 100"
     p = driver.profile(query)
@@ -82,6 +98,7 @@ def test_add_invalid_biocypher_node(driver):
         driver.add_biocypher_nodes("String")
 
 
+@requires_neo4j
 def test_add_single_biocypher_node(driver):
     # neo4j database needs to be running!
     n = Node(id="test_id1", label="Test")
@@ -92,6 +109,7 @@ def test_add_single_biocypher_node(driver):
     assert r[0]["id"] == "test_id1"
 
 
+@requires_neo4j
 def test_add_biocypher_node_list(driver):
     # neo4j database needs to be running!
     n1 = Node(id="test_id1", label="Test")
@@ -103,6 +121,7 @@ def test_add_biocypher_node_list(driver):
     assert set([r[0]["id"], r[1]["id"]]) == set(["test_id1", "test_id2"])
 
 
+@requires_neo4j
 def test_add_biocypher_node_generator(driver):
     # neo4j database needs to be running!
     # generator
@@ -119,6 +138,7 @@ def test_add_biocypher_node_generator(driver):
     assert r[0]["id"] == "test_id1" and r[1]["id"] == "test_id2"
 
 
+@requires_neo4j
 def test_add_specific_id_node(driver):
     n = Node(id="CHAT", label="Gene", id_type="hgnc")
     driver.add_biocypher_nodes(n)
@@ -129,6 +149,7 @@ def test_add_specific_id_node(driver):
     assert r[0]["n"].get("id_type") == "hgnc"
 
 
+@requires_neo4j
 def test_add_generic_id_node(driver):
     n = Node(id="CHAT", label="Gene", id_type="HGNC")
     driver.add_biocypher_nodes(n)
@@ -144,6 +165,7 @@ def test_add_invalid_biocypher_edge(driver):
         driver.add_biocypher_edges([1, 2, 3])
 
 
+@requires_neo4j
 def test_add_single_biocypher_edge_explicit_node_creation(driver):
     # neo4j database needs to be running!
     n1 = Node("src", "Test")
@@ -164,6 +186,7 @@ def test_add_single_biocypher_edge_explicit_node_creation(driver):
     )
 
 
+@requires_neo4j
 def test_add_single_biocypher_edge_missing_nodes(driver):
     # neo4j database needs to be running!
     # merging on non-existing nodes creates them without labels; what is
@@ -183,6 +206,7 @@ def test_add_single_biocypher_edge_missing_nodes(driver):
     )
 
 
+@requires_neo4j
 def test_add_biocypher_edge_list(driver):
     # neo4j database needs to be running!
     n1 = Node("src", "Test")
@@ -209,6 +233,7 @@ def test_add_biocypher_edge_list(driver):
     )
 
 
+@requires_neo4j
 def test_add_biocypher_edge_generator(driver):
     # neo4j database needs to be running!
     n1 = Node("src", "Test")
@@ -242,6 +267,7 @@ def test_add_biocypher_edge_generator(driver):
     )
 
 
+@requires_neo4j
 def test_add_biocypher_interaction_as_relasnode_list(driver):
     # neo4j database needs to be running!
     i1 = Node("int1", "Int1")
@@ -274,6 +300,7 @@ def test_add_biocypher_interaction_as_relasnode_list(driver):
     )
 
 
+@requires_neo4j
 def test_add_biocypher_interaction_as_RelAsNode_generator(driver):
     # neo4j database needs to be running!
     i1 = Node("int1", "Int1")
@@ -312,6 +339,7 @@ def test_add_biocypher_interaction_as_RelAsNode_generator(driver):
     )
 
 
+@requires_neo4j
 def test_pretty_profile(driver):
     prof, printout = driver.profile(
         "UNWIND [1,2,3,4,5] as id "
@@ -322,6 +350,7 @@ def test_pretty_profile(driver):
     assert "args" in prof and "ProduceResults" in printout[1]
 
 
+@requires_neo4j
 def test_pretty_explain(driver):
     plan, printout = driver.explain(
         "UNWIND [1,2,3,4,5] as id "
@@ -332,6 +361,7 @@ def test_pretty_explain(driver):
     assert "args" in plan and "ProduceResults" in printout[0]
 
 
+@requires_neo4j
 def test_access_translate(driver):
     assert driver.translate_term("mirna") == "MicroRNA"
     assert (
