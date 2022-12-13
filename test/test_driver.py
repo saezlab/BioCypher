@@ -378,9 +378,9 @@ def test_access_translate(driver):
 
 def test_log_missing_bl_types(driver):
     driver.translator.notype = {}
-    assert driver.log_missing_bl_types() == None
+    assert not driver.log_missing_bl_types()
 
     driver.translator.notype = {"a": 1, "b": 2}
     mt = driver.log_missing_bl_types()
 
-    assert mt.get("a") == 1 and mt.get("b") == 2
+    assert mt["a"] == 1 and mt["b"] == 2
