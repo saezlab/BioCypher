@@ -6,13 +6,14 @@ from neo4j_utils._misc import LIST_LIKE, if_none, to_list  # noqa: F401
 
 __all__ = [
     'SIMPLE_TYPES',
-    'ensure_iterable',
-    'prettyfloat',
-    'dict_str',
-    'is_str',
     'cc',
-    'sc',
+    'dict_str',
+    'ensure_iterable',
+    'ensure_iterable_2',
     'first',
+    'plain_tuple',
+    'prettyfloat',
+    'sc',
 ]
 
 SIMPLE_TYPES = (
@@ -40,11 +41,19 @@ def ensure_iterable_2(value: Any) -> Iterable:
 
     return (
         (value,)
-            if isinstance(value, (SIMPLE_TYPES, tuple)) else
+            if isinstance(value, SIMPLE_TYPES) or not plain_tuple(value) else
         value
             if isinstance(value, LIST_LIKE) else
         (value,)
     )
+
+
+def plain_tuple(value: Any) -> bool:
+    """
+    Tells if ``value`` is just a tuple, or some fancy subclass of it.
+    """
+
+    return isinstance(value, tuple) and value.__class__.__mro__[0] == tuple
 
 
 def prettyfloat(n: float) -> str:
@@ -103,7 +112,7 @@ def sc(s: str) -> str:
         String in snake_case form.
     """
 
-    return re.sub('[ \.]', '_', s).lower()
+    return re.sub(r'[ \.]', '_', s).lower()
 
 
 def first(value: Any) -> Any:
