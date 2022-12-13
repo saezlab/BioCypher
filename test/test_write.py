@@ -121,10 +121,10 @@ def _get_nodes(l: int) -> list:
     nodes = []
     for i in range(l):
         bnp = Node(
-            node_id=f"p{i+1}",
-            node_label="protein",
+            id=f"p{i+1}",
+            label="protein",
             id_type="uniprot",
-            properties={
+            props={
                 "score": 4 / (i + 1),
                 "name": "StringProperty1",
                 "taxon": 9606,
@@ -132,10 +132,10 @@ def _get_nodes(l: int) -> list:
         )
         nodes.append(bnp)
         bnm = Node(
-            node_id=f"m{i+1}",
-            node_label="microRNA",
+            id=f"m{i+1}",
+            label="microRNA",
             id_type="mirbase",
-            properties={"name": "StringProperty1", "taxon": 9606},
+            props={"name": "StringProperty1", "taxon": 9606},
         )
         nodes.append(bnm)
 
@@ -146,9 +146,9 @@ def test_property_types(bw):
     nodes = []
     for i in range(4):
         bnp = Node(
-            node_id=f"p{i+1}",
-            node_label="protein",
-            properties={
+            id=f"p{i+1}",
+            label="protein",
+            props={
                 "score": 4 / (i + 1),
                 "name": "StringProperty1",
                 "taxon": 9606,
@@ -229,9 +229,9 @@ def test_write_node_data_from_gen_no_props(bw):
     le = 4
     for i in range(le):
         bnp = Node(
-            node_id=f"p{i+1}",
-            node_label="protein",
-            properties={
+            id=f"p{i+1}",
+            label="protein",
+            props={
                 "score": 4 / (i + 1),
                 "name": "StringProperty1",
                 "taxon": 9606,
@@ -239,8 +239,8 @@ def test_write_node_data_from_gen_no_props(bw):
         )
         nodes.append(bnp)
         bnm = Node(
-            node_id=f"m{i+1}",
-            node_label="microRNA",
+            id=f"m{i+1}",
+            label="microRNA",
         )
         nodes.append(bnm)
 
@@ -301,9 +301,9 @@ def test_too_many_properties(bw):
     nodes = _get_nodes(1)
 
     bn1 = Node(
-        node_id="p0",
-        node_label="protein",
-        properties={
+        id="p0",
+        label="protein",
+        props={
             "p1": get_random_string(4),
             "p2": get_random_string(8),
             "p3": get_random_string(16),
@@ -327,9 +327,9 @@ def test_not_enough_properties(bw):
     nodes = _get_nodes(1)
 
     bn1 = Node(
-        node_id="p0",
-        node_label="protein",
-        properties={"p1": get_random_string(4)},
+        id="p0",
+        label="protein",
+        props={"p1": get_random_string(4)},
     )
     nodes.append(bn1)
 
@@ -351,19 +351,19 @@ def test_write_none_type_property_and_order_invariance(bw):
     nodes = []
 
     bnp1 = Node(
-        node_id=f"p1",
-        node_label="protein",
-        properties={"taxon": 9606, "score": 1, "name": None},
+        id=f"p1",
+        label="protein",
+        props={"taxon": 9606, "score": 1, "name": None},
     )
     bnp2 = Node(
-        node_id=f"p2",
-        node_label="protein",
-        properties={"name": None, "score": 2, "taxon": 9606},
+        id=f"p2",
+        label="protein",
+        props={"name": None, "score": 2, "taxon": 9606},
     )
     bnm = Node(
-        node_id=f"m1",
-        node_label="microRNA",
-        properties={"name": None, "taxon": 9606},
+        id=f"m1",
+        label="microRNA",
+        props={"name": None, "taxon": 9606},
     )
     nodes.append(bnp1)
     nodes.append(bnp2)
@@ -458,7 +458,7 @@ def _get_edges(l):
             source=f"p{i}",
             target=f"p{i + 1}",
             label="PERTURBED_IN_DISEASE",
-            properties={"residue": "T253", "level": 4},
+            props={"residue": "T253", "level": 4},
             # we suppose the verb-form relationship label is created by
             # translation functionality in translate.py
         )
@@ -467,7 +467,7 @@ def _get_edges(l):
             source=f"m{i}",
             target=f"p{i + 1}",
             label="Is_Mutated_In",
-            properties={"site": "3-UTR", "confidence": 1},
+            props={"site": "3-UTR", "confidence": 1},
             # we suppose the verb-form relationship label is created by
             # translation functionality in translate.py
         )
@@ -650,9 +650,9 @@ def _get_rel_as_nodes(l):
     for i in range(l):
 
         n = Node(
-            node_id=f"i{i+1}",
-            node_label="post translational interaction",
-            properties={"directed": True, "effect": -1},
+            id=f"i{i+1}",
+            label="post translational interaction",
+            props={"directed": True, "effect": -1},
         )
         e1 = Edge(
             source=f"i{i+1}",
