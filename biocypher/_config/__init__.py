@@ -16,6 +16,8 @@ Module data directory, including:
 * The default config files
 """
 
+from __future__ import annotations
+
 from typing import Any, Optional
 import os
 import re
@@ -23,7 +25,15 @@ import re
 import yaml
 import appdirs
 
-__all__ = ['config', 'module_data', 'module_data_path', 'neo4j_config', 'read_config', 'reset']
+__all__ = [
+    'config',
+    'module_data',
+    'module_data_path',
+    'neo4j_config',
+    'read_config',
+    'reset',
+    'save',
+]
 
 
 _SYNONYMS = {
@@ -55,6 +65,9 @@ _NEO4J_SYNONYMS = {
     'db': 'name',
     'pw': 'passwd',
 }
+
+_USER_CONFIG_DIR = appdirs.user_config_dir('biocypher', 'saezlab')
+_USER_CONFIG_FILE = os.path.join(_USER_CONFIG_DIR, 'conf.yaml')
 
 
 def module_data_path(name: str) -> str:
@@ -105,8 +118,7 @@ def read_config() -> dict:
     """
 
     defaults = _conf_key_synonyms(module_data('module_config'))
-    user_confdir = appdirs.user_config_dir('biocypher', 'saezlab')
-    user = _read_yaml(os.path.join(user_confdir, 'conf.yaml')) or {}
+    user = _read_yaml(_USER_CONFIG_FILE) or {}
     local = _read_yaml('biocypher.yaml') or {}
 
     defaults.update(_conf_key_synonyms(user))
@@ -164,6 +176,27 @@ def neo4j_config() -> dict:
         for k, v in _config.items()
         if k.startswith('neo4j_')
     }
+
+
+def save(path: str | None = None, user: bool = False):
+    """
+    Save the current config into a YAML file.
+
+    Args:
+        path:
+            Path to the YAML file. By default *biocypher.yaml* in the
+            current directory.
+        user:
+            Save to the user level config directory: this will override the
+            default values for all sessions run by the same user, but not
+            the local config in the working directory.
+    """
+
+    path = _USER_CONFIG_FILE if user else path or 'biocypher.yaml'
+
+    with open(path, 'w') as fp:
+
+        yaml.dump(_config, fp)
 
 
 def reset():
