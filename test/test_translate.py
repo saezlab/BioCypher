@@ -25,8 +25,8 @@ def translator(version_node):
 @pytest.fixture
 def biolink_adapter(version_node):
     return BiolinkAdapter(
-        version_node.schema,
-        schema="biocypher",  # this is the default
+        schema=version_node.schema,
+        model="biocypher",  # this is the default
         # unstable, move to test yaml
     )
 
