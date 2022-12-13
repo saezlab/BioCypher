@@ -171,14 +171,14 @@ def test_add_single_biocypher_edge_explicit_node_creation(driver):
     e = Edge("src", "tar", "Test")
     driver.add_biocypher_edges(e)
     r, summary = driver.query(
-        "MATCH (n1)-[r:Test]->(n2) "
+        "MATCH (n1)-[r:TEST]->(n2) "
         "WITH n1, n2, n1.id AS id1, n2.id AS id2, type(r) AS label "
         "RETURN id1, id2, label"
     )
     assert (
         r[0]["id1"] == "src"
         and r[0]["id2"] == "tar"
-        and r[0]["label"] == "Test"
+        and r[0]["label"] == "TEST"
     )
 
 
@@ -191,14 +191,14 @@ def test_add_single_biocypher_edge_missing_nodes(driver):
     e = Edge("src", "tar", "Test")
     driver.add_biocypher_edges(e)
     r, summary = driver.query(
-        "MATCH (n1)-[r:Test]->(n2) "
+        "MATCH (n1)-[r:TEST]->(n2) "
         "WITH n1, n2, n1.id AS id1, n2.id AS id2, type(r) AS label "
         "RETURN id1, id2, label"
     )
     assert (
         r[0]["id1"] == "src"
         and r[0]["id2"] == "tar"
-        and r[0]["label"] == "Test"
+        and r[0]["label"] == "TEST"
     )
 
 
@@ -215,7 +215,7 @@ def test_add_biocypher_edge_list(driver):
     e2 = Edge("src", "tar2", "Test2")
     driver.add_biocypher_edges([e1, e2])
     r, summary = driver.query(
-        "MATCH (n3)<-[r2:Test2]-(n1)-[r1:Test1]->(n2) "
+        "MATCH (n3)<-[r2:TEST2]-(n1)-[r1:TEST1]->(n2) "
         "WITH n1, n2, n3, n1.id AS id1, n2.id AS id2, n3.id AS id3, "
         "type(r1) AS label1, type(r2) AS label2 "
         "RETURN id1, id2, id3, label1, label2"
@@ -224,8 +224,8 @@ def test_add_biocypher_edge_list(driver):
         r[0]["id1"] == "src"
         and r[0]["id2"] == "tar1"
         and r[0]["id3"] == "tar2"
-        and r[0]["label1"] == "Test1"
-        and r[0]["label2"] == "Test2"
+        and r[0]["label1"] == "TEST1"
+        and r[0]["label2"] == "TEST2"
     )
 
 
@@ -249,7 +249,7 @@ def test_add_biocypher_edge_generator(driver):
 
     driver.add_biocypher_edges(g)
     r, summary = driver.query(
-        "MATCH (n3)<-[r2:Test2]-(n1)-[r1:Test1]->(n2) "
+        "MATCH (n3)<-[r2:TEST2]-(n1)-[r1:TEST1]->(n2) "
         "WITH n1, n2, n3, n1.id AS id1, n2.id AS id2, n3.id AS id3, "
         "type(r1) AS label1, type(r2) AS label2 "
         "RETURN id1, id2, id3, label1, label2"
@@ -258,8 +258,8 @@ def test_add_biocypher_edge_generator(driver):
         r[0]["id1"] == "src"
         and r[0]["id2"] == "tar1"
         and r[0]["id3"] == "tar2"
-        and r[0]["label1"] == "Test1"
-        and r[0]["label2"] == "Test2"
+        and r[0]["label1"] == "TEST1"
+        and r[0]["label2"] == "TEST2"
     )
 
 
@@ -269,15 +269,15 @@ def test_add_biocypher_interaction_as_relasnode_list(driver):
     i1 = Node("int1", "Int1")
     i2 = Node("int2", "Int2")
     driver.add_biocypher_nodes([i1, i2])
-    e1 = Edge("src", "int1", "is_source_of")
-    e2 = Edge("tar", "int1", "is_target_of")
-    e3 = Edge("src", "int2", "is_source_of")
-    e4 = Edge("tar", "int2", "is_target_of")
+    e1 = Edge("src", "int1", "IS_SOURCE_OF")
+    e2 = Edge("tar", "int1", "IS_TARGET_OF")
+    e3 = Edge("src", "int2", "IS_SOURCE_OF")
+    e4 = Edge("tar", "int2", "IS_TARGET_OF")
     r1, r2 = RelAsNode(i1, e1, e2), RelAsNode(i2, e3, e4)
     driver.add_biocypher_edges([r1, r2])
     r, summary = driver.query(
-        "MATCH (n2)-[e4:is_target_of]->(i2:Int2)<-[e3:is_source_of]-"
-        "(n1)-[e1:is_source_of]->(i1:Int1)<-[e2:is_target_of]-(n2)"
+        "MATCH (n2)-[e4:IS_TARGET_OF]->(i2:Int2)<-[e3:IS_SOURCE_OF]-"
+        "(n1)-[e1:IS_SOURCE_OF]->(i1:Int1)<-[e2:IS_TARGET_OF]-(n2)"
         "WITH n1, n2, i1, i2, n1.id AS id1, n2.id AS id2, "
         "i1.id AS id3, i2.id AS id4, "
         "type(e1) AS label1, type(e2) AS label2, "
@@ -289,10 +289,10 @@ def test_add_biocypher_interaction_as_relasnode_list(driver):
         and r[0]["id2"] == "tar"
         and r[0]["id3"] == "int1"
         and r[0]["id4"] == "int2"
-        and r[0]["label1"] == "is_source_of"
-        and r[0]["label2"] == "is_target_of"
-        and r[0]["label3"] == "is_source_of"
-        and r[0]["label4"] == "is_target_of"
+        and r[0]["label1"] == "IS_SOURCE_OF"
+        and r[0]["label2"] == "IS_TARGET_OF"
+        and r[0]["label3"] == "IS_SOURCE_OF"
+        and r[0]["label4"] == "IS_TARGET_OF"
     )
 
 
@@ -302,10 +302,10 @@ def test_add_biocypher_interaction_as_RelAsNode_generator(driver):
     i1 = Node("int1", "Int1")
     i2 = Node("int2", "Int2")
     driver.add_biocypher_nodes([i1, i2])
-    e1 = Edge("src", "int1", "is_source_of")
-    e2 = Edge("tar", "int1", "is_target_of")
-    e3 = Edge("src", "int2", "is_source_of")
-    e4 = Edge("tar", "int2", "is_target_of")
+    e1 = Edge("src", "int1", "IS_SOURCE_OF")
+    e2 = Edge("tar", "int1", "IS_TARGET_OF")
+    e3 = Edge("src", "int2", "IS_SOURCE_OF")
+    e4 = Edge("tar", "int2", "IS_TARGET_OF")
     r1, r2 = RelAsNode(i1, e1, e2), RelAsNode(i2, e3, e4)
     relasnode_list = [r1, r2]
 
@@ -315,8 +315,8 @@ def test_add_biocypher_interaction_as_RelAsNode_generator(driver):
 
     driver.add_biocypher_edges(gen(relasnode_list))
     r, summary = driver.query(
-        "MATCH (n2)-[e4:is_target_of]->(i2:Int2)<-[e3:is_source_of]-"
-        "(n1)-[e1:is_source_of]->(i1:Int1)<-[e2:is_target_of]-(n2)"
+        "MATCH (n2)-[e4:IS_TARGET_OF]->(i2:Int2)<-[e3:IS_SOURCE_OF]-"
+        "(n1)-[e1:IS_SOURCE_OF]->(i1:Int1)<-[e2:IS_TARGET_OF]-(n2)"
         "WITH n1, n2, i1, i2, n1.id AS id1, n2.id AS id2, "
         "i1.id AS id3, i2.id AS id4, "
         "type(e1) AS label1, type(e2) AS label2, "
@@ -328,10 +328,10 @@ def test_add_biocypher_interaction_as_RelAsNode_generator(driver):
         and r[0]["id2"] == "tar"
         and r[0]["id3"] == "int1"
         and r[0]["id4"] == "int2"
-        and r[0]["label1"] == "is_source_of"
-        and r[0]["label2"] == "is_target_of"
-        and r[0]["label3"] == "is_source_of"
-        and r[0]["label4"] == "is_target_of"
+        and r[0]["label1"] == "IS_SOURCE_OF"
+        and r[0]["label2"] == "IS_TARGET_OF"
+        and r[0]["label3"] == "IS_SOURCE_OF"
+        and r[0]["label4"] == "IS_TARGET_OF"
     )
 
 
