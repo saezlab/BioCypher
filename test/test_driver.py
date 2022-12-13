@@ -8,11 +8,7 @@ from biocypher._driver import Driver
 def init_driver():
 
     # neo4j database needs to be running!
-    # there needs to be a database called "test" in the neo4j instance
-
     return Driver(
-        db_name="test",
-        db_passwd="your_password_here",
         wipe=True,
         increment_version=False,
         user_schema_config_path="biocypher/_config/test_schema_config.yaml",
