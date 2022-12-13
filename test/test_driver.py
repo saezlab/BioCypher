@@ -161,7 +161,7 @@ def test_add_generic_id_node(driver):
 
 def test_add_invalid_biocypher_edge(driver):
     # neo4j database needs to be running!
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         driver.add_biocypher_edges([1, 2, 3])
 
 
