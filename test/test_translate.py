@@ -116,7 +116,7 @@ def test_adapter(version_node):
     ad = BiolinkAdapter(schema = version_node.schema, model="biolink")
 
     assert isinstance(
-        ad.biolink_leaves["protein"]["class_definition"],
+        ad.biolink_schema["protein"]["class_definition"],
         ClassDefinition,
     )
 
@@ -126,14 +126,14 @@ def test_custom_bmt_yaml(version_node):
         schema = version_node.schema,
         model = module_data_path("test-biolink-model"),
     )
-    p = ad.biolink_leaves["protein"]
+    p = ad.biolink_schema["protein"]
 
     assert p["class_definition"].description == "Test"
 
 
 def test_biolink_yaml_extension(biolink_adapter):
-    p1 = biolink_adapter.biolink_leaves["post translational interaction"]
-    p2 = biolink_adapter.biolink_leaves["phosphorylation"]
+    p1 = biolink_adapter.biolink_schema["post translational interaction"]
+    p2 = biolink_adapter.biolink_schema["phosphorylation"]
 
     assert (
         p1["class_definition"].description
@@ -209,11 +209,11 @@ def test_merge_multiple_inputs_edge(version_node, translator):
 
 def test_multiple_inputs_multiple_virtual_leaves_rel_as_node(biolink_adapter):
 
-    vtg = biolink_adapter.biolink_leaves["variant to gene association"]
-    kvtg = biolink_adapter.biolink_leaves[
+    vtg = biolink_adapter.biolink_schema["variant to gene association"]
+    kvtg = biolink_adapter.biolink_schema[
         "known.sequence variant.variant to gene association"
     ]
-    svtg = biolink_adapter.biolink_leaves[
+    svtg = biolink_adapter.biolink_schema[
         "known.sequence variant.variant to gene association"
     ]
 
@@ -250,19 +250,19 @@ def test_virtual_leaves_inherit_properties(version_node):
 
 def test_ad_hoc_children_node(biolink_adapter):
 
-    se = biolink_adapter.biolink_leaves["side effect"]
+    se = biolink_adapter.biolink_schema["side effect"]
 
     assert "PhenotypicFeature" in se["ancestors"]
 
 
 def test_leaves_of_ad_hoc_child(biolink_adapter):
 
-    snrna = biolink_adapter.biolink_leaves.get("intact.snRNA sequence")
+    snrna = biolink_adapter.biolink_schema.get("intact.snRNA sequence")
 
     assert snrna
     assert "SnRNASequence" in snrna["ancestors"]
 
-    dsdna = biolink_adapter.biolink_leaves.get("intact.dsDNA sequence")
+    dsdna = biolink_adapter.biolink_schema.get("intact.dsDNA sequence")
 
     assert dsdna["ancestors"][1:4] == [
         "DsDNASequence",
@@ -281,7 +281,7 @@ def test_inherit_properties(version_node):
 
 def test_multiple_inheritance(biolink_adapter):
 
-    mta = biolink_adapter.biolink_leaves.get("mutation to tissue association")
+    mta = biolink_adapter.biolink_schema.get("mutation to tissue association")
 
     assert "MutationToTissueAssociation" in mta["ancestors"]
     assert "GenotypeToTissueAssociation" in mta["ancestors"]
