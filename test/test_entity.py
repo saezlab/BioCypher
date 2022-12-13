@@ -29,7 +29,7 @@ def test_virtual_leaves_node(version_node):
 
 
 def test_getting_properties_via_config(version_node):
-    assert "name" in version_node.schema["protein"].get("props")
+    assert "name" in version_node.schema["protein"].get("properties")
 
 
 @given(st.builds(Node))
