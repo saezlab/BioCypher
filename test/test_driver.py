@@ -75,10 +75,10 @@ def test_profile(driver):
 def test_add_invalid_biocypher_node(driver):
     # neo4j database needs to be running!
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         driver.add_biocypher_nodes(1)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         driver.add_biocypher_nodes("String")
 
 
