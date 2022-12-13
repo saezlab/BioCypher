@@ -784,7 +784,7 @@ class BatchWriter:
 
         # list files in self.outdir
         files = glob.glob(os.path.join(self.outdir, f'{label}-part*.csv'))
-        repart = re.compile('part(\d+)')
+        repart = re.compile(r'part(\d+)')
 
         idx = max([int(repart.search(f).group(1)) for f in files] + [-1]) + 1
 
@@ -851,4 +851,4 @@ class BatchWriter:
             self.call['edges']
         )
 
-        return f'    \{os.linesep}'.join(call)
+        return f'    {os.linesep}'.join(call)
