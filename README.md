@@ -9,7 +9,7 @@ framework to create knowledge graph databases for systems biology. For an
 overview, usage notes, and a tutorial, read the docs
 [here](https://saezlab.github.io/BioCypher/).
 
-![BioCypher](fig_1_draft.png)
+![BioCypher](graphical_abstract.png)
 
 ## ⚙️ Usage
 
