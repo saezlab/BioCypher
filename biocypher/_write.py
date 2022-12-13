@@ -196,10 +196,10 @@ class BatchWriter:
         """
         self.db_name = db_name
 
-        self.delim = delimiter or _conf('csv_delimiter')
-        self.adelim = array_delimiter or _conf('csv_array_delimiter')
-        self.quote = quote or _conf('csv_quote_char')
-        self.batch_size = batch_size or _conf('csv_batch_size')
+        self.delim = delimiter or _config('csv_delimiter')
+        self.adelim = array_delimiter or _config('csv_array_delimiter')
+        self.quote = quote or _config('csv_quote_char')
+        self.batch_size = batch_size or _config('csv_batch_size')
 
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
