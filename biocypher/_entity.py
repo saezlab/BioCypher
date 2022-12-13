@@ -340,7 +340,6 @@ class RelAsNode(
 for _cls in (Node, Edge, RelAsNode):
 
     _cls.__annotations__ = _cls.__new__.__annotations__
-    _cls.__init__.__annotations__ = _cls.__new__.__annotations__
 
 
 BC_TYPES = (
