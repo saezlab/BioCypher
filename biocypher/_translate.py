@@ -339,7 +339,11 @@ class Translator:
             set(filter_props.keys())
         )
 
-        props = {k: props[k] for k in prop_keys}
+        props = {
+            k: props[k]
+            for k in prop_keys
+            if props[k].__class__.__name__ == filter_props[k]
+        }
 
         missing_keys = (
             set(filter_props.keys()) -
