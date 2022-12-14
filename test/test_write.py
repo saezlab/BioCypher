@@ -1,4 +1,5 @@
 import os
+import re
 import random
 import string
 import tempfile
@@ -127,6 +128,16 @@ def _get_rel_as_nodes(l):
     return rels
 
 
+def unformat(s: str) -> str:
+    """
+    Removes whitespace and line breaks from a string.
+    """
+
+    rewhite = re.compile('[\s\n\t\r]+')
+
+    return rewhite.sub(' ', s)
+
+
 @pytest.fixture
 def version_node():
     return VersionNode(
@@ -168,12 +179,12 @@ def test_write_node_data_headers_import_call(bw):
     # four proteins, four miRNAs
     nodes = _get_nodes(8)
 
-    passed = bw.write(nodes[:4])
-    passed = bw.write(nodes[4:])
+    passed_0 = bw.write(nodes[:4])
+    passed_1 = bw.write(nodes[4:])
     bw.write_call()
 
     p_csv = os.path.join(path, "Protein-header.csv")
-    m_csv = os.path.join(path, "MicroRNA-header.csv")
+    m_csv = os.path.join(path, "Microrna-header.csv")
     call = os.path.join(path, "neo4j-admin-import-call.sh")
 
     with open(p_csv) as f:
@@ -183,12 +194,21 @@ def test_write_node_data_headers_import_call(bw):
     with open(call) as f:
         c = f.read()
 
-    assert (
-        passed
-        and p == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
-        and m == ":ID;name;taxon:long;id;id_type;:LABEL"
-        and c
-        == f'bin/neo4j-admin import --database=neo4j --delimiter=";" --array-delimiter="|" --quote="\'" --nodes="{path}/Protein-header.csv,{path}/Protein-part.*" --nodes="{path}/MicroRNA-header.csv,{path}/MicroRNA-part.*" '
+    assert passed_0
+    assert passed_1
+    assert unformat(p) == (
+        ':ID;id:string;id_type:string;name:string;'
+        'score:double;taxon:long;:LABEL'
+    )
+    assert unformat(m) == (
+        ':ID;id:string;id_type:string;name:string;taxon:long;:LABEL'
+    )
+    assert unformat(c) == unformat(
+        'neo4j-admin import --database=neo4j --delimiter=";" '
+        '--array-delimiter="|" --quote="\'" '
+        '--skip-bad-relationships=false --skip-duplicate-nodes=false '
+        f'--nodes="{path}/Protein-header.csv,{path}/Protein-part.*" '
+        f'--nodes="{path}/Microrna-header.csv,{path}/Microrna-part.*"'
     )
 
 
@@ -218,7 +238,10 @@ def test_property_types(bw):
         header = f.read()
 
     assert passed
-    assert header == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
+    assert header == (
+        ':ID;id:string;id_type:string;name:string;'
+        'score:double;taxon:long;:LABEL'
+    )
     assert data == (
         "p1;'StringProperty1';4.0;9606;'p1';'id';Protein|GeneProductMixin|"
         "ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|"
