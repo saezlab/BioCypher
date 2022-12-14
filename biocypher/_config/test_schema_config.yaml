@@ -159,6 +159,9 @@ gene to disease association:
   target: Disease
   label_in_input: [protein_disease, gene_disease]
   exclude_properties: accession
+  properties:
+    directional: bool
+    score: float
 
 # multiple inheritance
 mutation to tissue association:
