@@ -446,7 +446,7 @@ class BatchWriter:
         Batch size from the currently valid config.
         """
 
-        return override or self._batch_size or BATCH_SIZE_FALLBACK
+        return override or self.batch_size or BATCH_SIZE_FALLBACK
 
     @staticmethod
     def _col_type(py_type: str | type) -> str:
