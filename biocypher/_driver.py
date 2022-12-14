@@ -152,11 +152,14 @@ class Driver(neo4j_utils.Driver):
         self.csv_adelim = array_delimiter or _config('csv_array_delimiter')
         self.csv_quote = quote_char or _config('csv_quote_char')
         self.wipe = wipe
-        self.strict_mode = _argconf('strict_mode')
-        self.output_directory = _argconf('output_directory')
-        self.clear_cache = _argconf('clear_cache')
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
+
+        # BioCypher options
+        self.strict_mode = _argconf('strict_mode')
+        self.output_directory = _argconf('output_directory')
+        self.user_schema_config_path = _argconf('user_schema_config_path')
+        self.clear_cache = _argconf('clear_cache')
         self._biolink_use_cache = biolink_use_cache
         self.tail_ontology_url = _argconf('tail_ontology_url')
         self.head_join_node = _argconf('head_join_node')
@@ -170,7 +173,7 @@ class Driver(neo4j_utils.Driver):
         # one
         self.db_meta = VersionNode(
             from_config=self.offline or wipe,
-            config_file=user_schema_config_path,
+            config_file=self.user_schema_config_path,
             offline=self.offline,
             bcy_driver=self,
         )
