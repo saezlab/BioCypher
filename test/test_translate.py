@@ -55,11 +55,10 @@ def test_specific_and_generic_ids(translator):
     ]
     t = list(translator.translate(items = items))
 
-    # I removed this for the time being
-    # can't figure out how this would make sense - Denes
-    # assert t[0].id == "CHAT"
-    # assert t[0].props.get("id_type") == "hgnc"
-    # assert t[0].props.get("id") == "CHAT"
+    # can't figure out how this makes sense - Denes
+    assert t[0].id == "CHAT"
+    assert t[0].props.get("id_type") == "id"
+    assert t[0].props.get("id") == "CHAT"
     assert t[0].id == "REACT:25520"
     assert t[0].props.get("id_type") == "id" # and this?
     assert t[0].props.get("id") == "REACT:25520"
