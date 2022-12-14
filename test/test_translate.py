@@ -107,7 +107,7 @@ def test_translate_edges(translator):
         isinstance(n.source, Edge) and
         isinstance(n.target, Edge)
     )
-    assert n.node.id == "G15258_G16347_True_-1"
+    assert n.node.id == "G15258_G16347_directed=True_effect=-1"
     assert n.source.id == None
     assert n.target.label == "IS_TARGET_OF"
 
