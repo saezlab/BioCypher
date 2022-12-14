@@ -204,6 +204,21 @@ header and data files for each entity type, the import call conveniently
 aggregates this information into one command, detailing the location of all
 files on disk, so no data need to be copied around.
 
+### Quality control and convenience functions
+BioCypher provides a number of convenience functions for quality control and
+data exploration. In addition to writing the import call for Neo4j, we can print
+a log of ontological classes that were present in the input data but are not
+accounted for in the schema configuration, as well as a log of duplicates in the
+input data (for the level of granularity that was used for the import). We can
+also print the ontological hierarchy derived from the underlying model(s)
+according to the classes that were given in the schema configuration:
+
+```{code-block} python
+driver.log_missing_bl_types()     # show input unaccounted for in the schema
+driver.log_duplicates()           # show duplicates in the input data
+driver.show_ontology_structure()  # show ontological hierarchy
+```
+
 ## Section 2: Merging data
 
 (merging)=
