@@ -158,6 +158,19 @@ class Node(
 
         return (self,)
 
+
+    @property
+    def edges(self) -> tuple:
+        """
+        Create a tuple of edge(s).
+
+        Returns:
+            An empty tuple.
+        """
+
+        return ()
+
+
     @property
     def key(self) -> tuple[str, str]:
         """
