@@ -323,7 +323,7 @@ class RelAsNode(
             The source and target edges in a two elements tuple.
         """
 
-        return (self.source_edge, self.target_edge)
+        return (self.source, self.target)
 
     @property
     def nodes(self) -> tuple[Node]:
