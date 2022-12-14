@@ -766,7 +766,7 @@ def test_create_import_call(bw):
 
     passed = bw.write(gen(mixed))
 
-    call = bw.get_import_call()
+    call = bw.compile_call()
 
     assert (
         passed
