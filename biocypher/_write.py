@@ -847,8 +847,8 @@ class BatchWriter:
                 '--skip-duplicate-nodes='
                 f'{str(self.skip_duplicate_nodes).lower()}',
             ] +
-            self.call['nodes'] +
-            self.call['edges']
+            self.call['node'] +
+            self.call['edge']
         )
 
         return f'    {os.linesep}'.join(call)
