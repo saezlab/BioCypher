@@ -1,13 +1,13 @@
 # BioCypher
 
 ## 📖 Documentation
-https://saezlab.github.io/BioCypher/
+https://biocypher.org
 
 ## ❓ Description
 This is the development repository for BioCypher, our proposal for a unified
 framework to create knowledge graph databases for systems biology. For an 
 overview, usage notes, and a tutorial, read the docs
-[here](https://saezlab.github.io/BioCypher/).
+[here](https://biocypher.org).
 
 ![BioCypher](graphical_abstract.png)
 
