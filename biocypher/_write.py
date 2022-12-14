@@ -387,8 +387,8 @@ class BatchWriter:
         return (
             self._write_records(nodes, batch_size = bs) and
             self._write_records(edges, batch_size = bs) and
-            self._write_headers('node') and
-            self._write_headers('edge')
+            (self._write_headers('node') or True) and
+            (self._write_headers('edge') or True)
         )
 
     def _property_types(
@@ -630,7 +630,8 @@ class BatchWriter:
         if not self.property_types[what]:
 
             logger.error(
-                'Header information not found. Was the data parsed first?',
+                f'Header information not found for {what}s. '
+                'Was the data parsed first?',
             )
             return False
 
@@ -657,7 +658,7 @@ class BatchWriter:
             # though it will work fine in cpython
             header.extend(
                 f'{prop}{self._col_type(py_t)}'
-                for prop, py_t in props.items()
+                for prop, py_t in sorted(props.items(), key = lambda i: i[0])
             )
             header.extend([':LABEL'] if node else [':END_ID', ':TYPE'])
 
@@ -712,6 +713,9 @@ class BatchWriter:
             )
             return False
 
+        ptypes = self.property_types[what][label]
+        ptypes_sorted = sorted(ptypes.items(), key = lambda i: i[0])
+
         # from list of nodes or edges to list of strings
         lines = []
 
@@ -719,7 +723,7 @@ class BatchWriter:
             # check for deviations in properties
             # edge properties
             props = e.props
-            ptypes = self.property_types[what][label]
+
             missing = set(ptypes.keys()) - set(props.keys())
             excess = set(props.keys()) - set(ptypes.keys())
             e_display = (
@@ -749,7 +753,7 @@ class BatchWriter:
             # though it will work fine in cpython
             line.extend(
                 self._proc_prop(props.get(prop), py_type)
-                for prop, py_type in ptypes.items()
+                for prop, py_type in ptypes_sorted
             )
             line.append(labels if node else e.target)
 
