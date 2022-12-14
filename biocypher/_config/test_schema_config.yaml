@@ -162,6 +162,8 @@ gene to disease association:
   properties:
     directional: bool
     score: float
+    residue: str
+    level: int
 
 # multiple inheritance
 mutation to tissue association:
@@ -172,6 +174,9 @@ mutation to tissue association:
   source: Gene
   target: Tissue
   label_in_input: Gene_Is_Mutated_In_Cell_Tissue
+  properties:
+    confidence: int
+    site: str
 
 
 # multiple input to multiple virtual leaves
