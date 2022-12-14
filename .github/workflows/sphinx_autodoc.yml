@@ -41,6 +41,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         touch docs/_build/html/.nojekyll
+        echo 'biocypher.org' > docs/_build/html/CNAME
         git add -f docs/_build/
         git commit -m "Update autodoc" -a
     # using https://github.com/marketplace/actions/push-git-subdirectory-as-branch
