@@ -133,9 +133,12 @@ post translational interaction:
   represented_as: node
   label_as_edge: INTERACTS_POST_TRANSLATIONAL
   preferred_id: id
-  source: Protein 
+  source: Protein
   target: Protein
   label_in_input: post_translational
+  properties:
+    effect: int
+    directed: bool
 
 # auto label as edge
 phosphorylation:
