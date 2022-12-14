@@ -744,7 +744,7 @@ class BatchWriter:
                 )
                 return False
 
-            line = [e.node if node else e.source]
+            line = [e.id if node else e.source]
             # this is not guaranteed to be order preserving
             # though it will work fine in cpython
             line.extend(
