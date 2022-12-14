@@ -52,6 +52,81 @@ path = os.path.join(
 os.makedirs(path, exist_ok=True)
 
 
+def _get_nodes(l: int) -> list:
+    nodes = []
+    for i in range(l):
+        bnp = Node(
+            id=f"p{i+1}",
+            label="protein",
+            id_type="uniprot",
+            props={
+                "score": 4 / (i + 1),
+                "name": "StringProperty1",
+                "taxon": 9606,
+            },
+        )
+        nodes.append(bnp)
+        bnm = Node(
+            id=f"m{i+1}",
+            label="microRNA",
+            id_type="mirbase",
+            props={"name": "StringProperty1", "taxon": 9606},
+        )
+        nodes.append(bnm)
+
+    return nodes
+
+
+def _get_edges(l):
+    edges = []
+    for i in range(l):
+        e1 = Edge(
+            source=f"p{i}",
+            target=f"p{i + 1}",
+            label="PERTURBED_IN_DISEASE",
+            props={"residue": "T253", "level": 4},
+            # we suppose the verb-form relationship label is created by
+            # translation functionality in translate.py
+        )
+        edges.append(e1)
+        e2 = Edge(
+            source=f"m{i}",
+            target=f"p{i + 1}",
+            label="Is_Mutated_In",
+            props={"site": "3-UTR", "confidence": 1},
+            # we suppose the verb-form relationship label is created by
+            # translation functionality in translate.py
+        )
+        edges.append(e2)
+    return edges
+
+
+def _get_rel_as_nodes(l):
+
+    rels = []
+
+    for i in range(l):
+
+        n = Node(
+            id=f"i{i+1}",
+            label="post translational interaction",
+            props={"directed": True, "effect": -1},
+        )
+        e1 = Edge(
+            source=f"i{i+1}",
+            target=f"p{i+1}",
+            label="IS_SOURCE_OF",
+        )
+        e2 = Edge(
+            source=f"i{i}",
+            target=f"p{i + 2}",
+            label="IS_TARGET_OF",
+        )
+        rels.append(RelAsNode(n, e1, e2))
+
+    return rels
+
+
 @pytest.fixture
 def version_node():
     return VersionNode(
@@ -115,31 +190,6 @@ def test_write_node_data_headers_import_call(bw):
         and c
         == f'bin/neo4j-admin import --database=neo4j --delimiter=";" --array-delimiter="|" --quote="\'" --nodes="{path}/Protein-header.csv,{path}/Protein-part.*" --nodes="{path}/MicroRNA-header.csv,{path}/MicroRNA-part.*" '
     )
-
-
-def _get_nodes(l: int) -> list:
-    nodes = []
-    for i in range(l):
-        bnp = Node(
-            id=f"p{i+1}",
-            label="protein",
-            id_type="uniprot",
-            props={
-                "score": 4 / (i + 1),
-                "name": "StringProperty1",
-                "taxon": 9606,
-            },
-        )
-        nodes.append(bnp)
-        bnm = Node(
-            id=f"m{i+1}",
-            label="microRNA",
-            id_type="mirbase",
-            props={"name": "StringProperty1", "taxon": 9606},
-        )
-        nodes.append(bnm)
-
-    return nodes
 
 
 def test_property_types(bw):
@@ -466,30 +516,6 @@ def test_write_edge_data_from_gen(bw):
     )
 
 
-def _get_edges(l):
-    edges = []
-    for i in range(l):
-        e1 = Edge(
-            source=f"p{i}",
-            target=f"p{i + 1}",
-            label="PERTURBED_IN_DISEASE",
-            props={"residue": "T253", "level": 4},
-            # we suppose the verb-form relationship label is created by
-            # translation functionality in translate.py
-        )
-        edges.append(e1)
-        e2 = Edge(
-            source=f"m{i}",
-            target=f"p{i + 1}",
-            label="Is_Mutated_In",
-            props={"site": "3-UTR", "confidence": 1},
-            # we suppose the verb-form relationship label is created by
-            # translation functionality in translate.py
-        )
-        edges.append(e2)
-    return edges
-
-
 def test_write_edge_data_from_large_gen(bw):
 
     edges = _get_edges(int(1e4 + 4))
@@ -656,32 +682,6 @@ def test_relasnode_implementation(bw):
         and p
         == "i1;True;-1;'i1';'id';PostTranslationalInteraction|PairwiseMolecularInteraction|PairwiseGeneToGeneInteraction|GeneToGeneAssociation|Association|Entity\ni2;True;-1;'i2';'id';PostTranslationalInteraction|PairwiseMolecularInteraction|PairwiseGeneToGeneInteraction|GeneToGeneAssociation|Association|Entity\ni3;True;-1;'i3';'id';PostTranslationalInteraction|PairwiseMolecularInteraction|PairwiseGeneToGeneInteraction|GeneToGeneAssociation|Association|Entity\ni4;True;-1;'i4';'id';PostTranslationalInteraction|PairwiseMolecularInteraction|PairwiseGeneToGeneInteraction|GeneToGeneAssociation|Association|Entity\n"
     )
-
-
-def _get_rel_as_nodes(l):
-
-    rels = []
-
-    for i in range(l):
-
-        n = Node(
-            id=f"i{i+1}",
-            label="post translational interaction",
-            props={"directed": True, "effect": -1},
-        )
-        e1 = Edge(
-            source=f"i{i+1}",
-            target=f"p{i+1}",
-            label="IS_SOURCE_OF",
-        )
-        e2 = Edge(
-            source=f"i{i}",
-            target=f"p{i + 2}",
-            label="IS_TARGET_OF",
-        )
-        rels.append(RelAsNode(n, e1, e2))
-
-    return rels
 
 
 def test_relasnode_overwrite_behaviour(bw):
