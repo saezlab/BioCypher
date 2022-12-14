@@ -78,7 +78,7 @@ def dict_str(dct: dict, sep: str = ', ') -> str:
 
     return sep.join(
         f'{key}={prettyfloat(dct[key])}'
-        for key in sorted(dct.key())
+        for key in sorted(dct.keys())
     )
 
 
