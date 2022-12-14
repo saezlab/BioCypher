@@ -166,24 +166,8 @@ class Driver(neo4j_utils.Driver):
         self.tail_join_node = _argconf('tail_join_node')
 
         neo4j_utils.Driver.__init__(self, **driver_args)
-        # get database version node ('check' module) immutable
-        # variable of each instance (ie, each call from the
-        # adapter to BioCypher); checks for existence of graph
-        # representation and returns if found, else creates new
-        # one
-        self.db_meta = VersionNode(
-            from_config=self.offline or wipe,
-            config_file=self.user_schema_config_path,
-            offline=self.offline,
-            bcy_driver=self,
-        )
 
-        # if db representation node does not exist or explicitly
-        # asked for wipe, create new graph representation: default
-        # yaml, interactive?
-        # Denes: those are two different cases, if it's wiped, first
-        # its contents should be read, if it does not exist, a new one
-        # should be created.
+        self._init_version_node()
 
         # likely this will be refactored soon
         self._create_constraints()
@@ -196,6 +180,36 @@ class Driver(neo4j_utils.Driver):
         # TODO: implement passing a driver instance
         # Denes: I am not sure, but seems like it works already
         # by the base class
+
+    def _init_version_node(self):
+
+        if self.offline and not self.user_schema_config_path:
+
+            raise ValueError(
+                'Offline mode requires a schema configuration. '
+                'Please provide one with the `user_schema_config_path` '
+                'argument or set the `user_schema_config_path` '
+                'configuration variable.'
+            )
+
+        # if db representation node does not exist or explicitly
+        # asked for wipe, create new graph representation: default
+        # yaml, interactive?
+        # Denes: those are two different cases, if it's wiped, first
+        # its contents should be read, if it does not exist, a new one
+        # should be created.
+
+        # get database version node ('check' module) immutable
+        # variable of each instance (ie, each call from the
+        # adapter to BioCypher); checks for existence of graph
+        # representation and returns if found, else creates new
+        # one
+        self.db_meta = VersionNode(
+            from_config=self.offline or self.wipe,
+            config_file=self.user_schema_config_path,
+            offline=self.offline,
+            bcy_driver=self,
+        )
 
     def _update_translator(self):
 
