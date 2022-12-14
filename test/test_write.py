@@ -613,7 +613,7 @@ def test_write_duplicate_edges(bw):
     assert passed and l == 4 and c == 4
 
 
-def test_RelAsNode_implementation(bw):
+def test_relasnode_implementation(bw):
     trips = _get_rel_as_nodes(4)
 
     def gen(lis):
@@ -669,7 +669,7 @@ def _get_rel_as_nodes(l):
     return rels
 
 
-def test_RelAsNode_overwrite_behaviour(bw):
+def test_relasnode_overwrite_behaviour(bw):
     # if rel as node is called from successive write calls, SOURCE_OF,
     # TARGET_OF, and PART_OF should be continued, not overwritten
     trips = _get_rel_as_nodes(8)
