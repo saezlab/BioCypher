@@ -59,9 +59,9 @@ def test_specific_and_generic_ids(translator):
     assert t[0].id == "CHAT"
     assert t[0].props.get("id_type") == "id"
     assert t[0].props.get("id") == "CHAT"
-    assert t[0].id == "REACT:25520"
-    assert t[0].props.get("id_type") == "id" # and this?
-    assert t[0].props.get("id") == "REACT:25520"
+    assert t[1].id == "REACT:25520"
+    assert t[1].props.get("id_type") == "id" # and this?
+    assert t[1].props.get("id") == "REACT:25520"
 
 
 def test_translate_edges(translator):
@@ -103,12 +103,12 @@ def test_translate_edges(translator):
     assert n.source.label == "IS_PART_OF"
     n = next(t)
     assert (
-        type(n.node) == Node
-        and type(n.source) == Edge
-        and type(n.target) == Edge
+        isinstance(n.node, Node) and
+        isinstance(n.source, Edge) and
+        isinstance(n.target, Edge)
     )
     assert n.node.id == "G15258_G16347_True_-1"
-    assert n.source.id == "G15258"
+    assert n.source.id == None
     assert n.target.label == "IS_TARGET_OF"
 
 
