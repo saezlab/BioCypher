@@ -56,12 +56,12 @@ class Driver(neo4j_utils.Driver):
 
     def __init__(
         self,
-        driver: Optional['neo4j.Driver'] = None,
-        db_name: Optional[str] = None,
-        db_uri: Optional[str] = None,
-        db_user: Optional[str] = None,
-        db_passwd: Optional[str] = None,
-        multi_db: Optional[bool] = None,
+        driver: neo4j.Driver = None,
+        db_name: str | None = None,
+        db_uri: str | None = None,
+        db_user: str | None = None,
+        db_passwd: str | None = None,
+        multi_db: bool | None = None,
         fetch_size: int = 1000,
         raise_errors: bool | None = None,
         wipe: bool = False,
@@ -78,6 +78,9 @@ class Driver(neo4j_utils.Driver):
         skip_duplicate_nodes: bool = False,
         biolink_model: dict | str | None = None,
         biolink_use_cache: bool = True,
+        tail_ontology_url: str | None = None,
+        head_join_node: str | None = None,
+        tail_join_node: str | None = None,
     ):
         """
         Set up a BioCypher database connection.
@@ -131,6 +134,12 @@ class Driver(neo4j_utils.Driver):
                 built in model, or path to the model YAML file to load.
             biolink_use_cache:
                 Load the Biolink model from cache, if available.
+            tail_ontology_url:
+                URL of the ontology to hybridise to the head ontology.
+            head_join_node:
+                Biolink class of the node to join the tail ontology to.
+            tail_join_node:
+                Ontology class of the node to join the head ontology to.
         """
 
         neo4j_config = _neo4j_config()
@@ -149,6 +158,9 @@ class Driver(neo4j_utils.Driver):
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
         self._biolink_use_cache = biolink_use_cache
+        self.tail_ontology_url = _argconf('tail_ontology_url')
+        self.head_join_node = _argconf('head_join_node')
+        self.tail_join_node = _argconf('tail_join_node')
 
         neo4j_utils.Driver.__init__(self, **driver_args)
         # get database version node ('check' module) immutable
@@ -348,7 +360,7 @@ class Driver(neo4j_utils.Driver):
             self,
             edges: Iterable[
                 tuple[
-                    Optional[str],
+                    str | None,
                     str,
                     str,
                     str,
@@ -562,8 +574,8 @@ class Driver(neo4j_utils.Driver):
     def write_csv(
             self,
             items: Iterable[INPUT_BC_TYPES],
-            dirname: Optional[str] = None,
-            db_name: Optional[str] = None,
+            dirname: str | None = None,
+            db_name: str | None = None,
     ) -> bool:
         """
         Compile graph components and write them into CSV files.
@@ -658,8 +670,11 @@ class Driver(neo4j_utils.Driver):
                 translator=self.translator,
                 clear_cache=self.clear_cache,
             )
-            # standard use case; TODO options for hybrids
+            # only simple one-hybrid case; TODO generalise
             self.ontology_adapter = OntologyAdapter(
+                tail_ontology_url=self.tail_ontology_url,
+                head_join_node=self.head_join_node,
+                tail_join_node=self.tail_join_node,
                 biolink_adapter=biolink_adapter,
             )
 
