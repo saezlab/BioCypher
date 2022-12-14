@@ -122,7 +122,7 @@ class Translator:
 
         for i in items:
 
-            bc_i = (
+            bc_item = (
                 i
                     if isinstance(i, BC_TYPES) else
                 self.node(*i)
@@ -132,7 +132,7 @@ class Translator:
                 self.edge(*i[1:], _id = i[0])
             )
 
-            if bc_i: yield bc_i
+            if bc_item: yield bc_item
 
         self._log_finish_translate('components')
 
@@ -236,7 +236,7 @@ class Translator:
 
             props_str = _misc.dict_str(dct = props, sep = '_')
             # source target concat
-            node_id = f'{src}_{tar}_{props_str}'
+            node_id = f'{source}_{target}_{props_str}'
 
         n = Node(
             id = node_id,
@@ -269,7 +269,7 @@ class Translator:
             label = reltype2,
         )
 
-        yield RelAsNode(node = n, source = e_s, target = e_t)
+        return RelAsNode(node = n, source = e_s, target = e_t)
 
 
     def node(
