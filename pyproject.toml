@@ -61,6 +61,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/saezlab/biocypher/issues"
 
+[tool.pytest.ini_options]
+log_cli = true
+
 [tool.black]
 line-length = 80
 target-version = ['py310']
