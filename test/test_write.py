@@ -832,6 +832,7 @@ def test_duplicate_id(bw):
 
     with open(csv, 'r') as fp:
 
-        l_lines0 = sum(1 for _ in fp)
+        numof_lines = sum(1 for _ in fp)
 
-    assert passed and l_lines0 == 1
+    assert passed
+    assert numof_lines == 1
