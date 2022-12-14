@@ -419,7 +419,7 @@ class BatchWriter:
 
             propt = {
                 k: v.__class__.__name__
-                for k, v in instance.props
+                for k, v in instance.props.items()
                 if k is not None  # why would be a key here None?
             }
 
@@ -649,7 +649,7 @@ class BatchWriter:
             prt_path = os.path.join(self.outdir, f'{label}-part.*')
 
             # check if file already exists
-            if os.path.exists(header_path): continue
+            if os.path.exists(hdr_path): continue
 
             # add column types
             header = [':ID' if node else ':START_ID']
@@ -661,7 +661,7 @@ class BatchWriter:
             )
             header.extend([':LABEL'] if node else [':END_ID', ':TYPE'])
 
-            with open(header_path, 'w') as f:
+            with open(hdr_path, 'w') as f:
 
                 # concatenate with delimiter
                 f.write(self.delim.join(header))
