@@ -369,4 +369,39 @@ on.
 
 (tut_hybridising)=
 ### Hybridising ontologies
-Not implemented yet; coming soon.
+A broad, general ontology is a useful tool for knowledge representation, but
+often the task at hand requires more specific and granular concepts. In such
+cases, it is possible to hybridise the general ontology with a more specific
+one. For instance, there are many different types of sequence variants in
+biology, but Biolink only provides a generic "sequence variant" class (and it
+may exceed the scope of Biolink to provide granular classes for all thinkable
+cases). However, there are many specialist ontologies, such as the Sequence
+Ontology (SO), which provides a more granular representation of sequence
+variants.
+
+To hybridise the Biolink model with the SO, we can use the generic ontology
+adapter class of BioCypher by providing a "tail ontology" as a link to an OBO
+format ontology file, as well as a set of nodes (one in Biolink, one in SO)
+which should be joined to form the hybridised ontology. The ontology adapter
+also accepts any arbitrary "head ontology" as a base ontology, but if none is
+provided, the Biolink model is used as the default head ontology. These options
+can be provided to the BioCypher driver as parameters, or as options in the
+BioCypher configuration file.
+
+```{code-block} python
+:caption: Programmatic usage
+driver = BioCypher.driver(
+    # ...
+    tail_ontology_url="http://purl.obolibrary.org/obo/so.obo",
+    head_join_node="sequence variant",  # Biolink class
+    tail_join_node="sequence_variant",  # SO class
+    # ...
+)
+```
+
+```{code-block} yaml
+:caption: Using biocypher_config.yaml
+tail_ontology_url: http://purl.obolibrary.org/obo/so.obo
+head_join_node: sequence variant
+tail_join_node: sequence_variant
+```
