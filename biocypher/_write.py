@@ -723,7 +723,7 @@ class BatchWriter:
             missing = set(ptypes.keys()) - set(props.keys())
             excess = set(props.keys()) - set(ptypes.keys())
             e_display = (
-                f'ID `{e.node_id}`'
+                f'ID `{e.id}`'
                     if node else
                 f'endpoint IDs `{e.source}-{e.target}`'
             )
