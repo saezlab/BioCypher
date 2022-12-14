@@ -368,7 +368,7 @@ on.
 <!-- TODO provide config access to custom biolink model path -->
 
 (tut_hybridising)=
-### Hybridising ontologies
+## Hybridising ontologies
 A broad, general ontology is a useful tool for knowledge representation, but
 often the task at hand requires more specific and granular concepts. In such
 cases, it is possible to hybridise the general ontology with a more specific
@@ -401,7 +401,9 @@ driver = BioCypher.driver(
 
 ```{code-block} yaml
 :caption: Using biocypher_config.yaml
+# ...
 tail_ontology_url: http://purl.obolibrary.org/obo/so.obo
 head_join_node: sequence variant
 tail_join_node: sequence_variant
+# ...
 ```
