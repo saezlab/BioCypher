@@ -54,6 +54,8 @@ gene:
   preferred_id: hgnc
   label_in_input: [hgnc, ensg]
   exclude_properties: accession
+  properties:
+    taxon: int
 
 disease:
   represented_as: node
