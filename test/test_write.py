@@ -789,7 +789,7 @@ def test_write_offline():
 
     nodes = _get_nodes(4)
 
-    passed = d.write_nodes(nodes, dirname=path)
+    passed = d.write(nodes, dirname=path)
 
     p_csv = os.path.join(path, "Protein-part000.csv")
     m_csv = os.path.join(path, "MicroRNA-part000.csv")
