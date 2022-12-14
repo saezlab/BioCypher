@@ -2,11 +2,11 @@ Title: BioCypher graph schema configuration file
 
 # This configuration file establishes the hierarchy and connectivity in a newly
 # set-up BioCypher property graph database. Naming should adhere to Biolink
-# nomenclature (available at https://biolink.github.io/biolink-model/ or via 
+# nomenclature (available at https://biolink.github.io/biolink-model/ or via
 # the python module 'biolink-model-toolkit').
 
 # The BioCypher YAML file specifies only the leaves of the hierarchy tree of
-# the desired graph; the hierarchical structure of entities will be derived 
+# the desired graph; the hierarchical structure of entities will be derived
 # from the Biolink model. Thus, only the immediate constituents of the graph
 # need to be specified in the schema config.
 
@@ -18,15 +18,15 @@ Title: BioCypher graph schema configuration file
 # usually represented in node form, which is also the Biolink recommendation.
 # The same is not true for associations.
 #
-# A little more complex is the representation of aggregates of named things, 
+# A little more complex is the representation of aggregates of named things,
 # for instance in the case of functional protein complexes. These are represented
 # by so-called "mixins", which are not officially part of the hierarchy.
 
 # regular node
 protein:
   represented_as: node
-  preferred_id: uniprot 
-  label_in_input: protein 
+  preferred_id: uniprot
+  label_in_input: protein
   properties:
     name: str
     score: float
@@ -34,25 +34,25 @@ protein:
 
 microRNA:
   represented_as: node
-  preferred_id: mirbase.mature 
-  label_in_input: mirna 
+  preferred_id: mirbase.mature
+  label_in_input: mirna
 
 macromolecular complex mixin:
   represented_as: node
   preferred_id: complexportal
-  label_in_input: complex 
+  label_in_input: complex
 
 # virtual leaves for multiple inputs
 pathway:
   represented_as: node
-  preferred_id: [reactome, wikipathways] 
-  label_in_input: [reactome, wikipathways] 
+  preferred_id: [reactome, wikipathways]
+  label_in_input: [reactome, wikipathways]
 
 # merge muliple inputs
 gene:
   represented_as: node
   preferred_id: hgnc
-  label_in_input: [hgnc, ensg] 
+  label_in_input: [hgnc, ensg]
   exclude_properties: accession
 
 disease:
@@ -114,17 +114,17 @@ dsDNA sequence:
 # ---
 # Associations
 # ---
-# Associations are not supposed to be represented in node form as per the 
-# specifications of Biolink. However, in an analytic context, it often makes 
+# Associations are not supposed to be represented in node form as per the
+# specifications of Biolink. However, in an analytic context, it often makes
 # sense to represent interactions as nodes in Neo4j, because it enables, for
 # instance, the annotation of a relationship with a publication as source of
-# evidence (also known as reification in the knowledge graph world). 
+# evidence (also known as reification in the knowledge graph world).
 
-# The Biolink specifications for these types of relationships do 
+# The Biolink specifications for these types of relationships do
 # not go into depth; for example, the hierarchy for molecular interactions
-# (ie, "associations") ends at "PairwiseMolecularInteraction", there are no 
+# (ie, "associations") ends at "PairwiseMolecularInteraction", there are no
 # explicit terms for protein-protein-interaction, phosphorylation, miRNA-
-# targeting, etc. Biolink proposes to use interaction identifiers from 
+# targeting, etc. Biolink proposes to use interaction identifiers from
 # ontologies, such as https://www.ebi.ac.uk/ols/ontologies/mi/.
 
 

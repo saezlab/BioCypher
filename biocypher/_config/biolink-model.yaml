@@ -2693,7 +2693,7 @@ slots:
 
   affects synthesis of:
     description: >-
-      holds between two chemical entities where the action or effect 
+      holds between two chemical entities where the action or effect
       of one impacts the rate of chemical synthesis of the other
     is_a: affects
     domain: chemical entity or gene or gene product
@@ -3391,7 +3391,7 @@ slots:
       - RO:0002295
       - RO:0002332
       - RO:0002578
-  
+
   regulated by:
     domain: physical essence or occurrent
     range: physical essence or occurrent
@@ -3448,7 +3448,7 @@ slots:
       - CHEMBL.MECHANISM:negative_allosteric_modulator
       - CHEMBL.MECHANISM:negative_modulator
       - RO:0002630
-  
+
   negatively regulated by:
     is_a: regulated by
     mixin: true
@@ -4348,7 +4348,7 @@ slots:
     narrow_mappings:
       # more restricted case of a material entity mitigating a pathological process
       - RO:0002599
-  
+
   prevented by:
     is_a: risk affected by
     description: >-
@@ -6291,7 +6291,7 @@ slots:
       located or occurring in a particular environment. For example, two microbial taxa may interact in the context of
       a human gut; a disease may give rise to a particular phenotype in a particular environmental exposure.
   # TODO: add examples of values for this property.
-      
+
   sequence localization attribute:
     is_a: association slot
     domain: genomic sequence localization
@@ -6421,7 +6421,7 @@ classes:
       - MESH
       - UMLS
       - KEGG.BRITE ## br/ko number
-  
+
   annotation:
     description: >-
       Biolink Model root class for entity annotations.
@@ -6629,9 +6629,9 @@ classes:
       - MESH
     in_subset:
       - model_organism_database
-  
+
   ## Temporal Entities
-  
+
   event:
     is_a: named thing
     description: >-
@@ -6813,15 +6813,15 @@ classes:
     is_a: information content entity
     aliases: ['knowledgebase']
     description: >-
-      A database or knowledgebase and its supporting ecosystem of interfaces 
-      and services that deliver content to consumers (e.g. web portals, APIs, 
+      A database or knowledgebase and its supporting ecosystem of interfaces
+      and services that deliver content to consumers (e.g. web portals, APIs,
       query endpoints, streaming services, data downloads, etc.).
       A single Information Resource by this definition may span many different datasets or
       databases, and include many access endpoints and user
       interfaces. Information Resources include project-specific resources
       such as a Translator Knowledge Provider, and community knowledgebases like ChemBL, OMIM, or DGIdb.
     in_subset:
-        - translator_minimal      
+        - translator_minimal
 
 
   ## Publications
@@ -8021,7 +8021,7 @@ classes:
       - NCIT
       - PO
       - FAO
-      
+
 
   ## entity mixins
 
@@ -8273,7 +8273,7 @@ classes:
       - gene product isoform mixin
     id_prefixes:
       - UniProtKB # UniProtKB:([A-Z0-9]+-\d+)
-      - UNIPROT.ISOFORM 
+      - UNIPROT.ISOFORM
       - PR
       - ENSEMBL
 
@@ -10512,7 +10512,7 @@ classes:
         range: organism taxon
         description: >-
           organism taxon that is the subject of the association
-      
+
   organism taxon to organism taxon association:
     is_a: association
     abstract: true
@@ -10595,4 +10595,4 @@ classes:
       predicate:
         description: >-
           predicate describing the relationship between the taxon and the environment
-           
+
