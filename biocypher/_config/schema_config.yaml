@@ -66,10 +66,9 @@ disease:
   preferred_id: icd10
 
 pathway:
-   represented_as: node
-   preferred_id: [reactome, wikipathways] 
-   label_in_input: [reactome, wikipathways] 
-
+  represented_as: node
+  preferred_id: [reactome, wikipathways]
+  label_in_input: [reactome, wikipathways]
 
 # ---
 # Associations
@@ -103,13 +102,12 @@ entity to disease association mixin:
   source: Protein
   target: Disease
 
-
 # below not in biolink
 # will insert into custom biolink yaml, get hierarchy from there
 post translational interaction:
   represented_as: node
   preferred_id: id
-  source: Protein 
+  source: Protein
   # optional other sources/targets?
   # source and target need to adhere to Biolink naming, otherwise the
   # meta-graph will not work
@@ -126,7 +124,7 @@ acetylation:
   preferred_id: id
   source: Protein
   target: Protein
-      
+
 post transcriptional interaction:
   represented_as: node
   preferred_id: id
@@ -134,8 +132,6 @@ post transcriptional interaction:
   target: Protein
   label_in_input: post_transcriptional
   label_as_edge: INTERACTS_POST_TRANSCRIPTIONAL
-
-
 
 ## CROssBAR list of source database attributes
 # UniProtKB (related MongoDB collections: Proteins):
