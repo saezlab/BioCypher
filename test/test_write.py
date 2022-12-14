@@ -167,11 +167,26 @@ def test_property_types(bw):
     with open(h_csv) as f:
         header = f.read()
 
-    assert (
-        passed
-        and header == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
-        and data
-        == "p1;'StringProperty1';4.0;9606;'p1';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np2;'StringProperty1';2.0;9606;'p2';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np3;'StringProperty1';1.3333333333333333;9606;'p3';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np4;'StringProperty1';1.0;9606;'p4';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
+    assert passed
+    assert header == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
+    assert data == (
+        "p1;'StringProperty1';4.0;9606;'p1';'id';Protein|GeneProductMixin|"
+        "ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|"
+        "Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
+        "p2;'StringProperty1';2.0;9606;'p2';'id';Protein|GeneProductMixin|"
+        "ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|"
+        "Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
+        "p3;'StringProperty1';1.3333333333333333;9606;'p3';'id';Protein|"
+        "GeneProductMixin|ThingWithTaxon|Polypeptide|"
+        "ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|"
+        "Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
+        "p4;'StringProperty1';1.0;9606;'p4';'id';Protein|GeneProductMixin|"
+        "ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|"
+        "ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|"
+        "Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
     )
 
 
