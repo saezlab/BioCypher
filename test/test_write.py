@@ -95,7 +95,7 @@ def test_write_node_data_headers_import_call(bw):
 
     passed = bw.write(nodes[:4])
     passed = bw.write(nodes[4:])
-    bw.write_import_call()
+    bw.write_call()
 
     p_csv = os.path.join(path, "Protein-header.csv")
     m_csv = os.path.join(path, "MicroRNA-header.csv")
