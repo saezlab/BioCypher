@@ -40,6 +40,7 @@ logger.debug(f'Loading module {__name__}.')
 
 from typing import Any, Generator, Iterable, Literal
 import collections
+import importlib as imp
 
 from more_itertools import peekable
 
@@ -78,6 +79,17 @@ class Translator:
 
         # record nodes without biolink type configured in schema_config.yaml
         self.notype = collections.defaultdict(int)
+
+    def reload(self):
+        """
+        Reloads the object from the module level.
+        """
+
+        modname = self.__class__.__module__
+        mod = __import__(modname, fromlist = [modname.split('.')[0]])
+        imp.reload(mod)
+        new = getattr(mod, self.__class__.__name__)
+        setattr(self, '__class__', new)
 
     def translate(
             self,
