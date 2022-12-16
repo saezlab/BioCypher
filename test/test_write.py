@@ -673,18 +673,21 @@ def test_write_edge_data_headers_import_call(bw):
 
 
 def test_write_duplicate_edges(bw):
+
     edges = _get_edges(4)
     edges.append(edges[0])
 
     passed = bw.write(edges)
 
-    ptl_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
-    pts_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
+    pid_csv = os.path.join(path, 'PERTURBED_IN_DISEASE-part000.csv')
+    imi_csv = os.path.join(path, 'IS_MUTATED_IN-part000.csv')
 
-    l = sum(1 for _ in open(ptl_csv))
-    c = sum(1 for _ in open(pts_csv))
+    lnum_pid = sum(1 for _ in open(pid_csv))
+    lnum_imi = sum(1 for _ in open(imi_csv))
 
-    assert passed and l == 4 and c == 4
+    assert passed
+    assert lnum_pid == 4
+    assert lnum_imi == 4
 
 
 def test_relasnode_implementation(bw):
