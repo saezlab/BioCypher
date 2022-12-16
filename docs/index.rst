@@ -25,11 +25,12 @@ the Neo4j admin-import feature.
 
    BioCypher is a community-driven project. If you have any questions,
    specific needs, or want to contribute to the project, please contact
-   us over by [GitHub](https://github.com/saezlab/BioCypher) or via email
+   us over by `GitHub <https://github.com/saezlab/BioCypher>`_ or via email
    at sebastian.lobentanzer (at) uni-heidelberg.de.
 
 .. figure:: ../graphical_abstract.png
    :width: 70%
+   :align: center
    :alt: BioCypher graphical abstract
 
    BioCypher uses a collection of reusable “adapters” for the different sources
