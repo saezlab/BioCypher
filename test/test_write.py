@@ -779,7 +779,6 @@ def test_relasnode_overwrite_behaviour(bw):
 def test_write_mixed_edges(bw):
 
     mixed = _get_mixed_edges(4)
-
     passed = bw.write((e for e in mixed))
 
     pti_csv = os.path.join(path, 'PostTranslationalInteraction-header.csv')
@@ -796,47 +795,27 @@ def test_write_mixed_edges(bw):
 
 def test_create_import_call(bw):
 
-    mixed =
-    le = 4
-    for i in range(le):
-        n = Node(
-            f"i{i+1}",
-            "post translational interaction",
-        )
-        e1 = Edge(
-            source=f"i{i+1}",
-            target=f"p{i+1}",
-            label="IS_SOURCE_OF",
-        )
-        e2 = Edge(
-            source=f"i{i}",
-            target=f"p{i+2}",
-            label="IS_TARGET_OF",
-        )
-        mixed.append(RelAsNode(n, e1, e2))
-
-        e3 = Edge(
-            source=f"p{i+1}",
-            target=f"p{i+1}",
-            label="PERTURBED_IN_DISEASE",
-        )
-        mixed.append(e3)
-
-    def gen(lis):
-        yield from lis
-
-    passed = bw.write(gen(mixed))
-
+    mixed = _get_mixed_edges(4)
+    passed = bw.write((e for e in mixed))
     call = bw.compile_call()
 
-    assert (
-        passed
-        and call == 'bin/neo4j-admin import --database=neo4j --delimiter=";" '
-        '--array-delimiter="|" --quote="\'" '
-        f'--nodes="{path}/PostTranslationalInteraction-header.csv,{path}/PostTranslationalInteraction-part.*" '
-        f'--relationships="{path}/IS_SOURCE_OF-header.csv,{path}/IS_SOURCE_OF-part.*" '
-        f'--relationships="{path}/IS_TARGET_OF-header.csv,{path}/IS_TARGET_OF-part.*" '
-        f'--relationships="{path}/PERTURBED_IN_DISEASE-header.csv,{path}/PERTURBED_IN_DISEASE-part.*" '
+    assert passed
+    assert unformat(call) == (
+        'neo4j-admin import --database=neo4j --delimiter=";" '
+        '--array-delimiter="|" --quote="\'" --skip-bad-relationships=false '
+        '--skip-duplicate-nodes=false '
+        '--nodes="'
+            f'{path}/PostTranslationalInteraction-header.csv,'
+            f'{path}/PostTranslationalInteraction-part.*" '
+        '--relationships="'
+            f'{path}/PERTURBED_IN_DISEASE-header.csv,'
+            f'{path}/PERTURBED_IN_DISEASE-part.*" '
+        '--relationships="'
+            f'{path}/IS_SOURCE_OF-header.csv,'
+            f'{path}/IS_SOURCE_OF-part.*" '
+        '--relationships="'
+            f'{path}/IS_TARGET_OF-header.csv,'
+            f'{path}/IS_TARGET_OF-part.*"'
     )
 
 
