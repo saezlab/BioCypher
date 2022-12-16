@@ -459,44 +459,47 @@ def test_write_none_type_property_and_order_invariance(bw):
 
 
 def test_accidental_exact_batch_size(bw):
-    nodes = _get_nodes(int(1e4))
 
-    def node_gen(nodes):
-        yield from nodes
+    nodes = _get_nodes(1e4)
 
-    passed = bw.write(
-        node_gen(nodes),
-        batch_size=int(1e4),
-    )  # reduce test time
+    node_gen = (n for n in nodes)
 
-    p0_csv = os.path.join(path, "Protein-part000.csv")
-    m0_csv = os.path.join(path, "MicroRNA-part000.csv")
-    p1_csv = os.path.join(path, "Protein-part001.csv")
-    m1_csv = os.path.join(path, "MicroRNA-part001.csv")
+    passed = bw.write(node_gen, batch_size = 1e4)
+
+    p0_csv = os.path.join(path, 'Protein-part000.csv')
+    m0_csv = os.path.join(path, 'Microrna-part000.csv')
+    p1_csv = os.path.join(path, 'Protein-part001.csv')
+    m1_csv = os.path.join(path, 'Microrna-part001.csv')
 
     pr_lines = sum(1 for _ in open(p0_csv))
     mi_lines = sum(1 for _ in open(m0_csv))
 
-    ph_csv = os.path.join(path, "Protein-header.csv")
-    mh_csv = os.path.join(path, "MicroRNA-header.csv")
+    ph_csv = os.path.join(path, 'Protein-header.csv')
+    mh_csv = os.path.join(path, 'Microrna-header.csv')
 
     with open(ph_csv) as f:
-        p = f.read()
-    with open(mh_csv) as f:
-        m = f.read()
+        p_header = f.read()
 
-    assert (
-        passed
-        and pr_lines == 1e4
-        and mi_lines == 1e4
-        and not os.path.exists(p1_csv)
-        and not os.path.exists(m1_csv)
-        and p == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
-        and m == ":ID;name;taxon:long;id;id_type;:LABEL"
+    with open(mh_csv) as f:
+        m_header = f.read()
+
+    assert passed
+    assert pr_lines == 1e4
+    assert mi_lines == 1e4
+    assert not os.path.exists(p1_csv)
+    assert not os.path.exists(m1_csv)
+    assert p_header == (
+        ':ID;id:string;id_type:string;name:string;'
+        'score:double;taxon:long;:LABEL'
+    )
+    assert m_header == (
+        ':ID;id:string;id_type:string;'
+        'name:string;taxon:long;:LABEL'
     )
 
 
 def test_write_edge_data_from_gen(bw):
+
     edges = _get_edges(4)
 
     def edge_gen(edges):
