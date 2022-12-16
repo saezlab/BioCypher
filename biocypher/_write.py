@@ -542,9 +542,12 @@ class BatchWriter:
         # additional labels (derived from biolink) by primary label
         labels = {}
         batch_size = self._batch_size(batch_size)
+        written_here = 0
+        processed_here = 0
 
         for e in entities:
 
+            processed_here += 1
             what = self._what(e)
             node = what == 'node'
 
@@ -603,6 +606,7 @@ class BatchWriter:
 
                     return False
 
+                written_here += len(by_label[label])
                 by_label[label] = []
 
         # after generator depleted, write remainder of by_label
@@ -617,6 +621,20 @@ class BatchWriter:
             if not passed:
 
                 return False
+
+            written_here += len(items)
+
+        logger.info(
+            f'Processed {processed_here} '
+            f'and written to CSV {written_here} items.'
+        )
+
+        if processed_here and not written_here:
+
+            logger.warn(
+                'Looks like no items has been written out in this call! '
+                'Maybe all were duplicates, maybe you forgot to call `reset`?'
+            )
 
         # --- where this comment belongs to?
         # use complete bin list to write header files

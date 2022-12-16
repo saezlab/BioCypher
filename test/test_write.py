@@ -354,6 +354,7 @@ def test_write_node_data_from_gen_no_props(bw):
 
 
 def test_write_node_data_from_large_gen(bw):
+
     nodes = _get_nodes(1e4 + 4)
 
     node_gen = (n for n in nodes)
@@ -378,6 +379,7 @@ def test_write_node_data_from_large_gen(bw):
 
 
 def test_too_many_properties(bw):
+
     nodes = _get_nodes(1)
 
     bn1 = Node(
