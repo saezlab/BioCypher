@@ -53,8 +53,11 @@ os.makedirs(path, exist_ok=True)
 
 
 def _get_nodes(l: int) -> list:
+
     nodes = []
+
     for i in range(int(l)):
+
         bnp = Node(
             id=f"p{i+1}",
             label="protein",
@@ -78,13 +81,21 @@ def _get_nodes(l: int) -> list:
 
 
 def _get_edges(l):
+
     edges = []
+
     for i in range(int(l)):
+
         e1 = Edge(
             source=f"p{i}",
             target=f"p{i + 1}",
             label="PERTURBED_IN_DISEASE",
-            props={"residue": "T253", "level": 4},
+            props={
+                "residue": "T253",
+                "level": 4,
+                "directional": True,
+                "score": .78,
+            },
             # we suppose the verb-form relationship label is created by
             # translation functionality in translate.py
         )
@@ -98,6 +109,7 @@ def _get_edges(l):
             # translation functionality in translate.py
         )
         edges.append(e2)
+
     return edges
 
 
@@ -502,25 +514,32 @@ def test_write_edge_data_from_gen(bw):
 
     edges = _get_edges(4)
 
-    def edge_gen(edges):
-        yield from edges
+    edge_gen = (e for e in edges)
 
-    passed = bw._write_records(edge_gen(edges), batch_size=int(1e4))
+    passed = bw._write_records(edge_gen, batch_size = 1e4)
 
     pid_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
-    imi_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
+    imi_csv = os.path.join(path, "IS_MUTATED_IN-part000.csv")
 
     with open(pid_csv) as f:
-        l = f.read()
-    with open(imi_csv) as f:
-        c = f.read()
+        pid_contents = f.read()
 
-    assert (
-        passed
-        and l
-        == "p0;'T253';4;p1;PERTURBED_IN_DISEASE\np1;'T253';4;p2;PERTURBED_IN_DISEASE\np2;'T253';4;p3;PERTURBED_IN_DISEASE\np3;'T253';4;p4;PERTURBED_IN_DISEASE\n"
-        and c
-        == "m0;'3-UTR';1;p1;Is_Mutated_In\nm1;'3-UTR';1;p2;Is_Mutated_In\nm2;'3-UTR';1;p3;Is_Mutated_In\nm3;'3-UTR';1;p4;Is_Mutated_In\n"
+    with open(imi_csv) as f:
+        imi_contents = f.read()
+
+    assert passed
+
+    assert pid_contents == (
+        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n'
+        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n'
+        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n'
+        'p3;True;4;T253;0.78;p4;PERTURBED_IN_DISEASE'
+    )
+    assert imi_contents == (
+        'm0;1;3-UTR;p1;IS_MUTATED_IN\n'
+        'm1;1;3-UTR;p2;IS_MUTATED_IN\n'
+        'm2;1;3-UTR;p3;IS_MUTATED_IN\n'
+        'm3;1;3-UTR;p4;IS_MUTATED_IN'
     )
 
 
