@@ -730,22 +730,18 @@ def test_relasnode_implementation(bw):
 
 
 def test_relasnode_overwrite_behaviour(bw):
+
     # if rel as node is called from successive write calls, SOURCE_OF,
     # TARGET_OF, and PART_OF should be continued, not overwritten
     trips = _get_rel_as_nodes(8)
+    passed_n0 = bw.write((n for n in trips[:5]))
+    passed_n1 = bw.write((n for n in trips[5:]))
 
-    def gen1(lis):
-        yield from lis[:5]
+    iso_csv = os.path.join(path, 'IS_SOURCE_OF-part001.csv')
 
-    def gen2(lis):
-        yield from lis[5:]
-
-    passed1 = bw.write(gen1(trips))
-    passed2 = bw.write(gen2(trips))
-
-    iso_csv = os.path.join(path, "IS_SOURCE_OF-part001.csv")
-
-    assert passed1 and passed2 and os.path.exists(iso_csv)
+    assert passed_n0
+    assert passed_n1
+    assert os.path.exists(iso_csv)
 
 
 def test_write_mixed_edges(bw):
