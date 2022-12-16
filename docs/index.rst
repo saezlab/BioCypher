@@ -6,8 +6,8 @@ Introduction
 
 BioCypher (`GitHub repository <https://github.com/saezlab/BioCypher>`_) is a
 framework designed to serve as guideline and translation mechanism for both the
-creation of biomedical property graph databases from primary data as well as for
-the seamless integration, optimisation, and querying of these databases. Its
+creation of biomedical knowledge graph databases from primary data as well as
+for the seamless integration, optimisation, and querying of these databases. Its
 purpose is to combine the computational power of graph databases with the search
 for answers of our most pressing biological questions and facilitate interfacing
 with cutting edge developments in the areas of causal reasoning, representation
