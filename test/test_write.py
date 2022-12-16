@@ -4,7 +4,6 @@ import random
 import string
 import tempfile
 
-from genericpath import isfile
 import pytest
 
 from biocypher._write import BatchWriter
@@ -383,48 +382,42 @@ def test_too_many_properties(bw):
     nodes = _get_nodes(1)
 
     bn1 = Node(
-        id="p0",
-        label="protein",
-        props={
-            "p1": get_random_string(4),
-            "p2": get_random_string(8),
-            "p3": get_random_string(16),
-            "p4": get_random_string(16),
+        id = 'p0',
+        label = 'protein',
+        props = {
+            'p1': get_random_string(4),
+            'p2': get_random_string(8),
+            'p3': get_random_string(16),
+            'p4': get_random_string(16),
         },
     )
     nodes.append(bn1)
 
-    def node_gen(nodes):
-        yield from nodes
+    node_gen = (n for n in nodes)
 
-    passed = bw._write_records(
-        node_gen(nodes),
-        batch_size=int(1e4),
-    )  # reduce test time
+    passed = bw._write_records(node_gen, batch_size = 1e4)
 
     assert not passed
 
 
 def test_not_enough_properties(bw):
+
     nodes = _get_nodes(1)
 
     bn1 = Node(
-        id="p0",
-        label="protein",
-        props={"p1": get_random_string(4)},
+        id='p0',
+        label='protein',
+        props={'p1': get_random_string(4)},
     )
     nodes.append(bn1)
+    node_gen = (n for n in nodes)
 
-    def node_gen(nodes):
-        yield from nodes
+    passed = bw._write_records(node_gen, batch_size=1e4)
 
-    passed = bw._write_records(
-        node_gen(nodes),
-        batch_size=int(1e4),
-    )  # reduce test time
-    p0_csv = os.path.join(path, "Protein-part000.csv")
+    p0_csv = os.path.join(path, 'Protein-part000.csv')
 
-    assert not passed and not isfile(p0_csv)
+    assert not passed
+    assert not os.path.exists(p0_csv)
 
 
 def test_write_none_type_property_and_order_invariance(bw):
@@ -501,8 +494,8 @@ def test_accidental_exact_batch_size(bw):
         passed
         and pr_lines == 1e4
         and mi_lines == 1e4
-        and not isfile(p1_csv)
-        and not isfile(m1_csv)
+        and not os.path.exists(p1_csv)
+        and not os.path.exists(m1_csv)
         and p == ":ID;name;score:double;taxon:long;id;id_type;:LABEL"
         and m == ":ID;name;taxon:long;id;id_type;:LABEL"
     )
@@ -717,7 +710,7 @@ def test_relasnode_overwrite_behaviour(bw):
 
     iso_csv = os.path.join(path, "IS_SOURCE_OF-part001.csv")
 
-    assert passed1 and passed2 and isfile(iso_csv)
+    assert passed1 and passed2 and os.path.exists(iso_csv)
 
 
 def test_write_mixed_edges(bw):
@@ -759,10 +752,10 @@ def test_write_mixed_edges(bw):
 
     assert (
         passed
-        and os.path.isfile(pmi_csv)
-        and os.path.isfile(iso_csv)
-        and os.path.isfile(ito_csv)
-        and os.path.isfile(ipt_csv)
+        and os.path.exists(pmi_csv)
+        and os.path.exists(iso_csv)
+        and os.path.exists(ito_csv)
+        and os.path.exists(ipt_csv)
     )
 
 
