@@ -745,49 +745,43 @@ def test_relasnode_overwrite_behaviour(bw):
 
 
 def test_write_mixed_edges(bw):
-    mixed = []
-    le = 4
-    for i in range(le):
-        e3 = Edge(
-            source=f"p{i+1}",
-            target=f"p{i+1}",
-            label="PERTURBED_IN_DISEASE",
+
+    pid_props = {
+        'directional': True,
+        'residue': 'T253',
+        'level': 4,
+        'score': .78,
+    }
+
+    mixed = [
+        Edge(
+            source = f'p{i + 1}',
+            target = f'p{i + 1}',  # Q: are source and target the same
+            label = 'PERTURBED_IN_DISEASE',
+            props = pid_props,
         )
-        mixed.append(e3)
-
-        n = Node(
-            f"i{i+1}",
-            "post translational interaction",
+        for i in range(4)
+    ] + [
+        RelAsNode(
+            node = Node(f'i{i + 1}', 'post translational interaction'),
+            source = Edge(f'i{i + 1}', f'p{i + 1}', 'IS_SOURCE_OF'),
+            target = Edge(f'i{i + 1}', f'p{i + 2}', 'IS_TARGET_OF'),
         )
-        e1 = Edge(
-            source=f"i{i+1}",
-            target=f"p{i+1}",
-            label="IS_SOURCE_OF",
-        )
-        e2 = Edge(
-            source=f"i{i}",
-            target=f"p{i+2}",
-            label="IS_TARGET_OF",
-        )
-        mixed.append(RelAsNode(n, e1, e2))
+        for i in range(4)
+    ]
 
-    def gen(lis):
-        yield from lis
+    passed = bw.write((e for e in mixed))
 
-    passed = bw.write(gen(mixed))
+    pti_csv = os.path.join(path, 'PostTranslationalInteraction-header.csv')
+    iso_csv = os.path.join(path, 'IS_SOURCE_OF-header.csv')
+    ito_csv = os.path.join(path, 'IS_TARGET_OF-header.csv')
+    pid_csv = os.path.join(path, 'PERTURBED_IN_DISEASE-header.csv')
 
-    pmi_csv = os.path.join(path, "PostTranslationalInteraction-header.csv")
-    iso_csv = os.path.join(path, "IS_SOURCE_OF-header.csv")
-    ito_csv = os.path.join(path, "IS_TARGET_OF-header.csv")
-    ipt_csv = os.path.join(path, "PERTURBED_IN_DISEASE-header.csv")
-
-    assert (
-        passed
-        and os.path.exists(pmi_csv)
-        and os.path.exists(iso_csv)
-        and os.path.exists(ito_csv)
-        and os.path.exists(ipt_csv)
-    )
+    assert passed
+    assert os.path.exists(pti_csv)
+    assert os.path.exists(iso_csv)
+    assert os.path.exists(ito_csv)
+    assert os.path.exists(pid_csv)
 
 
 def test_create_import_call(bw):
