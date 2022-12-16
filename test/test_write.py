@@ -691,32 +691,41 @@ def test_write_duplicate_edges(bw):
 
 
 def test_relasnode_implementation(bw):
-    trips = _get_rel_as_nodes(4)
 
-    def gen(lis):
-        yield from lis
+    trips = _get_rel_as_nodes(4) # what is trips?
+    passed = bw.write((l for l in trips))
 
-    passed = bw.write(gen(trips))
-
-    iso_csv = os.path.join(path, "IS_SOURCE_OF-part000.csv")
-    ito_csv = os.path.join(path, "IS_TARGET_OF-part000.csv")
-    pmi_csv = os.path.join(path, "PostTranslationalInteraction-part000.csv")
+    iso_csv = os.path.join(path, 'IS_SOURCE_OF-part000.csv')
+    ito_csv = os.path.join(path, 'IS_TARGET_OF-part000.csv')
+    pti_csv = os.path.join(path, 'PostTranslationalInteraction-part000.csv')
 
     with open(iso_csv) as f:
-        s = f.read()
-    with open(ito_csv) as f:
-        t = f.read()
-    with open(pmi_csv) as f:
-        p = f.read()
+        iso_contents = f.read()
 
-    assert (
-        passed
-        and s
-        == "i1;p1;IS_SOURCE_OF\ni2;p2;IS_SOURCE_OF\ni3;p3;IS_SOURCE_OF\ni4;p4;IS_SOURCE_OF\n"
-        and t
-        == "i0;p2;IS_TARGET_OF\ni1;p3;IS_TARGET_OF\ni2;p4;IS_TARGET_OF\ni3;p5;IS_TARGET_OF\n"
-        and p
-        == "i1;True;-1;'i1';'id';PostTranslationalInteraction|PairwiseMolecularInteraction|PairwiseGeneToGeneInteraction|GeneToGeneAssociation|Association|Entity\ni2;True;-1;'i2';'id';PostTranslationalInteraction|PairwiseMolecularInteraction|PairwiseGeneToGeneInteraction|GeneToGeneAssociation|Association|Entity\ni3;True;-1;'i3';'id';PostTranslationalInteraction|PairwiseMolecularInteraction|PairwiseGeneToGeneInteraction|GeneToGeneAssociation|Association|Entity\ni4;True;-1;'i4';'id';PostTranslationalInteraction|PairwiseMolecularInteraction|PairwiseGeneToGeneInteraction|GeneToGeneAssociation|Association|Entity\n"
+    with open(ito_csv) as f:
+        ito_contents = f.read()
+
+    with open(pti_csv) as f:
+        pti_contents = f.read()
+
+    assert passed
+    assert iso_contents == (
+        'i1;p1;IS_SOURCE_OF\n'
+        'i2;p2;IS_SOURCE_OF\n'
+        'i3;p3;IS_SOURCE_OF\n'
+        'i4;p4;IS_SOURCE_OF'
+    )
+    assert ito_contents == (
+        'i0;p2;IS_TARGET_OF\n'
+        'i1;p3;IS_TARGET_OF\n'
+        'i2;p4;IS_TARGET_OF\n'
+        'i3;p5;IS_TARGET_OF'
+    )
+    assert pti_contents == (
+        'i1;True;-1;i1;id;Post translational interaction\n'
+        'i2;True;-1;i2;id;Post translational interaction\n'
+        'i3;True;-1;i3;id;Post translational interaction\n'
+        'i4;True;-1;i4;id;Post translational interaction'
     )
 
 
