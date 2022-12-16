@@ -661,11 +661,12 @@ class BatchWriter:
         # load headers from data parse
         if not self.property_types[what]:
 
-            logger.error(
+            logger.warn(
                 f'Header information not found for {what}s. '
-                'Was the data parsed first?',
+                f'Either the data contains no {what}s, '
+                'or `_write_headers` was called at the wrong point?',
             )
-            return False
+            return True
 
         node = what == 'node'
 
