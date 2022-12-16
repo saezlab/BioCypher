@@ -619,39 +619,56 @@ def test_write_edge_data_from_list_no_props(bw):
 
 
 def test_write_edge_data_headers_import_call(bw):
-    edges = _get_edges(8)
 
+    edges = _get_edges(8)
     nodes = _get_nodes(8)
 
-    def edge_gen1(edges):
-        yield from edges[:4]
+    edge_gen0 = (e for e in edges[:4])
+    edge_gen1 = (e for e in edges[4:])
 
-    def edge_gen2(edges):
-        yield from edges[4:]
+    passed_e0 = bw.write(edge_gen0)
+    passed_e1 = bw.write(edge_gen1)
+    passed_n = bw.write(nodes)
 
-    passed = bw.write(edge_gen1(edges))
-    passed = bw.write(edge_gen2(edges))
-    passed = bw.write(nodes)
+    bw.write_call()
 
-    bw.write_import_call()
+    pid_csv = os.path.join(path, 'PERTURBED_IN_DISEASE-header.csv')
+    imi_csv = os.path.join(path, 'IS_MUTATED_IN-header.csv')
+    call_sh = os.path.join(path, 'neo4j-admin-import-call.sh')
 
-    ptl_csv = os.path.join(path, "PERTURBED_IN_DISEASE-header.csv")
-    pts_csv = os.path.join(path, "Is_Mutated_In-header.csv")
-    call_csv = os.path.join(path, "neo4j-admin-import-call.sh")
+    with open(pid_csv) as f:
+        pid_header = f.read()
 
-    with open(ptl_csv) as f:
-        l = f.read()
-    with open(pts_csv) as f:
-        c = f.read()
-    with open(call_csv) as f:
-        call = f.read()
+    with open(imi_csv) as f:
+        imi_header = f.read()
 
-    assert (
-        passed
-        and l == ":START_ID;residue;level:long;:END_ID;:TYPE"
-        and c == ":START_ID;site;confidence:long;:END_ID;:TYPE"
-        and call
-        == f'bin/neo4j-admin import --database=neo4j --delimiter=";" --array-delimiter="|" --quote="\'" --nodes="{path}/Protein-header.csv,{path}/Protein-part.*" --nodes="{path}/MicroRNA-header.csv,{path}/MicroRNA-part.*" --relationships="{path}/PERTURBED_IN_DISEASE-header.csv,{path}/PERTURBED_IN_DISEASE-part.*" --relationships="{path}/Is_Mutated_In-header.csv,{path}/Is_Mutated_In-part.*" '
+    with open(call_sh) as f:
+        the_call = f.read()
+
+    assert passed_e0
+    assert passed_e1
+    assert passed_n
+    assert pid_header == (
+        ':START_ID;directional:boolean;level:long;'
+        'residue:string;score:double;:END_ID;:TYPE'
+    )
+    assert imi_header == ':START_ID;confidence:long;site:string;:END_ID;:TYPE'
+    assert unformat(the_call) == (
+        'neo4j-admin import --database=neo4j --delimiter=";" '
+        '--array-delimiter="|" --quote="\'" --skip-bad-relationships=false '
+        '--skip-duplicate-nodes=false '
+        '--relationships="'
+            f'{path}/PERTURBED_IN_DISEASE-header.csv,'
+            f'{path}/PERTURBED_IN_DISEASE-part.*" '
+        '--relationships="'
+            f'{path}/IS_MUTATED_IN-header.csv,'
+            f'{path}/IS_MUTATED_IN-part.*" '
+        '--nodes="'
+            f'{path}/Protein-header.csv,'
+            f'{path}/Protein-part.*" '
+        '--nodes="'
+            f'{path}/Microrna-header.csv,'
+            f'{path}/Microrna-part.*"'
     )
 
 
