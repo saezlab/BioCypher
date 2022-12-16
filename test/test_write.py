@@ -55,7 +55,7 @@ os.makedirs(path, exist_ok=True)
 
 def _get_nodes(l: int) -> list:
     nodes = []
-    for i in range(l):
+    for i in range(int(l)):
         bnp = Node(
             id=f"p{i+1}",
             label="protein",
@@ -80,7 +80,7 @@ def _get_nodes(l: int) -> list:
 
 def _get_edges(l):
     edges = []
-    for i in range(l):
+    for i in range(int(l)):
         e1 = Edge(
             source=f"p{i}",
             target=f"p{i + 1}",
@@ -106,7 +106,7 @@ def _get_rel_as_nodes(l):
 
     rels = []
 
-    for i in range(l):
+    for i in range(int(l)):
 
         n = Node(
             id=f"i{i+1}",
@@ -354,33 +354,27 @@ def test_write_node_data_from_gen_no_props(bw):
 
 
 def test_write_node_data_from_large_gen(bw):
-    nodes = _get_nodes(int(1e4 + 4))
+    nodes = _get_nodes(1e4 + 4)
 
-    def node_gen(nodes):
-        yield from nodes
+    node_gen = (n for n in nodes)
 
-    passed = bw._write_records(
-        node_gen(nodes),
-        batch_size=int(1e4),
-    )  # reduce test time
+    passed = bw._write_records(node_gen, batch_size=1e4)
 
-    p0_csv = os.path.join(path, "Protein-part000.csv")
-    m0_csv = os.path.join(path, "MicroRNA-part000.csv")
-    p1_csv = os.path.join(path, "Protein-part001.csv")
-    m1_csv = os.path.join(path, "MicroRNA-part001.csv")
+    p0_csv = os.path.join(path, 'Protein-part000.csv')
+    m0_csv = os.path.join(path, 'Microrna-part000.csv')
+    p1_csv = os.path.join(path, 'Protein-part001.csv')
+    m1_csv = os.path.join(path, 'Microrna-part001.csv')
 
     pr_lines = sum(1 for _ in open(p0_csv))
     mi_lines = sum(1 for _ in open(m0_csv))
     pr_lines1 = sum(1 for _ in open(p1_csv))
     mi_lines1 = sum(1 for _ in open(m1_csv))
 
-    assert (
-        passed
-        and pr_lines == 1e4
-        and mi_lines == 1e4
-        and pr_lines1 == 4
-        and mi_lines1 == 4
-    )
+    assert passed
+    assert pr_lines == 1e4
+    assert mi_lines == 1e4
+    assert pr_lines1 == 4
+    assert mi_lines1 == 4
 
 
 def test_too_many_properties(bw):

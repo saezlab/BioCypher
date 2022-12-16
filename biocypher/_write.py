@@ -560,8 +560,6 @@ class BatchWriter:
             self.seen[what][_id] += 1
             label = e.label
 
-            print(self.seen)
-
             # check for duplicates
             if self.seen[what][_id] > 1:
 
