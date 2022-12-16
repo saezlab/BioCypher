@@ -407,16 +407,18 @@ class BatchWriter:
             self,
             label: str,
             instance: Node | Edge | None = None,
-            what: ENTITIES = 'node',
+            what: ENTITIES | None = None,
         ):
 
         propt = {}
+        what = what or getattr(instance, 'entity', 'node')
+
         # get properties from config if present
         from_conf = self.bl_adapter.schema.get(label, {}).get('properties')
 
         if what != 'node' and not from_conf:
 
-            from_conf.update(self._lae_proptypes(label) or {})
+            from_conf = self._lae_proptypes(label)
 
         if from_conf:
 
@@ -442,15 +444,14 @@ class BatchWriter:
         Looks up property types for label as edge schema.
         """
 
-        for leave in self.bl_adapter.schema.values():
+        for leaf in self.bl_adapter.schema.values():
 
             if (
-                isinstance(leave, dict) and
-                leave.get('label_as_edge') == label
+                isinstance(leaf, dict) and
+                leaf.get('label_as_edge') == label
             ):
 
-                return leave.get('properties')
-
+                return leaf.get('properties')
 
 
     def _batch_size(self, override: int | None = None) -> int:
