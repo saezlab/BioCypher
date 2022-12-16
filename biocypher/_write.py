@@ -612,6 +612,8 @@ class BatchWriter:
         # after generator depleted, write remainder of by_label
         for label, items in by_label.items():
 
+            node = items and self._what(items[0]) == 'node'
+
             passed = self._compile_batch(
                 entities = items,
                 label = label,
@@ -728,7 +730,7 @@ class BatchWriter:
 
         entities = _misc.to_list(entities)
 
-        if not entities: return
+        if not entities: return True
 
         eclass = entities[0].__class__
         what = self._what(entities[0])
