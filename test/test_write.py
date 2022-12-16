@@ -545,30 +545,27 @@ def test_write_edge_data_from_gen(bw):
 
 def test_write_edge_data_from_large_gen(bw):
 
-    edges = _get_edges(int(1e4 + 4))
+    edges = _get_edges(1e4 + 4)
 
-    def edge_gen(edges):
-        yield from edges
+    edge_gen = (e for e in edges)
 
-    passed = bw._write_records(edge_gen(edges), batch_size=int(1e4))
+    passed = bw._write_records(edge_gen, batch_size = 1e4)
 
-    apl0_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
-    ips0_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
-    apl1_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part001.csv")
-    ips1_csv = os.path.join(path, "Is_Mutated_In-part001.csv")
+    apl0_csv = os.path.join(path, 'PERTURBED_IN_DISEASE-part000.csv')
+    ips0_csv = os.path.join(path, 'IS_MUTATED_IN-part000.csv')
+    apl1_csv = os.path.join(path, 'PERTURBED_IN_DISEASE-part001.csv')
+    ips1_csv = os.path.join(path, 'IS_MUTATED_IN-part001.csv')
 
-    l_lines0 = sum(1 for _ in open(apl0_csv))
-    c_lines0 = sum(1 for _ in open(ips0_csv))
-    l_lines1 = sum(1 for _ in open(apl1_csv))
-    c_lines1 = sum(1 for _ in open(ips1_csv))
+    pid_lines0 = sum(1 for _ in open(apl0_csv))
+    imi_lines0 = sum(1 for _ in open(ips0_csv))
+    pid_lines1 = sum(1 for _ in open(apl1_csv))
+    imi_lines1 = sum(1 for _ in open(ips1_csv))
 
-    assert (
-        passed
-        and l_lines0 == 1e4
-        and c_lines0 == 1e4
-        and l_lines1 == 4
-        and c_lines1 == 4
-    )
+    assert passed
+    assert pid_lines0 == 1e4
+    assert imi_lines0 == 1e4
+    assert pid_lines1 == 4
+    assert imi_lines1 == 4
 
 
 def test_write_edge_data_from_list(bw):
