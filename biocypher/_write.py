@@ -81,6 +81,7 @@ from collections import OrderedDict, defaultdict
 import os
 import re
 import glob
+import importlib as imp
 
 import biocypher._misc as _misc
 from biocypher._config import config as _config
@@ -208,6 +209,17 @@ class BatchWriter:
         self.bl_adapter = bl_adapter
         self.set_outdir(dirname)
         self.reset()
+
+    def reload(self):
+        """
+        Reloads the object from the module level.
+        """
+
+        modname = self.__class__.__module__
+        mod = __import__(modname, fromlist = [modname.split('.')[0]])
+        imp.reload(mod)
+        new = getattr(mod, self.__class__.__name__)
+        setattr(self, '__class__', new)
 
     def main(self):
         """
@@ -594,6 +606,7 @@ class BatchWriter:
                 by_label[label] = []
 
         # after generator depleted, write remainder of by_label
+        print(by_label)
         for label, items in by_label.items():
 
             passed = self._compile_batch(
