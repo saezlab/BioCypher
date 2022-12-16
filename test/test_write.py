@@ -213,9 +213,8 @@ def test_write_node_data_headers_import_call(bw):
 
 
 def test_property_types(bw):
-    nodes = []
-    for i in range(4):
-        bnp = Node(
+    nodes = [
+        Node(
             id=f"p{i+1}",
             label="protein",
             props={
@@ -224,7 +223,8 @@ def test_property_types(bw):
                 "taxon": 9606,
             },
         )
-        nodes.append(bnp)
+        for i in range(4)
+    ]
 
     passed = bw.write(nodes, batch_size=1e6)
 
@@ -243,23 +243,10 @@ def test_property_types(bw):
         'score:double;taxon:long;:LABEL'
     )
     assert data == (
-        "p1;'StringProperty1';4.0;9606;'p1';'id';Protein|GeneProductMixin|"
-        "ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|"
-        "ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|"
-        "Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
-        "p2;'StringProperty1';2.0;9606;'p2';'id';Protein|GeneProductMixin|"
-        "ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|"
-        "ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|"
-        "Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
-        "p3;'StringProperty1';1.3333333333333333;9606;'p3';'id';Protein|"
-        "GeneProductMixin|ThingWithTaxon|Polypeptide|"
-        "ChemicalEntityOrGeneOrGeneProduct|"
-        "ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|"
-        "Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
-        "p4;'StringProperty1';1.0;9606;'p4';'id';Protein|GeneProductMixin|"
-        "ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|"
-        "ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|"
-        "Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
+        'p1;p1;id;StringProperty1;4.0;9606;Protein\n'
+        'p2;p2;id;StringProperty1;2.0;9606;Protein\n'
+        'p3;p3;id;StringProperty1;1.3333333333333333;9606;Protein\n'
+        'p4;p4;id;StringProperty1;1.0;9606;Protein'
     )
 
 
