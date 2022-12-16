@@ -139,6 +139,38 @@ def _get_rel_as_nodes(l):
     return rels
 
 
+def _get_mixed_edges(n: int) -> list:
+    """
+    Creates a list of Edge and RelAsNode objects.
+    """
+
+    pid_props = {
+        'directional': True,
+        'residue': 'T253',
+        'level': 4,
+        'score': .78,
+    }
+
+    mixed = [
+        Edge(
+            source = f'p{i + 1}',
+            target = f'p{i + 1}',  # Q: are source and target the same
+            label = 'PERTURBED_IN_DISEASE',
+            props = pid_props,
+        )
+        for i in range(n)
+    ] + [
+        RelAsNode(
+            node = Node(f'i{i + 1}', 'post translational interaction'),
+            source = Edge(f'i{i + 1}', f'p{i + 1}', 'IS_SOURCE_OF'),
+            target = Edge(f'i{i + 1}', f'p{i + 2}', 'IS_TARGET_OF'),
+        )
+        for i in range(n)
+    ]
+
+    return mixed
+
+
 def unformat(s: str) -> str:
     """
     Removes whitespace and line breaks from a string.
@@ -746,29 +778,7 @@ def test_relasnode_overwrite_behaviour(bw):
 
 def test_write_mixed_edges(bw):
 
-    pid_props = {
-        'directional': True,
-        'residue': 'T253',
-        'level': 4,
-        'score': .78,
-    }
-
-    mixed = [
-        Edge(
-            source = f'p{i + 1}',
-            target = f'p{i + 1}',  # Q: are source and target the same
-            label = 'PERTURBED_IN_DISEASE',
-            props = pid_props,
-        )
-        for i in range(4)
-    ] + [
-        RelAsNode(
-            node = Node(f'i{i + 1}', 'post translational interaction'),
-            source = Edge(f'i{i + 1}', f'p{i + 1}', 'IS_SOURCE_OF'),
-            target = Edge(f'i{i + 1}', f'p{i + 2}', 'IS_TARGET_OF'),
-        )
-        for i in range(4)
-    ]
+    mixed = _get_mixed_edges(4)
 
     passed = bw.write((e for e in mixed))
 
@@ -785,7 +795,8 @@ def test_write_mixed_edges(bw):
 
 
 def test_create_import_call(bw):
-    mixed = []
+
+    mixed =
     le = 4
     for i in range(le):
         n = Node(
