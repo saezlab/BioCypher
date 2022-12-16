@@ -598,39 +598,24 @@ def test_write_edge_data_from_list(bw):
 
 
 def test_write_edge_data_from_list_no_props(bw):
-    le = 4
-    edges = []
-    for i in range(le):
-        e1 = Edge(
-            source=f"p{i}",
-            target=f"p{i + 1}",
-            label="PERTURBED_IN_DISEASE",
+
+    edges = [
+        Edge(
+            source = f'{"m" if i % 2 else "p"}{i // 2}',
+            target = f'p{i // 2 + 1}',
+            label = 'IS_MUTATED_IN' if i % 2 else 'PERTURBED_IN_DISEASE',
         )
-        edges.append(e1)
-        e2 = Edge(
-            source=f"m{i}",
-            target=f"p{i + 1}",
-            label="Is_Mutated_In",
-        )
-        edges.append(e2)
+        for i in range(8)
+    ]
 
-    passed = bw.write(edges, batch_size=int(1e4))
+    passed = bw.write(edges, batch_size = 1e4)
 
-    ptl_csv = os.path.join(path, "PERTURBED_IN_DISEASE-part000.csv")
-    pts_csv = os.path.join(path, "Is_Mutated_In-part000.csv")
+    pid_csv = os.path.join(path, 'PERTURBED_IN_DISEASE-part000.csv')
+    imi_csv = os.path.join(path, 'IS_MUTATED_IN-part000.csv')
 
-    with open(ptl_csv) as f:
-        l = f.read()
-    with open(pts_csv) as f:
-        c = f.read()
-
-    assert (
-        passed
-        and l
-        == "p0;p1;PERTURBED_IN_DISEASE\np1;p2;PERTURBED_IN_DISEASE\np2;p3;PERTURBED_IN_DISEASE\np3;p4;PERTURBED_IN_DISEASE\n"
-        and c
-        == "m0;p1;Is_Mutated_In\nm1;p2;Is_Mutated_In\nm2;p3;Is_Mutated_In\nm3;p4;Is_Mutated_In\n"
-    )
+    assert not passed
+    assert not os.path.exists(pid_csv)
+    assert not is.path.exists(imi.csv)
 
 
 def test_write_edge_data_headers_import_call(bw):
