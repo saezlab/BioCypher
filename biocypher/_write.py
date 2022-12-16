@@ -560,6 +560,8 @@ class BatchWriter:
             self.seen[what][_id] += 1
             label = e.label
 
+            print(self.seen)
+
             # check for duplicates
             if self.seen[what][_id] > 1:
 
@@ -606,7 +608,6 @@ class BatchWriter:
                 by_label[label] = []
 
         # after generator depleted, write remainder of by_label
-        print(by_label)
         for label, items in by_label.items():
 
             passed = self._compile_batch(

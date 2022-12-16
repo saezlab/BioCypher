@@ -311,32 +311,26 @@ def test_write_node_data_from_gen(bw):
 
 
 def test_write_node_data_from_gen_no_props(bw):
-    nodes = []
-    le = 4
-    for i in range(le):
-        bnp = Node(
-            id=f"p{i+1}",
-            label="protein",
-            props={
-                "score": 4 / (i + 1),
-                "name": "StringProperty1",
-                "taxon": 9606,
+
+    nodes = [
+        Node(
+            id = f'{"m" if i % 2 else "p"}{i // 2 + 1}',
+            label = 'microRNA' if i % 2 else 'protein',
+            props = None if i % 2 else {
+                'score': 4 / (i // 2 + 1),
+                'name': 'StringProperty1',
+                'taxon': 9606,
             },
         )
-        nodes.append(bnp)
-        bnm = Node(
-            id=f"m{i+1}",
-            label="microRNA",
-        )
-        nodes.append(bnm)
+        for i in range(8)
+    ]
 
-    def node_gen(nodes):
-        yield from nodes
+    node_gen = (n for n in nodes)
 
-    passed = bw._write_records(node_gen(nodes), batch_size=1e6)
+    passed = bw._write_records(node_gen, batch_size=1e6)
 
-    p_csv = os.path.join(path, "Protein-part000.csv")
-    m_csv = os.path.join(path, "microRNA-part000.csv")
+    p_csv = os.path.join(path, 'Protein-part000.csv')
+    m_csv = os.path.join(path, 'Microrna-part000.csv')
 
     with open(p_csv) as f:
         pr = f.read()
@@ -344,12 +338,18 @@ def test_write_node_data_from_gen_no_props(bw):
     with open(m_csv) as f:
         mi = f.read()
 
-    assert (
-        passed
-        and pr
-        == "p1;'StringProperty1';4.0;9606;'p1';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np2;'StringProperty1';2.0;9606;'p2';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np3;'StringProperty1';1.3333333333333333;9606;'p3';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np4;'StringProperty1';1.0;9606;'p4';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
-        and mi
-        == "m1;'m1';'id';MicroRNA|NoncodingRNAProduct|RNAProduct|GeneProductMixin|Transcript|NucleicAcidEntity|GenomicEntity|PhysicalEssence|OntologyClass|MolecularEntity|ChemicalEntity|ChemicalOrDrugOrTreatment|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|NamedThing|Entity|PhysicalEssenceOrOccurrent|ThingWithTaxon|GeneOrGeneProduct|MacromolecularMachineMixin\nm2;'m2';'id';MicroRNA|NoncodingRNAProduct|RNAProduct|GeneProductMixin|Transcript|NucleicAcidEntity|GenomicEntity|PhysicalEssence|OntologyClass|MolecularEntity|ChemicalEntity|ChemicalOrDrugOrTreatment|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|NamedThing|Entity|PhysicalEssenceOrOccurrent|ThingWithTaxon|GeneOrGeneProduct|MacromolecularMachineMixin\nm3;'m3';'id';MicroRNA|NoncodingRNAProduct|RNAProduct|GeneProductMixin|Transcript|NucleicAcidEntity|GenomicEntity|PhysicalEssence|OntologyClass|MolecularEntity|ChemicalEntity|ChemicalOrDrugOrTreatment|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|NamedThing|Entity|PhysicalEssenceOrOccurrent|ThingWithTaxon|GeneOrGeneProduct|MacromolecularMachineMixin\nm4;'m4';'id';MicroRNA|NoncodingRNAProduct|RNAProduct|GeneProductMixin|Transcript|NucleicAcidEntity|GenomicEntity|PhysicalEssence|OntologyClass|MolecularEntity|ChemicalEntity|ChemicalOrDrugOrTreatment|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|NamedThing|Entity|PhysicalEssenceOrOccurrent|ThingWithTaxon|GeneOrGeneProduct|MacromolecularMachineMixin\n"
+    assert passed
+    assert pr == (
+        'p1;p1;id;StringProperty1;4.0;9606;Protein\n'
+        'p2;p2;id;StringProperty1;2.0;9606;Protein\n'
+        'p3;p3;id;StringProperty1;1.3333333333333333;9606;Protein\n'
+        'p4;p4;id;StringProperty1;1.0;9606;Protein'
+    )
+    assert mi == (
+        'm1;m1;id;Microrna\n'
+        'm2;m2;id;Microrna\n'
+        'm3;m3;id;Microrna\n'
+        'm4;m4;id;Microrna'
     )
 
 
