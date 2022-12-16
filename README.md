@@ -9,7 +9,14 @@ framework to create knowledge graph databases for systems biology. For an
 overview, usage notes, and a tutorial, read the docs
 [here](https://biocypher.org).
 
-![BioCypher](graphical_abstract.png)
+<img 
+    style="display: block; 
+           margin-left: auto;
+           margin-right: auto;
+           width: 50%;"
+    src="graphical_abstract.png" 
+    alt="Our logo">
+</img>
 
 ## ⚙️ Usage
 
