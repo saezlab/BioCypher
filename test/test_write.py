@@ -412,7 +412,7 @@ def test_not_enough_properties(bw):
     nodes.append(bn1)
     node_gen = (n for n in nodes)
 
-    passed = bw._write_records(node_gen, batch_size=1e4)
+    passed = bw._write_records(node_gen, batch_size = 1e4)
 
     p0_csv = os.path.join(path, 'Protein-part000.csv')
 
@@ -421,45 +421,40 @@ def test_not_enough_properties(bw):
 
 
 def test_write_none_type_property_and_order_invariance(bw):
+
     # as introduced by translation using defined properties in
     # schema_config.yaml
-    nodes = []
+    nodes = [
+        Node(
+            id = 'p1',
+            label = 'protein',
+            props = {'taxon': 9606, 'score': 1, 'name': None},
+        ),
+        Node(
+            id = 'p2',
+            label='protein',
+            props = {'name': None, 'score': 2, 'taxon': 9606},
+        ),
+        Node(
+            id = 'm1',
+            label = 'microRNA',
+            props = {'name': None, 'taxon': 9606},
+        ),
+    ]
 
-    bnp1 = Node(
-        id=f"p1",
-        label="protein",
-        props={"taxon": 9606, "score": 1, "name": None},
-    )
-    bnp2 = Node(
-        id=f"p2",
-        label="protein",
-        props={"name": None, "score": 2, "taxon": 9606},
-    )
-    bnm = Node(
-        id=f"m1",
-        label="microRNA",
-        props={"name": None, "taxon": 9606},
-    )
-    nodes.append(bnp1)
-    nodes.append(bnp2)
-    nodes.append(bnm)
+    node_gen = (n for n in nodes)
 
-    def node_gen(nodes):
-        yield from nodes
+    passed = bw._write_records(node_gen, batch_size = 1e4)
 
-    passed = bw._write_records(
-        node_gen(nodes),
-        batch_size=int(1e4),
-    )  # reduce test time
+    p0_csv = os.path.join(path, 'Protein-part000.csv')
 
-    p0_csv = os.path.join(path, "Protein-part000.csv")
     with open(p0_csv) as f:
         p = f.read()
 
-    assert (
-        passed
-        and p
-        == "p1;;1;9606;'p1';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np2;;2;9606;'p2';'id';Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n"
+    assert passed
+    assert p == (
+        'p1;p1;id;;1;9606;Protein\n'
+        'p2;p2;id;;2;9606;Protein'
     )
 
 
