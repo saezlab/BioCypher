@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "biocypher"
-version = "0.4.0"
+version = "0.4.1"
 description = "Graph database standard for molecular biology"
 authors = [
     "Sebastian Lobentanzer <sebastian.lobentanzer@uni-heidelberg.de>",
