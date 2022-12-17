@@ -116,7 +116,7 @@ class Translator:
         items = peekable(items)
         first = items.peek()
 
-        if isinstance(first, (_misc.SIMPLE_TYPES, BC_TYPES)):
+        if isinstance(first, _misc.SIMPLE_TYPES):
 
             items = (first,)
 
