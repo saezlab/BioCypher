@@ -20,8 +20,9 @@ logger.debug(f'Loading module {__name__}.')
 
 from typing import TYPE_CHECKING, Any, Optional
 import inspect
-import collections
 import itertools
+import collections
+
 import more_itertools as mit
 
 if TYPE_CHECKING:
@@ -31,12 +32,12 @@ if TYPE_CHECKING:
 import neo4j_utils
 
 from . import _misc
-from ._write import BatchWriter, ENTITIES
+from ._meta import VersionNode
+from ._write import ENTITIES, BatchWriter
 from ._config import config as _config
 from ._entity import BC_TYPES, Edge, Node
-from ._meta import VersionNode
-from ._translate import Translator
 from ._biolink import BiolinkAdapter
+from ._translate import Translator
 
 __all__ = ['Driver']
 
@@ -215,8 +216,8 @@ class Driver(neo4j_utils.Driver):
                 label_cc = _misc.cc(leaf[0])
                 label_sc = _misc.sc(leaf[0])
                 s = (
-                    f'CREATE CONSTRAINT {label_sc}_id '
-                    f'IF NOT EXISTS ON (n:{label_cc}) '
+                    f'CREATE CONSTRAINT `{label_sc}_id` '
+                    f'IF NOT EXISTS ON (n:`{label_cc}`) '
                     'ASSERT n.id IS UNIQUE'
                 )
                 self.query(s)
