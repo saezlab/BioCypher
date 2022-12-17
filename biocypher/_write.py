@@ -148,7 +148,7 @@ class BatchWriter:
         skip_bad_relationships: bool = False,
         skip_duplicate_nodes: bool = False,
         batch_size: int | None = None,
-        wipe: bool = True,
+        wipe: bool = False,
     ):
         """
         Export data into CSV for *neo4j-admin* import.
