@@ -820,19 +820,20 @@ def test_create_import_call(bw):
 
 
 def test_write_offline():
+
     d = Driver(
-        offline=True,
-        user_schema_config_path="biocypher/_config/test_schema_config.yaml",
-        delimiter=",",
-        array_delimiter="|",
+        offline = True,
+        user_schema_config_path = 'biocypher/_config/test_schema_config.yaml',
+        delimiter = ',',
+        array_delimiter = '|',
     )
 
     nodes = _get_nodes(4)
 
-    passed = d.write_csv(items=nodes, dirname=path)
+    passed = d.write_csv(items = nodes, dirname = path)
 
-    p_csv = os.path.join(path, "Protein-part000.csv")
-    m_csv = os.path.join(path, "MicroRNA-part000.csv")
+    p_csv = os.path.join(path, 'Protein-part000.csv')
+    m_csv = os.path.join(path, 'Microrna-part000.csv')
 
     with open(p_csv) as f:
         pr = f.read()
@@ -840,37 +841,44 @@ def test_write_offline():
     with open(m_csv) as f:
         mi = f.read()
 
-    assert (
-        passed
-        and pr
-        == 'p1,"StringProperty1",4.0,9606,"p1","uniprot",Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np2,"StringProperty1",2.0,9606,"p2","uniprot",Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np3,"StringProperty1",1.3333333333333333,9606,"p3","uniprot",Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\np4,"StringProperty1",1.0,9606,"p4","uniprot",Protein|GeneProductMixin|ThingWithTaxon|Polypeptide|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|BiologicalEntity|NamedThing|Entity|GeneOrGeneProduct|MacromolecularMachineMixin\n'
-        and mi
-        == 'm1,"StringProperty1",9606,"m1","mirbase",MicroRNA|NoncodingRNAProduct|RNAProduct|GeneProductMixin|Transcript|NucleicAcidEntity|GenomicEntity|PhysicalEssence|OntologyClass|MolecularEntity|ChemicalEntity|ChemicalOrDrugOrTreatment|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|NamedThing|Entity|PhysicalEssenceOrOccurrent|ThingWithTaxon|GeneOrGeneProduct|MacromolecularMachineMixin\nm2,"StringProperty1",9606,"m2","mirbase",MicroRNA|NoncodingRNAProduct|RNAProduct|GeneProductMixin|Transcript|NucleicAcidEntity|GenomicEntity|PhysicalEssence|OntologyClass|MolecularEntity|ChemicalEntity|ChemicalOrDrugOrTreatment|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|NamedThing|Entity|PhysicalEssenceOrOccurrent|ThingWithTaxon|GeneOrGeneProduct|MacromolecularMachineMixin\nm3,"StringProperty1",9606,"m3","mirbase",MicroRNA|NoncodingRNAProduct|RNAProduct|GeneProductMixin|Transcript|NucleicAcidEntity|GenomicEntity|PhysicalEssence|OntologyClass|MolecularEntity|ChemicalEntity|ChemicalOrDrugOrTreatment|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|NamedThing|Entity|PhysicalEssenceOrOccurrent|ThingWithTaxon|GeneOrGeneProduct|MacromolecularMachineMixin\nm4,"StringProperty1",9606,"m4","mirbase",MicroRNA|NoncodingRNAProduct|RNAProduct|GeneProductMixin|Transcript|NucleicAcidEntity|GenomicEntity|PhysicalEssence|OntologyClass|MolecularEntity|ChemicalEntity|ChemicalOrDrugOrTreatment|ChemicalEntityOrGeneOrGeneProduct|ChemicalEntityOrProteinOrPolypeptide|NamedThing|Entity|PhysicalEssenceOrOccurrent|ThingWithTaxon|GeneOrGeneProduct|MacromolecularMachineMixin\n'
+    assert passed
+    assert pr == (
+        'p1,p1,uniprot,StringProperty1,4.0,9606,Protein\n'
+        'p2,p2,uniprot,StringProperty1,2.0,9606,Protein\n'
+        'p3,p3,uniprot,StringProperty1,1.3333333333333333,9606,Protein\n'
+        'p4,p4,uniprot,StringProperty1,1.0,9606,Protein'
+    )
+    assert mi == (
+        'm1,m1,mirbase,StringProperty1,9606,Microrna\n'
+        'm2,m2,mirbase,StringProperty1,9606,Microrna\n'
+        'm3,m3,mirbase,StringProperty1,9606,Microrna\n'
+        'm4,m4,mirbase,StringProperty1,9606,Microrna'
     )
 
 
 def test_duplicate_id(bw):
-    nodes = []
-    csv = os.path.join(path, "Protein-part000.csv")
-    # remove csv file in path
-    if os.path.exists(csv):
-        os.remove(csv)
-    # four proteins, four miRNAs
-    for _ in range(2):
-        bnp = Node(
-            id=f"p1",
-            label="protein",
-            props={
-                "name": "StringProperty1",
-                "score": 4.32,
-                "taxon": 9606,
+
+    csv_path = os.path.join(path, 'Protein-part000.csv')
+
+    if os.path.exists(csv_path):
+        os.remove(csv_path)
+
+    nodes = [
+        Node(
+            id = 'p1',
+            label = 'protein',
+            props = {
+                'name': 'StringProperty1',
+                'score': 4.32,
+                'taxon': 9606,
             },
         )
-        nodes.append(bnp)
+        for _ in range(2)
+    ]
 
     passed = bw.write(nodes)
 
-    with open(csv, 'r') as fp:
+    with open(csv_path, 'r') as fp:
 
         numof_lines = sum(1 for _ in fp)
 
