@@ -634,7 +634,7 @@ class BatchWriter:
 
         if processed_here and not written_here:
 
-            logger.warn(
+            logger.warning(
                 'Looks like no items has been written out in this call! '
                 'Maybe all were duplicates, maybe you forgot to call `reset`?'
             )
@@ -662,7 +662,7 @@ class BatchWriter:
         # load headers from data parse
         if not self.property_types[what]:
 
-            logger.warn(
+            logger.warning(
                 f'Header information not found for {what}s. '
                 f'Either the data contains no {what}s, '
                 'or `_write_headers` was called at the wrong point?',
