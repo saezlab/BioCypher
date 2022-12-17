@@ -176,7 +176,7 @@ def unformat(s: str) -> str:
     Removes whitespace and line breaks from a string.
     """
 
-    rewhite = re.compile('[\s\n\t\r]+')
+    rewhite = re.compile(r'[\s\n\t\r]+')
 
     return rewhite.sub(' ', s)
 
@@ -647,7 +647,7 @@ def test_write_edge_data_from_list_no_props(bw):
 
     assert not passed
     assert not os.path.exists(pid_csv)
-    assert not is.path.exists(imi.csv)
+    assert not os.path.exists(imi_csv)
 
 
 def test_write_edge_data_headers_import_call(bw):
