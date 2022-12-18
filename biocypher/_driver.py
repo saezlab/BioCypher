@@ -678,7 +678,8 @@ class Driver(neo4j_utils.Driver):
             msg = (
                 'Input entities not accounted for due to them not being '
                 'present in the `schema_config.yaml` configuration file '
-                '(see log for details): \n'
+                '(not necessarily a problem, if you do not want to include '
+                'them in the database): \n'
             )
 
             for k, v in missing.items():
