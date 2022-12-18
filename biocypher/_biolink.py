@@ -98,7 +98,7 @@ class BiolinkAdapter:
 
     def _load(self):
 
-        logger.info('Building Biolink model.')
+        logger.info('Building Biolink model (might take a few minutes!).')
         # select with model to use
         self.set_model()
         # initialise biolink toolkit
