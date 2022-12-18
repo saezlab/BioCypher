@@ -31,6 +31,7 @@ def biolink_adapter(version_node):
         schema=version_node.schema,
         model="biocypher",  # this is the default
         # unstable, move to test yaml
+        use_cache = False,
     )
 
 
@@ -120,7 +121,11 @@ def test_translate_edges(translator):
 
 
 def test_adapter(version_node):
-    ad = BiolinkAdapter(schema = version_node.schema, model="biolink")
+    ad = BiolinkAdapter(
+        schema = version_node.schema,
+        model="biolink",
+        use_cache = False,
+    )
 
     assert isinstance(
         ad.biolink_schema["protein"]["class_definition"],
@@ -132,6 +137,7 @@ def test_custom_bmt_yaml(version_node):
     ad = BiolinkAdapter(
         schema = version_node.schema,
         model = module_data_path("test-biolink-model"),
+        use_cache = False,
     )
     p = ad.biolink_schema["protein"]
 
