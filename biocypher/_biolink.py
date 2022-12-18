@@ -58,6 +58,7 @@ class BiolinkAdapter:
         self,
         schema: dict,
         model: Literal['biocypher', 'biolink'] | str | dict | None = None,
+        use_cache: bool = True,
     ):
         """
         Args:
@@ -79,6 +80,8 @@ class BiolinkAdapter:
         # mapping functionality for translating terms and queries
         self.mappings = {}
         self.reverse_mappings = {}
+
+        self._use_cache = use_cache
 
         logger.info('Instantiating Biolink Adapter.')
 
@@ -106,6 +109,10 @@ class BiolinkAdapter:
 
 
     def _from_cache(self) -> bool:
+
+        if not self._use_cache:
+
+            return False
 
         data = _cache.cache.load(self.schema)
 
