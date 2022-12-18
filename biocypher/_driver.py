@@ -67,6 +67,8 @@ class Driver(neo4j_utils.Driver):
         quote_char: Optional[str] = None,
         skip_bad_relationships: bool = False,
         skip_duplicate_nodes: bool = False,
+        biolink_model: dict | str | None = None,
+        biolink_use_cache: bool = True,
     ):
         """
         Set up a BioCypher database connection.
@@ -101,6 +103,11 @@ class Driver(neo4j_utils.Driver):
                 String quotation character for CSV export.
             array_delimiter:
                 Array delimiter for CSV exported contents.
+            biolink_model:
+                Either a Biolink model as a dict, or the name of a
+                built in model, or path to the model YAML file to load.
+            biolink_use_cache:
+                Load the Biolink model from cache, if available.
         """
 
         driver_args = {
@@ -114,6 +121,7 @@ class Driver(neo4j_utils.Driver):
         self.wipe = wipe
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
+        self._biolink_use_cache = biolink_use_cache
 
         neo4j_utils.Driver.__init__(self, **driver_args)
         # get database version node ('check' module) immutable
@@ -605,7 +613,11 @@ class Driver(neo4j_utils.Driver):
 
         if not self.bl_adapter:
 
-            self.bl_adapter = BiolinkAdapter(schema=self.db_meta.schema)
+            self.bl_adapter = BiolinkAdapter(
+                schema = self.db_meta.schema,
+                model = self._biolink_model,
+                use_caceh = self._biolink_use_cache,
+            )
 
     def get_import_call(self) -> str:
         """
