@@ -109,3 +109,32 @@ def load(*key: Any, cachedir: str | None = None) -> Any | None:
         obj = None
 
     return obj
+
+
+def remove(*key: Any, cachedir: str | None = None):
+    """
+    Remove a cache item by its key.
+    """
+
+    path = cache_path(cachedir = cachedir, *key)
+    _remove(path)
+
+
+def wipe():
+    """
+    Remove all cache contents.
+    """
+
+    cachedir = cache_dir()
+
+    for f in os.listdir(cachedir):
+
+        path = os.path.join(cachedir, f)
+        _remove(path)
+
+
+def _remove(path: str):
+
+    if os.path.isfile(path) or os.path.islink(path):
+
+        os.unlink(path)
