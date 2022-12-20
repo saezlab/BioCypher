@@ -44,7 +44,7 @@ d = biocypher.Driver(
 )
 ```
 
-```{note
+```{note}
 We use the APOC library for Neo4j, which is not included automatically, but
 needs to be installed as a plugin to the DMBS. For more information, please
 refer to the [APOC documentation](https://neo4j.com/labs/apoc/).
