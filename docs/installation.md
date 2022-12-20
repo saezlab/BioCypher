@@ -45,6 +45,7 @@ a local dependency.
 The `driver` tests require a running Neo4j instance with a DB named `test`.
 ```
 
+(config)=
 # Configuration
 BioCypher comes with a default set of configuration parameters. You can
 overwrite them by creating a `biocypher_config.yaml` file in the root directory

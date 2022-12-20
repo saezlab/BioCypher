@@ -36,7 +36,23 @@ details via arguments or configuration file:
 
 ```{code-block} python
 import biocypher
-d = biocypher.Driver(<args>)
+d = biocypher.Driver(
+  offline = False,
+  db_uri = "bolt://localhost:7687",
+  db_user = "neo4j",
+  db_passwd = "password",
+)
+```
+
+```{note
+We use the APOC library for Neo4j, which is not included automatically, but
+needs to be installed as a plugin to the DMBS. For more information, please
+refer to the [APOC documentation](https://neo4j.com/labs/apoc/).
+```
+
+```{hint}
+The settings for the BioCypher driver can also be specified in a configuration
+file. For more details, please refer to the [Setup instructions](config).
 ```
 
 The main function of the adapter is to pass data into BioCypher, usually
@@ -125,7 +141,8 @@ protein:
 If there exists no identifier system that is suitable for coverage of
 the data, the standard field `id` can be used; this will not result in
 the creation of a named property that reflects the identifier of each
-node. See below for an example.
+node. See below for an example. The `preferred_id` field can in this case also
+be omitted entirely; this will lead to the same outcome (`id`).
 
 The other slots of a graph constituent entry contain information
 BioCypher needs to receive the input data correctly and construct the
