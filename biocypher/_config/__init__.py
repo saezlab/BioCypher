@@ -118,8 +118,10 @@ def read_config() -> dict:
     TODO explain path configuration
     """
 
+<<<<<<< HEAD
     defaults = _conf_key_synonyms(module_data('module_config'))
     user = _read_yaml(_USER_CONFIG_FILE) or {}
+    # TODO account for .yml?
     local = _read_yaml('biocypher.yaml') or {}
 
     defaults.update(_conf_key_synonyms(user))
