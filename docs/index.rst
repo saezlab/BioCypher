@@ -14,10 +14,11 @@ with cutting edge developments in the areas of causal reasoning, representation
 learning, and natural language processing, all of which depend on having a
 consistent descriptive vocabulary. To achieve meaningful automatic
 representations in the biomedical language space, we include the `Biolink model
-<https://biolink.github.io/biolink-model/>`_ as underlying hierarchical
+<https://biolink.github.io/biolink-model/>`_ as a basic underlying hierarchical
 ontology, supplying identification, filtering, and mapping capabilities. In
-addition, we options to implement alternative ontological systems by way of
-exchanging or extending the base model. Side objectives are the creation of
+addition, we provide options to implement alternative ontological systems by way
+of exchanging or extending the base model, for example using [OBO
+Foundry](https://obofoundry.org) ontologies. Side objectives are the creation of
 human-readable graph syntax and facilitating ultra-rapid graph creation through
 the Neo4j admin-import feature.
 
