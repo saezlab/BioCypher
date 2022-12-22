@@ -8,7 +8,7 @@ https://biocypher.org
 This is the development repository for BioCypher, our proposal for a unified
 framework to create knowledge graph databases for systems biology. For an
 This is the development repository for BioCypher, our proposal for a unifying
-framework to create knowledge graph databases for systems biology. For an
+framework to create knowledge graph databases for systems biomedicine. For an
 overview, usage notes, and a tutorial, read the docs
 [here](https://biocypher.org).
 
