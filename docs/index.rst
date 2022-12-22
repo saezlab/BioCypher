@@ -17,8 +17,8 @@ representations in the biomedical language space, we include the `Biolink model
 <https://biolink.github.io/biolink-model/>`_ as a basic underlying hierarchical
 ontology, supplying identification, filtering, and mapping capabilities. In
 addition, we provide options to implement alternative ontological systems by way
-of exchanging or extending the base model, for example using [OBO
-Foundry](https://obofoundry.org) ontologies. Side objectives are the creation of
+of exchanging or extending the base model, for example using `OBO Foundry
+<https://obofoundry.org>`_ ontologies. Side objectives are the creation of
 human-readable graph syntax and facilitating ultra-rapid graph creation through
 the Neo4j admin-import feature.
 
