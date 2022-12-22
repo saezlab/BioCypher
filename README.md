@@ -4,17 +4,20 @@
 https://biocypher.org
 
 ## ❓ Description
+
 This is the development repository for BioCypher, our proposal for a unified
-framework to create knowledge graph databases for systems biology. For an 
+framework to create knowledge graph databases for systems biology. For an
+This is the development repository for BioCypher, our proposal for a unifying
+framework to create knowledge graph databases for systems biology. For an
 overview, usage notes, and a tutorial, read the docs
 [here](https://biocypher.org).
 
-<img 
-    style="display: block; 
+<img
+    style="display: block;
            margin-left: auto;
            margin-right: auto;
            width: 50%;"
-    src="graphical_abstract.png" 
+    src="graphical_abstract.png"
     alt="Our logo">
 </img>
 
