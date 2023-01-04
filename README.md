@@ -1,6 +1,7 @@
 # BioCypher
 
 ## 📖 Documentation
+
 https://biocypher.org
 
 ## ❓ Description
@@ -18,7 +19,7 @@ overview, usage notes, and a tutorial, read the docs
            margin-right: auto;
            width: 50%;"
     src="graphical_abstract.png"
-    alt="Our logo">
+    alt="Graphical Abstract">
 </img>
 
 ## ⚙️ Usage
