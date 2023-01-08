@@ -24,7 +24,7 @@ import json
 import pickle
 import hashlib
 
-from linkml_runtime.linkml_model.meta import ClassDefinition
+from linkml_runtime.linkml_model import meta as lml_meta
 import bmt
 
 from . import _misc
@@ -401,7 +401,7 @@ class BiolinkAdapter:
             )
 
         # create class definition
-        se = ClassDefinition(entity)
+        se = lml_meta.ClassDefinition(entity)
         se.is_a = parent
         self.biolink_schema[entity] = {
             'class_definition': se,
@@ -455,7 +455,7 @@ class BiolinkAdapter:
             )
 
         # create class definition
-        se = ClassDefinition(entity)
+        se = lml_meta.ClassDefinition(entity)
         se.is_a = parent
         self.biolink_schema[entity] = {
             'class_definition': se,
@@ -507,7 +507,10 @@ class BiolinkAdapter:
 
         for class_name, properties in self.biolink_schema.items():
 
-            if isinstance(properties['class_definition'], bmt.TypeDefinition):
+            if isinstance(
+                properties['class_definition'],
+                lml_meta.TypeDefinition
+            ):
 
                 logger.warning(
                     f'Leaf `{class_name}` is a type definition, not a class. '
