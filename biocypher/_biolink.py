@@ -548,6 +548,16 @@ class BiolinkAdapter:
             parents.discard(None)
             children = set(tree.keys())
 
+        # add synonym information
+        for class_name in self.biolink_schema:
+
+            if self.biolink_schema[class_name].get('synonym_for'):
+
+                tree.nodes[class_name].tag = (
+                    f'{class_name} = '
+                    f"{self.biolink_schema[class_name].get('synonym_for')}"
+                )
+
         self._tree = tree
 
 
