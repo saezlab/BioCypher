@@ -863,6 +863,11 @@ class BatchWriter:
 
         return True
 
+    @staticmethod
+    def _double_backslash(value: str) -> str:
+
+        return value.replace('\\', '\\\\')
+
     def compile_call(self) -> str:
         """
         Compile the *neo4j-admin* call based on previously processed data.
@@ -882,8 +887,8 @@ class BatchWriter:
             [
                 'neo4j-admin import',
                 f'--database={self.db_name}',
-                f'--delimiter="{self.delim}"',
-                f'--array-delimiter="{self.adelim}"',
+                f'--delimiter="{self._double_backslash(self.delim)}"',
+                f'--array-delimiter="{self._double_backslash(self.adelim)}"',
                 f'--quote={q}{self.quote}{q}',
                 '--skip-bad-relationships='
                 f'{str(self.skip_bad_relationships).lower()}',
