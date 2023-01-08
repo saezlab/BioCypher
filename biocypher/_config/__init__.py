@@ -21,6 +21,7 @@ from __future__ import annotations
 from typing import Any, Optional
 import os
 import re
+import inspect
 
 import yaml
 import appdirs
@@ -176,6 +177,52 @@ def neo4j_config() -> dict:
         for k, v in _config.items()
         if k.startswith('neo4j_')
     }
+
+
+def argconf(key: str) -> Any:
+    """
+    Option from argument if available, else from config.
+
+    Args:
+        key:
+            A config key.
+
+    Returns:
+        Current value of the config key, looked up by the precendence order
+        above.
+    """
+
+    parent_locals = inspect.currentframe().f_back.f_locals
+
+    return _misc.if_none(parent_locals.get(key), config(key))
+
+
+def arginstconf(key: str, attr: str | None) -> Any:
+    """
+    Option from argument if available, else from instance or class attribute
+    if available, else from config.
+
+    Args:
+        key:
+            A config key.
+        attr:
+            Name of the instance or class attribute, if it is different
+            from the ``key``.
+
+    Returns:
+        Current value of the config key, looked up by the precendence order
+        above.
+    """
+
+    parent_locals = inspect.currentframe().f_back.f_locals
+    self = parent_locals.get('self', parent_locals.get('cls'))
+    attr = attr or key
+
+    return _misc.if_none(
+        parent_locals.get(key),
+        getattr(self, attr, None),
+        conf(key),
+    )
 
 
 def save(path: str | None = None, user: bool = False):
