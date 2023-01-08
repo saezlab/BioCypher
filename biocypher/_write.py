@@ -150,6 +150,7 @@ class BatchWriter:
         skip_duplicate_nodes: bool = False,
         batch_size: int | None = None,
         wipe: bool = False,
+        strict_mode: bool = None,
     ):
         """
         Export data into CSV for *neo4j-admin* import.
@@ -183,19 +184,11 @@ class BatchWriter:
                 the overwrite of pre-existing database contents.
 
         Attributes:
-            seen_node_ids:
-                Dictionary to store the ids of nodes that have already been
-                written; to avoid duplicates. keys: ids, values: amount of
-                duplicates
-            duplicate_node_types:
-                Set to store the types of nodes that have been found to have
-                duplicates.
-            seen_edges:
-                Dict to store the set of edges that have already been written;
-                to avoid duplicates; per edge type. Keys: ids, values: count.
-            duplicate_edge_types:
-                Set to store the types of nodes that have been found to have
-                duplicates.
+            seen:
+                Dictionary to store the ids of nodes and edges that have
+                already been processed; to avoid duplicates. keys: ids,
+            dupl_by_type:
+                Duplicate node and edge IDs by label/type.
             property_types:
                 Dict to store a dict of properties for each label to check for
                 consistency and their type for now, relevant for `int`.
@@ -206,6 +199,7 @@ class BatchWriter:
         self.adelim = array_delimiter or _config('csv_array_delimiter')
         self.quote = quote or _config('csv_quote_char')
         self.batch_size = batch_size or _config('csv_batch_size')
+        self.strict_mode = _misc.if_none(strict_mode, _config('strict_mode'))
 
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
