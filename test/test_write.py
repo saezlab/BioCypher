@@ -66,6 +66,7 @@ def _get_nodes(l: int) -> list:
                 "score": 4 / (i + 1),
                 "name": "StringProperty1",
                 "taxon": 9606,
+                "genes": ["gene1", "gene2"],
             },
         )
         nodes.append(bnp)
@@ -297,6 +298,7 @@ def test_property_types(bw):
                 "score": 4 / (i + 1),
                 "name": "StringProperty1",
                 "taxon": 9606,
+                "genes": ["gene1", "gene2"],
             },
         )
         for i in range(4)
@@ -396,6 +398,7 @@ def test_write_node_data_from_gen_no_props(bw):
                 'score': 4 / (i // 2 + 1),
                 'name': 'StringProperty1',
                 'taxon': 9606,
+                "genes": ["gene1", "gene2"],
             },
         )
         for i in range(8)
@@ -505,11 +508,13 @@ def test_write_none_type_property_and_order_invariance(bw):
         Node(
             id = 'p1',
             label = 'protein',
+            genes = None,
             props = {'taxon': 9606, 'score': 1, 'name': None},
         ),
         Node(
             id = 'p2',
             label='protein',
+            genes = ["gene1", "gene2"],
             props = {'name': None, 'score': 2, 'taxon': 9606},
         ),
         Node(
@@ -900,6 +905,7 @@ def test_duplicate_id(bw):
         Node(
             id = 'p1',
             label = 'protein',
+            genes = ["gene1", "gene2"],
             props = {
                 'name': 'StringProperty1',
                 'score': 4.32,
