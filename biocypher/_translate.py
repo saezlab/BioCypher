@@ -48,7 +48,7 @@ from more_itertools import peekable
 
 from . import _misc
 from ._entity import BC_TYPES, Edge, Node, RelAsNode
-from ._config import config
+from ._config import config, argconf
 
 __all__ = ['Translator']
 
@@ -89,7 +89,7 @@ class Translator:
         """
 
         self._required_props = config('required_props')
-        self.strict_mode = _misc.if_none(strict_mode, config('strict_mode'))
+        self.strict_mode = argconf(locals(), 'strict_mode')
         self.schema = schema
         self._update_bl_types()
 

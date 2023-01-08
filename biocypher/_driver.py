@@ -37,6 +37,7 @@ from . import _misc
 from ._meta import VersionNode
 from ._write import ENTITIES, BatchWriter
 from ._config import config as _config
+from ._config import argconf as _argconf
 from ._config import neo4j_config as _neo4j_config
 from ._entity import BC_TYPES, Edge, Node
 from ._biolink import BiolinkAdapter
@@ -138,7 +139,7 @@ class Driver(neo4j_utils.Driver):
         self.csv_adelim = array_delimiter or _config('csv_array_delimiter')
         self.csv_quote = quote_char or _config('csv_quote_char')
         self.wipe = wipe
-        self.strict_mode = _misc.if_none(strict_mode, _config('strict_mode'))
+        self.strict_mode = _argconf(locals(), 'strict_mode')
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
         self._biolink_use_cache = biolink_use_cache

@@ -86,6 +86,7 @@ import warnings
 
 import biocypher._misc as _misc
 from biocypher._config import config as _config
+from biocypher._config import argconf as _argconf
 from ._entity import BC_TYPES, Edge, Node, RelAsNode
 
 __all__ = ['BatchWriter', 'ENTITIES']
@@ -199,7 +200,7 @@ class BatchWriter:
         self.adelim = array_delimiter or _config('csv_array_delimiter')
         self.quote = quote or _config('csv_quote_char')
         self.batch_size = batch_size or _config('csv_batch_size')
-        self.strict_mode = _misc.if_none(strict_mode, _config('strict_mode'))
+        self.strict_mode = _argconf(locals(), 'strict_mode')
 
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
