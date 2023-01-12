@@ -1,7 +1,7 @@
 (adapter_functions)=
 # BioCypher Tutorial - Adapters
 
-![BioCypher pipeline interface](../figure_pipeline.png)
+![BioCypher pipeline interface](figure_pipeline.png)
 
 ```{note}
 To facilitate the creation of a BioCypher pipeline, we have created a template
