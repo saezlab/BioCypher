@@ -6,7 +6,7 @@
            margin-left: auto;
            margin-right: auto;
            width: 100%;"
-    src="figure_pipeline.png"
+    src="../figure_pipeline.png"
     alt="BioCypher pipeline interface">
 </img>
 
