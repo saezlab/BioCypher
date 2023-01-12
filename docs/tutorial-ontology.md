@@ -1,6 +1,10 @@
 # BioCypher Tutorial - Handling Ontologies
+
+![Adapters and ontologies](figure_modularity.png)
+
 BioCypher relies on ontologies to ground the knowledge graph contents in
-biology. This has the advantage of making working with BioCypher accessible to
+biology. This has the advantages of providing machine readability and therefore
+automation capabilities as well as making working with BioCypher accessible to
 biologically oriented researchers. However, it also means that BioCypher
 requires a certain amount of knowledge about ontologies and how to use them. We
 try to make dealing with ontologies as easy as possible, but some basic
