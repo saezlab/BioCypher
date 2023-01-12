@@ -1,6 +1,15 @@
 (adapter_functions)=
 # BioCypher Tutorial - Adapters
 
+<img
+    style="display: block;
+           margin-left: auto;
+           margin-right: auto;
+           width: 100%;"
+    src="figure_pipeline.png"
+    alt="BioCypher pipeline interface">
+</img>
+
 ```{note}
 To facilitate the creation of a BioCypher pipeline, we have created a template
 repository that can be used as a starting point for your own adapter. It
