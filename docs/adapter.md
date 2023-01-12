@@ -5,17 +5,23 @@
 To facilitate the creation of a BioCypher pipeline, we have created a template
 repository that can be used as a starting point for your own adapter. It
 contains a basic structure for an adapter, as well as a script that can be used
-as a blueprint for a build pipeline. The repository can be found here:
-https://github.com/saezlab/biocypher-project-template
+as a blueprint for a build pipeline. The repository can be found
+[here](https://github.com/saezlab/biocypher-project-template).
 ```
 
 A "BioCypher adapter" is a python program responsible for connecting to the
 BioCypher core and providing it with the data from its associated resource.
 In doing so, it should adhere to several design principles to ensure simple
-interoperability between core and multiple adapters. In essence, an adapter
+interoperability between the core and multiple adapters. In essence, an adapter
 should conform to an interface that is defined by the core to give information
 about the nodes and edges the adapter provides to enable automatic harmonisation
-of the contents.
+of the contents. An adapter can be "primary", i.e., responsible for a single
+"atomic" resource (e.g. UniProt, Reactome, etc.), or "secondary", i.e.,
+connecting to a resource that is itself a combination of multiple primary
+resources (e.g. OmniPath, Open Targets, etc.). Due to extensive prior
+harmonisation, the latter is often easier to implement and thus is a good
+starting point that can be subsequently extended to and replaced by primary
+adapters.
 
 ```{caution}
 The adapter interface is still under development and may change rapidly.
@@ -101,7 +107,7 @@ This representation will probably be subject to change soon and yield to a more
 standardised interface for nodes and edges, derived from a BioCypher core class.
 ```
 
-### Strict mode
+## Note: Strict mode
 We can activate BioCypher strict mode with the `strict_mode` parameter upon
 instantiation of the driver. In strict mode, the driver will raise an error if
 it encounters a node or edge without data source, version, and licence. These
