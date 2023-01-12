@@ -1,5 +1,5 @@
 (adapter_functions)=
-# Tutorial - Adapters
+# BioCypher Tutorial - Adapters
 
 ```{note}
 To facilitate the creation of a BioCypher pipeline, we have created a template
