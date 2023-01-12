@@ -17,7 +17,7 @@ overview, usage notes, and a tutorial, read the docs
     style="display: block;
            margin-left: auto;
            margin-right: auto;
-           width: 50%;"
+           width: 70%;"
     src="graphical_abstract.png"
     alt="Graphical Abstract">
 </img>
