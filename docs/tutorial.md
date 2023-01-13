@@ -126,7 +126,7 @@ Representation as an edge is only possible when source and target IDs are
 provided in the input data stream. Conversely, relationships can be represented
 as both `node` or `edge`, depending on the desired output. When a relationship
 should be represented as a node, i.e., "reified", BioCypher takes care to create
-a set of two edge and a node in place of the relationship. This is useful when
+a set of two edges and a node in place of the relationship. This is useful when
 we want to connect the relationship to other entities in the graph, for example
 literature references.
 
