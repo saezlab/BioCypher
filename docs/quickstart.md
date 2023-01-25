@@ -26,17 +26,19 @@ should be connected.
 (qs_host-module-adapter)=
 ## The host module adapter
 
-Currently, BioCypher expects input from the user module via an adapter
-module. Throughout the tutorial, we will exemplarise the use of
-BioCypher using [OmniPath](https://omnipathdb.org) (more specifically,
-its infrastructural backend,
-[PyPath](https://github.com/saezlab/pypath)). The adapter has the job of
-piping the data as it is represented in the original database into the
-BioCypher input, for instance as a {py:class}`Generator` object of
-single database entries, whether they be nodes or relationships in the
-graph to be created. For more details, please refer to the example
-[PyPath adapter](https://github.com/saezlab/pypath/blob/master/pypath/biocypher/adapter.py)
-and the section on [adapter functions](adapter_functions).
+Currently, BioCypher expects input from the user module via an adapter module.
+The adapter has the job of piping the data as it is represented in the original
+database into the BioCypher input, for instance as a {py:class}`Generator`
+object of single database entries, whether they be nodes or relationships in the
+graph to be created. Examples for current adapters can be found in several of
+our ongoing projects and the section on [adapter functions](adapter_functions).
+Adapters can ingest data from many different input sources, including Python
+modules as in the [CROssBAR
+adapter](https://github.com/HUBioDataLab/CROssBAR-BioCypher-Migration) (which
+uses the OmniPath backend software, PyPath, for downloading and caching data),
+advanced file management formats such as Parquet as in the [Open Targets
+adapter](https://github.com/saezlab/OTAR-BioCypher), or simple CSV files as in
+the [Dependency Map adapter](https://github.com/saezlab/DepMap-BioCypher).
 
 The recommended mode of access into BioCypher functionality is via the
 {py:class}``biocypher._driver.Driver`` class. It can be called either
