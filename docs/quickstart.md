@@ -1,13 +1,14 @@
 # Quickstart
 
 ```{note}
-For a quickstart into the knowledge graph build process, we provide a template
-repository on GitHub, which you can use to get started with your own project.
-You can get it [here](https://github.com/saezlab/biocypher-project-template).
-To set up a new project, simply follow the instructions in the README.
+If you already know how BioCypher works, we provide here a quickstart into the
+knowledge graph build process. We provide a template repository on GitHub, which
+you can use to get started with your own project.  You can get it
+[here](https://github.com/saezlab/biocypher-project-template).  To set up a new
+project, simply follow the instructions in the README.
 
-If you want to know more and get a step-by-step introduction to the package,
-please follow the [tutorial](tutorial).
+If you are new to BioCypher and would like a step-by-step introduction to the
+package, please follow the [tutorial](tutorial).
 ```
 
 The main interface for interacting with the BioCypher module to create
