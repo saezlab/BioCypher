@@ -229,6 +229,7 @@ class Translator:
                 target = target,
                 label = edge_label,
                 props = filtered_props,
+                id = _id,
             )
 
     def _rel_as_node(
