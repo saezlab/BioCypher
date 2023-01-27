@@ -333,7 +333,7 @@ class OntologyAdapter(Tree):
         self._tree = tree
 
 
-     def get_node_ancestry(self, node: str) -> list | None:
+    def get_node_ancestry(self, node: str) -> list | None:
         """
         Returns the ancestry of a node in the ontology.
         """

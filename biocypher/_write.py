@@ -88,6 +88,8 @@ import biocypher._misc as _misc
 from biocypher._config import config as _config
 from biocypher._config import argconf as _argconf
 from ._entity import BC_TYPES, Edge, Node, RelAsNode
+from ._ontology import OntologyAdapter
+from ._translate import Translator
 
 __all__ = ['BatchWriter', 'ENTITIES']
 
@@ -382,17 +384,18 @@ class BatchWriter:
             'edge': self.duplicate_edge_types,
         }
 
-        msg = ' and '.join(
-            f'for the following {entity_type} labels: {", ".join(ids)}'
-            for entity_type, ids in dupl.items()
-            if ids
-        )
+        if any(dupl.values()):
 
+            msg = ' and '.join(
+                f'for the following {entity_type} labels: {", ".join(ids)}'
+                for entity_type, ids in dupl.items()
+                if ids
+            )
 
-        msg = f'{"Encountered duplicate identifiers " if msg else } {msg}'
+            msg = f'Encountered duplicate identifiers {msg}.'
 
-        logger.warning(msg)
-        warnings.warn(msg)
+            logger.warning(msg)
+            warnings.warn(msg)
 
 
     def write(

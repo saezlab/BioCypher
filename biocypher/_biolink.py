@@ -9,6 +9,8 @@
 # Distributed under GPLv3 license, see the file `LICENSE`.
 #
 
+from __future__ import annotations
+
 """
 Biolink toolkit wiki:
 https://biolink.github.io/biolink-model-toolkit/example_usage.html
@@ -175,7 +177,7 @@ class BiolinkAdapter(_ontology.Tree):
 
         logger.info('Saving Biolink model into cache.')
 
-        _cache.cache.save(obj = data, self.schema, cachedir = cachedir)
+        _cache.cache.save(self.schema, obj = data, cachedir = cachedir)
 
 
     def set_model(self):
