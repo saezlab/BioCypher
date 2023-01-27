@@ -275,10 +275,6 @@ class VersionNode:
     def update_state(self):
         """
         Set the state using metadata in the database or initialize new state.
-
-        Attributes:
-            state:
-                Variables defining the graph state.
         """
 
         self._state = self.state_from_db()
@@ -286,7 +282,7 @@ class VersionNode:
     @property
     def state(self) -> dict:
         """
-        Protects the state from side effects and unintended overwrites.
+        Variables defining the graph state.
         """
 
         return copy.deepcopy(self._state)
@@ -337,12 +333,6 @@ class VersionNode:
             config_file:
                 Path to a config file. If not provided here or at the
                 instance level, the built-in default will be used.
-
-        Attributes:
-            schema:
-                Graph schema information from meta graph if it exists, or
-                create new schema information properties from configuration
-                file.
         """
 
         from_config = _misc.if_none(from_config, self.from_config)
@@ -362,7 +352,10 @@ class VersionNode:
     @property
     def schema(self) -> dict:
         """
-        Protects the schema from side effects and unintended overwrites.
+        Graph schema information.
+
+        From the meta graph if it exists, or create new schema information
+        properties from configuration file.
         """
 
         return copy.deepcopy(self._schema)

@@ -358,6 +358,7 @@ class Driver(neo4j_utils.Driver):
             nodes:
                 For each node to add to the biocypher graph, a 3-tuple with
                 the following layout:
+
                 * The (unique if constrained) ID of the node.
                 * The type of the node, capitalised or PascalCase and in noun
                   form (Neo4j primary label, eg `:Protein`).
@@ -397,6 +398,7 @@ class Driver(neo4j_utils.Driver):
             edges:
                 For each edge to add to the biocypher graph, a 5-tuple
                 with the following layout:
+
                 * The optional unique ID of the interaction. This can be
                   `None` if there is no systematic identifier (which for
                   many interactions is the case).
