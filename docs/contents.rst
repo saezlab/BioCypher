@@ -9,4 +9,4 @@
    tutorial-ontology
    adapter
    usage
-   submodule
+   reference
