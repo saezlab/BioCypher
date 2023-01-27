@@ -365,9 +365,9 @@ class Driver(neo4j_utils.Driver):
                   possess (can be empty).
 
         Returns:
-            2-tuple: the query result of :meth:`add_biocypher_nodes()`
-            - first entry: data
-            - second entry: Neo4j summary.
+            Tuple of two: the query result of :meth:`add_biocypher_nodes()`,
+            the first element is the retrned data, the second is a summary
+            from Neo4j.
         """
 
         bn = self.translator.translate(nodes)
@@ -408,9 +408,9 @@ class Driver(neo4j_utils.Driver):
                   possess (can be empty).
 
         Returns:
-            2-tuple: the query result of :meth:`add_biocypher_edges()`
-            - first entry: data
-            - second entry: Neo4j summary.
+            Tuple of two: the query result of :meth:`add_biocypher_edges()`,
+            the first element is the retrned data, the second is a summary
+            from Neo4j.
         """
 
         be = self.translator.translate(edges)
