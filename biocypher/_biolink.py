@@ -65,6 +65,7 @@ class BiolinkAdapter(_ontology.Tree):
         translator: Translator,
         model: Literal['biocypher', 'biolink'] | str | dict | None = None,
         use_cache: bool = True,
+        biolink_version: str | None = None,
     ):
         """
         Args:
@@ -80,6 +81,8 @@ class BiolinkAdapter(_ontology.Tree):
                 Read the model from the cache if available.
             translator:
                 A biocypher `Translator` isntance.
+            biolink_version:
+                The version of the Biolink schema to use to build the adapter.
         """
 
         self.schema = schema
@@ -87,6 +90,7 @@ class BiolinkAdapter(_ontology.Tree):
         self.model = model
         self.model_name = None
         self.biolink_schema = None
+        self.biolink_version = biolink_version
         self._ad_hoc_inheritance = []
 
         # mapping functionality for translating terms and queries
@@ -313,7 +317,7 @@ class BiolinkAdapter(_ontology.Tree):
         values = self.schema.get(class_name, {})
         class_name = values.get('synonym_for', class_name)
         classdef = self.toolkit.get_element(class_name) or {}
-        props = {k: classdef[k] for k in keys if k in classdef}
+        props = {k: classdef._get(k) for k in keys if k in classdef}
 
         return props
 
