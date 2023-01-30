@@ -29,6 +29,7 @@ __all__ = [
     'plain_tuple',
     'prettyfloat',
     'sc',
+    'to_set',
 ]
 
 SIMPLE_TYPES = (
@@ -61,6 +62,30 @@ def ensure_iterable_2(value: Any) -> Iterable:
             if isinstance(value, LIST_LIKE) else
         (value,)
     )
+
+
+def to_set(value: Any) -> set:
+    """
+    Makes sure `value` is a `set`.
+
+    If it is already, returns it unchanged; otherwise converts it to a set.
+    """
+
+    if isinstance(value, set):
+
+        return value
+
+    elif value is None:
+
+        return set()
+
+    elif isinstance(value, SIMPLE_TYPES):
+
+        return {value}
+
+    else:
+
+        value = set(value)
 
 
 def tuple_child(value: Any) -> bool:
