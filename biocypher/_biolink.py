@@ -168,16 +168,16 @@ class BiolinkAdapter(_ontology.Tree):
             logger.info(msg)
 
 
-    def save_to_cache(cachedir: str | None = None):
+    def save_to_cache(self, cachedir: str | None = None):
         """
         Save the data currently contained in the object into the cache.
         """
 
-        data = {k: getattr(self, a) for k, a in self._DATA_ATTRS.items()}
+        data = {a: getattr(self, a) for a in self._DATA_ATTRS}
 
         logger.info('Saving Biolink model into cache.')
 
-        _cache.cache.save(self.schema, obj = data, cachedir = cachedir)
+        _cache.save(data, self.schema, cachedir = cachedir)
 
 
     def set_model(self):
@@ -295,7 +295,7 @@ class BiolinkAdapter(_ontology.Tree):
                 # build class definition for virtual leaf
                 self._build_biolink_class(entity, values)
 
-        self._log_ad_hoc_inheritance()
+        self._log_ad_hoc_inheritance(from_ = f'`{self.model} `schema')
 
 
     def _get_biolink_properties(self, class_name):
@@ -404,7 +404,6 @@ class BiolinkAdapter(_ontology.Tree):
         input_label = values.get('label_in_input')
         parents = _misc.to_list(values.get('is_a'))
         ancestors = []
-
 
         logger.debug(
             'Received ad hoc multiple inheritance '
