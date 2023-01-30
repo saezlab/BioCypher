@@ -515,7 +515,7 @@ def test_log_missing_nodes(translator):
 
     tn = list(tn)
 
-    m = translator.get_missing_biolink_types()
+    m = translator.get_missing_ontology_classes()
 
     assert m.get("missing_protein") == 2
     assert m.get("missing_pathway") == 1
@@ -542,7 +542,7 @@ def test_strict_mode_error(translator):
         },
     )
 
-    assert list(translator.translate_nodes([n1])) is not None
+    assert list(translator.translate([n1])) is not None
 
     # test 'license' instead of 'licence'
     n2 = (
@@ -556,13 +556,13 @@ def test_strict_mode_error(translator):
         },
     )
 
-    assert list(translator.translate_nodes([n2])) is not None
+    assert list(translator.translate([n2])) is not None
 
     n3 = ('n1', 'Test', {'prop': 'val'})
 
     with pytest.raises(ValueError):
 
-        list(translator.translate_nodes([n1, n2, n3]))
+        list(translator.translate([n1, n2, n3]))
 
     e1 = (
         'n1', 'n2', 'Test', {
@@ -573,12 +573,12 @@ def test_strict_mode_error(translator):
         },
     )
 
-    assert list(translator.translate_edges([e1])) is not None
+    assert list(translator.translate([e1])) is not None
 
     e2 = ('n1', 'n2', 'Test', {'prop': 'val'})
 
     with pytest.raises(ValueError):
-        list(translator.translate_edges([e1, e2]))
+        list(translator.translate([e1, e2]))
 
 
 def test_strict_mode_property_filter(translator):
@@ -596,7 +596,7 @@ def test_strict_mode_property_filter(translator):
         },
     )
 
-    l = list(translator.translate_nodes([p1]))
+    l = list(translator.translate([p1]))
 
     assert 'source' in l[0].get_properties().keys()
     assert 'licence' in l[0].get_properties().keys()
