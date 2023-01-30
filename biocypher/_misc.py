@@ -15,8 +15,6 @@ import re
 from neo4j_utils._misc import LIST_LIKE, if_none, to_list  # noqa: F401
 import treelib
 
-from ._logger import logger
-
 if TYPE_CHECKING:
 
     import networkx as nx
@@ -218,6 +216,7 @@ def try_import(module):
 
     except ModuleNotFoundError:
 
+        from ._logger import logger
         msg = f'Module `{module}` not available.'
         warnings.warn(msg)
         logger.warning(msg)

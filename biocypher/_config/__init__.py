@@ -26,6 +26,8 @@ import inspect
 import yaml
 import appdirs
 
+import biocypher._misc as _misc
+
 __all__ = [
     'config',
     'module_data',
