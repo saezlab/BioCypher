@@ -494,11 +494,12 @@ def test_reverse_translate_query(translator, biolink_adapter):
 
     assert (
         translator.reverse_translate(query) == (
-        'MATCH '
-        '(n:Known_variant)'
-        '-[r:VARIANT_FOUND_IN_GENE_Known_variant_Gene]->'
-        '(g:protein) '
-        'RETURN n'
+            'MATCH '
+            '(n:Known_variant)'
+            '-[r:VARIANT_FOUND_IN_GENE_Known_variant_Gene]->'
+            '(g:protein) '
+            'RETURN n'
+        )
     )
 
 

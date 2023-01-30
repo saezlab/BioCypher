@@ -159,8 +159,7 @@ def unformat(s: str) -> str:
     Removes whitespace and line breaks from a string.
     """
 
-    rewhite = re.compile(r'[\s\n"
-        "\t\r]+')
+    rewhite = re.compile(r'[\s\n\t\r]+')
 
     return rewhite.sub(' ', s)
 
@@ -182,7 +181,7 @@ def translator(version_node):
 
 
 @pytest.fixture
-def bw(version_node, translator, translator):
+def bw(version_node, translator):
 
     biolink_adapter = BiolinkAdapter(
         schema=version_node.leaves,
@@ -856,21 +855,15 @@ def test_write_edge_data_from_gen(bw):
     assert passed
 
     assert pid_contents == (
-        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n"
-        "'
-        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n"
-        "'
-        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n"
-        "'
+        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n'
+        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n'
+        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n'
         'p3;True;4;T253;0.78;p4;PERTURBED_IN_DISEASE'
     )
     assert imi_contents == (
-        'm0;1;3-UTR;p1;IS_MUTATED_IN\n"
-        "'
-        'm1;1;3-UTR;p2;IS_MUTATED_IN\n"
-        "'
-        'm2;1;3-UTR;p3;IS_MUTATED_IN\n"
-        "'
+        'm0;1;3-UTR;p1;IS_MUTATED_IN\n'
+        'm1;1;3-UTR;p2;IS_MUTATED_IN\n'
+        'm2;1;3-UTR;p3;IS_MUTATED_IN\n'
         'm3;1;3-UTR;p4;IS_MUTATED_IN'
     )
 
@@ -916,21 +909,15 @@ def test_write_edge_data_from_list(bw):
 
     assert passed
     assert pid_contents == (
-        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n"
-        "'
-        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n"
-        "'
-        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n"
-        "'
+        'p0;True;4;T253;0.78;p1;PERTURBED_IN_DISEASE\n'
+        'p1;True;4;T253;0.78;p2;PERTURBED_IN_DISEASE\n'
+        'p2;True;4;T253;0.78;p3;PERTURBED_IN_DISEASE\n'
         'p3;True;4;T253;0.78;p4;PERTURBED_IN_DISEASE'
     )
     assert imi_contents == (
-        'm0;1;3-UTR;p1;IS_MUTATED_IN\n"
-        "'
-        'm1;1;3-UTR;p2;IS_MUTATED_IN\n"
-        "'
-        'm2;1;3-UTR;p3;IS_MUTATED_IN\n"
-        "'
+        'm0;1;3-UTR;p1;IS_MUTATED_IN\n'
+        'm1;1;3-UTR;p2;IS_MUTATED_IN\n'
+        'm2;1;3-UTR;p3;IS_MUTATED_IN\n'
         'm3;1;3-UTR;p4;IS_MUTATED_IN'
     )
 
