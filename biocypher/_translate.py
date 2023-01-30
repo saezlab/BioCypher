@@ -97,7 +97,7 @@ class Translator:
                 Fail on missing mandatory properties.
         """
 
-        self._required_props = config('required_props')
+        self._required_props = _misc.to_set(config('required_props') or ())
         self.strict_mode = argconf('strict_mode')
         self.schema = schema
         self._update_ontology_types()
@@ -356,6 +356,7 @@ class Translator:
         return self.schema.get(_ontology_class, {}).get('id_type', 'id')
 
 
+    @staticmethod
     def _property_synonyms(props: dict[str, str]) -> dict[str, str]:
 
         return {PROP_SYNONYMS.get(k, k): v for k, v in props.items()}
@@ -494,7 +495,7 @@ class Translator:
 
         return self.reverse_mappings.get(term, None)
 
-    def translate(self, query):
+    def translate_cypher(self, query):
         """
         Translate a cypher query. Only translates labels as of now.
         """
@@ -505,7 +506,7 @@ class Translator:
 
         return query
 
-    def reverse_translate(self, query):
+    def reverse_translate_cypher(self, query):
         """
         Reverse translate a cypher query.
 
