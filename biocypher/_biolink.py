@@ -345,7 +345,7 @@ class BiolinkAdapter(_ontology.Tree):
         parents = _misc.to_list(values.get('is_a'))
         ancestors = []
 
-        logger.info(
+        logger.debug(
             'Received ad hoc multiple inheritance '
             'information; updating pseudo-Biolink node '
             f'by setting `{entity}` as a child of `{parents[0]}`.',
@@ -354,11 +354,16 @@ class BiolinkAdapter(_ontology.Tree):
         self._ad_hoc_inheritance.append((parents[0], entity))
 
         while parents:
+
             parent = parents.pop(0)
+
             if self.biolink_schema.get(parent):
+
                 ancestors += self.biolink_schema.get(parent).get('ancestors')
                 break
+
             elif self.toolkit.get_ancestors(parent):
+
                 bla = _misc.to_list(
                     self.trim_biolink_ancestry(
                         self.toolkit.get_ancestors(parent, formatted=True),
@@ -366,7 +371,9 @@ class BiolinkAdapter(_ontology.Tree):
                 )
                 ancestors += bla
                 break
+
             else:
+
                 ancestors += [self.name_sentence_to_pascal(parent)]
 
         if ancestors:
@@ -399,7 +406,7 @@ class BiolinkAdapter(_ontology.Tree):
         ancestors = []
 
 
-        logger.info(
+        logger.debug(
             'Received ad hoc multiple inheritance '
             'information; updating pseudo-Biolink edge '
             f'by setting `{entity}` as a child of `{parents[0]}`.',
