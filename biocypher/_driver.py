@@ -144,7 +144,7 @@ class Driver(neo4j_utils.Driver):
 
         neo4j_config = _neo4j_config()
         driver_args = {
-            arg: _misc.if_none(locals().get(arg), _neo4j_config.get(arg))
+            arg: _misc.if_none(locals().get(arg), neo4j_config.get(arg))
             for arg in inspect.signature(neo4j_utils.Driver).parameters
         }
 
@@ -215,7 +215,7 @@ class Driver(neo4j_utils.Driver):
 
         self.translator = Translator(
             schema = self.db_meta.schema,
-            strict_mode = self.strict_mdoe,
+            strict_mode = self.strict_mode,
         )
 
     def _reset_insert_buffer(self):
