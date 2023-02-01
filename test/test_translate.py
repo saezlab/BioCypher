@@ -328,7 +328,7 @@ def test_multiple_inheritance(biolink_adapter):
 
 def test_synonym(biolink_adapter):
 
-    comp = biolink_adapter.biolink_leaves.get('complex')
+    comp = biolink_adapter.biolink_schema.get('complex')
 
     assert comp
     assert 'Complex' in comp['ancestors']
@@ -482,7 +482,7 @@ def test_reverse_translate_query(translator, biolink_adapter):
 
     with pytest.raises(NotImplementedError):
 
-        translator.reverse_translate(query)
+        translator.reverse_translate_cypher(query)
 
     query = (
         "MATCH "
@@ -493,7 +493,7 @@ def test_reverse_translate_query(translator, biolink_adapter):
     )
 
     assert (
-        translator.reverse_translate(query) == (
+        translator.reverse_translate_cypher(query) == (
             'MATCH '
             '(n:Known_variant)'
             '-[r:VARIANT_FOUND_IN_GENE_Known_variant_Gene]->'
@@ -604,7 +604,7 @@ def test_strict_mode_property_filter(translator):
 
 
 def test_networkx_from_treedict(biolink_adapter):
-    graph = biolink_adapter.get_networkx_graph()
+    graph = biolink_adapter.networkx_tree()
 
     assert isinstance(graph, Graph)
     assert 'sequence variant' in graph.nodes
