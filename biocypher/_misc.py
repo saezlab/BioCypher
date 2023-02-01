@@ -179,16 +179,16 @@ def tree_figure(tree: dict | 'nx.Graph') -> treelib.Tree:
 
     nx = try_import('networkx')
 
-    if isinstance(inheritance_tree, nx.Graph):
+    if isinstance(tree, nx.Graph):
 
-        inheritance_tree = nx.to_dict_of_lists(inheritance_tree)
+        tree = nx.to_dict_of_lists(tree)
         # unlist values
-        inheritance_tree = {k: v[0] for k, v in inheritance_tree.items() if v}
+        tree = {k: v[0] for k, v in tree.items() if v}
 
     # ugly, imperfect solution, to be fixed later
     # find root node
-    classes = set(inheritance_tree.keys())
-    parents = set(inheritance_tree.values())
+    classes = set(tree.keys())
+    parents = set(tree.values())
     root = list(parents - classes)
 
     if len(root) > 1:
@@ -201,8 +201,8 @@ def tree_figure(tree: dict | 'nx.Graph') -> treelib.Tree:
     if not root:
 
         # find key whose value is None
-        root = list(inheritance_tree.keys())[
-            list(inheritance_tree.values()).index(None)
+        root = list(tree.keys())[
+            list(tree.values()).index(None)
         ]
 
     _tree = treelib.Tree()
