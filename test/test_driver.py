@@ -3,6 +3,7 @@ import pytest
 
 from biocypher._entity import Edge, Node, RelAsNode
 from biocypher._driver import Driver
+from biocypher import _misc
 
 
 def init_driver():
@@ -375,12 +376,12 @@ def test_access_translate(driver):
     assert (driver.reverse_translate_term('SideEffect') == 'sider')
     assert (
         driver.translate_query("MATCH (n:reactome) RETURN n")
-        == "MATCH (n:Reactome.Pathway) RETURN n"
+        == "MATCH (n:Reactome.pathway) RETURN n"
     )
     assert (
-        driver.reverse_translate_query(
-            "MATCH (n:Wikipathways.Pathway) RETURN n"
-        )
+        _misc.first(driver.reverse_translate_query(
+            "MATCH (n:Wikipathways.pathway) RETURN n"
+        ))
         == "MATCH (n:wikipathways) RETURN n"
     )
 
