@@ -133,7 +133,7 @@ class BiolinkAdapter(_ontology.Tree):
 
             return False
 
-        data = _cache.cache.load(self.schema)
+        data = _cache.load(self.schema)
 
         if data:
 
@@ -143,9 +143,8 @@ class BiolinkAdapter(_ontology.Tree):
 
                 setattr(self, attr, data[attr])
 
-
             self._log_ad_hoc_inheritance(from_ = 'cache')
-            self._update_model_version()
+            self.init_toolkit()
 
             return True
 
