@@ -9,6 +9,7 @@ from typing import (
     TYPE_CHECKING,
     ValuesView,
 )
+import collections
 from collections.abc import Iterable
 import re
 
