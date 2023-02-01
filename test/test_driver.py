@@ -385,12 +385,13 @@ def test_access_translate(driver):
     )
 
 
-def test_log_missing_bl_types(driver):
+def test_log_missing_ontology_classes(driver):
+
     driver.translator.notype = {}
-    assert not driver.log_missing_bl_types()
+    assert not driver.log_missing_ontology_classes()
 
     driver.translator.notype = {"a": 1, "b": 2}
-    mt = driver.log_missing_bl_types()
+    mt = driver.log_missing_ontology_classes()
 
     assert mt["a"] == 1 and mt["b"] == 2
 
