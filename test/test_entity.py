@@ -66,6 +66,6 @@ def test_rel_as_node_invalid_node():
 
 def test_preferred_id_optional(version_node):
 
-    pti = version_node.leaves.get('post translational interaction')
+    pti = version_node.schema.get('post translational interaction')
 
-    assert pti.get('preferred_id') == 'id'
+    assert pti.get('preferred_id') is None
