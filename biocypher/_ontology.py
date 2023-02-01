@@ -237,10 +237,12 @@ class OntologyAdapter(Tree):
 
         logger.info('Creating ontology graph.')
 
+        nx = _misc.try_import('networkx')
+
         self.hybrid_ontology = self.head_ontology.copy()
 
         # subtree of tail ontology at join node
-        tail_ontology_subtree = dfs_tree(
+        tail_ontology_subtree = nx.dfs_tree(
             self.tail_ontology.reverse(), self.tail_join_node
         ).reverse()
 
@@ -269,7 +271,7 @@ class OntologyAdapter(Tree):
         """
         if self.head_join_node not in self.head_ontology.nodes:
 
-            if self.head_ontology_url:
+            if self.head_ontology:
 
                 self.head_join_node = self.find_join_node_by_name(
                     self.head_ontology, self.head_join_node
