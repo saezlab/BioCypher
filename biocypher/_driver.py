@@ -161,6 +161,7 @@ class Driver(neo4j_utils.Driver):
         self.user_schema_config_path = _argconf('user_schema_config_path')
         self.clear_cache = _argconf('clear_cache')
         self._biolink_use_cache = biolink_use_cache
+        self._biolink_model = biolink_model
         self.tail_ontology_url = _argconf('tail_ontology_url')
         self.head_join_node = _argconf('head_join_node')
         self.tail_join_node = _argconf('tail_join_node')
@@ -687,8 +688,8 @@ class Driver(neo4j_utils.Driver):
                 model = self._biolink_model,
                 use_cache = self._biolink_use_cache,
                 translator=self.translator,
-                clear_cache=self.clear_cache,
             )
+
             # only simple one-hybrid case; TODO generalise
             self.ontology_adapter = OntologyAdapter(
                 tail_ontology_url=self.tail_ontology_url,
@@ -730,18 +731,18 @@ class Driver(neo4j_utils.Driver):
         return self.batch_writer.write_import_call()
 
 
-    def log_missing_bl_types(self) -> Optional[set[str]]:
+    def log_missing_ontology_classes(self) -> set[str] | None:
         """
-        Send log message about Biolink types missing from the schema config.
+        Send log message about ontology classes missing from the schema config.
 
-        Get the set of Biolink types encountered without an entry in
+        Get the set of ontology classes encountered without an entry in
         the `schema_config.yaml` and print them to the logger.
 
         Returns:
-            A set of missing Biolink types
+            A set of missing ontology classes
         """
 
-        missing = self.translator.get_missing_bl_types()
+        missing = self.translator.get_missing_ontology_classes()
 
         if missing:
 
@@ -760,7 +761,7 @@ class Driver(neo4j_utils.Driver):
 
         else:
 
-            logger.info('No missing Biolink types in input.')
+            logger.info('No missing ontology classes in input.')
 
         return missing
 
