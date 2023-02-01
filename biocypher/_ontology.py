@@ -81,7 +81,7 @@ class Tree:
 
         nx = _misc.try_import('networkx')
 
-        return nx.Graph(self.nested_tree()) if nx else None
+        return nx.DiGraph(self.nested_tree()) if nx else None
 
 
 class OntologyAdapter(Tree):
@@ -186,7 +186,7 @@ class OntologyAdapter(Tree):
         else:
             logger.info('Loading ontology from Biolink adapter.')
             self.head_ontology = (
-                self.biolink_adapter.get_networkx_graph().reverse()
+                self.biolink_adapter.networkx_tree().reverse()
             )
 
         # tail ontology is always loaded from URL
