@@ -58,6 +58,7 @@ class BiolinkAdapter(_ontology.Tree):
         'reverse_mappings',
         '_ad_hoc_inheritance',
         '_tree',
+        'biolink_schema',
     )
 
 
@@ -144,7 +145,9 @@ class BiolinkAdapter(_ontology.Tree):
                 setattr(self, attr, data[attr])
 
             self._log_ad_hoc_inheritance(from_ = 'cache')
+            # this way we don't really speed up anything by using cache
             self.init_toolkit()
+            self.translate_schema_to_biolink()
 
             return True
 
