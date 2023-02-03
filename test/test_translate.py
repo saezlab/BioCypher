@@ -10,6 +10,7 @@ from biocypher._translate import Translator
 from biocypher._biolink import BiolinkAdapter
 from biocypher._meta import VersionNode
 from biocypher._ontology import OntologyAdapter
+from biocypher import _misc
 
 
 @pytest.fixture
@@ -463,7 +464,7 @@ def test_translate_query(translator, biolink_adapter):
     # sentence case
     query = "MATCH (n:hgnc)-[r:gene_disease]->(d:Disease) RETURN n"
     assert (
-        translator.translate(query) ==
+        _misc.first(translator.translate(query)) ==
         'MATCH (n:Gene)-[r:PERTURBED_IN_DISEASE]->(d:Disease) RETURN n'
     )
 

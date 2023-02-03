@@ -375,7 +375,7 @@ def test_access_translate(driver):
 
     assert (driver.reverse_translate_term('SideEffect') == 'sider')
     assert (
-        driver.translate_query("MATCH (n:reactome) RETURN n")
+        _misc.first(driver.translate_query("MATCH (n:reactome) RETURN n"))
         == "MATCH (n:Reactome.pathway) RETURN n"
     )
     assert (
