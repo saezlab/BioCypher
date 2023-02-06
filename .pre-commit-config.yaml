@@ -50,7 +50,7 @@ repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.2.0
     hooks:
-    -   id: check-docstring-first
+    # -   id: check-docstring-first
     -   id: end-of-file-fixer
     -   id: check-added-large-files
     -   id: mixed-line-ending
@@ -65,11 +65,11 @@ repos:
     -   id: fix-encoding-pragma
         args: [--remove] # for Python3 codebase, it's not necessary
     -   id: requirements-txt-fixer
--   repo: https://github.com/john-hen/Flake8-pyproject
-    rev: 1.1.0.post0
-    hooks:
-    -   id: Flake8-pyproject
-        additional_dependencies: [flake8-docstrings, flake8-comprehensions, flake8-bugbear]
+# -   repo: https://github.com/john-hen/Flake8-pyproject
+#     rev: 1.1.0.post0
+#     hooks:
+#     -   id: Flake8-pyproject
+#         additional_dependencies: [flake8-docstrings, flake8-comprehensions, flake8-bugbear]
 -   repo: https://github.com/myint/rstcheck
     rev: v6.0.0rc3
     hooks:

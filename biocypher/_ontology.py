@@ -11,12 +11,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Mapping
 
 import obonet
 
-from ._logger import logger
 import biocypher._misc as _misc
+from ._logger import logger
+
+__all__ = ['OntologyAdapter', 'Tree']
 
 if TYPE_CHECKING:
 
@@ -51,7 +53,7 @@ class Tree:
 
 
     @property
-    def tree(self) -> 'treelib.Tree':
+    def tree(self) -> treelib.Tree:
         """
         Ontology tree as an ASCII printable string.
         """
@@ -68,20 +70,45 @@ class Tree:
 
         logger.info(
             'Showing ontology structure, '
-            f'based on Biolink {self.biolink_version}:'
+            f'based on Biolink {self.biolink_version}:',
         )
 
         self.tree.show()
 
 
-    def networkx_tree(self) -> 'nx.DiGraph':
+    def networkx_tree(self) -> nx.DiGraph:
         """
         The ontology tree as a directed NetworkX graph.
         """
 
         nx = _misc.try_import('networkx')
 
-        return nx.DiGraph(self.nested_tree()) if nx else None
+        if nx:
+
+            graph = nx.DiGraph()
+
+            nes_tree = self.nested_tree()
+
+            # Add nodes and their data from nested inheritance tree
+            queue = list(nes_tree.items())
+            while queue:
+                parent_class, children = queue.pop()
+                data = self._get_biolink_properties(parent_class)
+                graph.add_node(parent_class, **data)
+                for child_class, grandchildren in children.items():
+                    if isinstance(children, Mapping):
+                        queue.append((child_class, grandchildren))
+
+            # Add edges from nested inheritance tree
+            queue = list(nes_tree.items())
+            while queue:
+                parent_class, children = queue.pop()
+                for child_class, grandchildren in children.items():
+                    graph.add_edge(parent_class, child_class)
+                    if isinstance(grandchildren, Mapping):
+                        queue.append((child_class, grandchildren))
+
+        return graph
 
 
 class OntologyAdapter(Tree):
@@ -127,7 +154,7 @@ class OntologyAdapter(Tree):
         if not head_ontology_url and not biolink_adapter:
 
             raise ValueError(
-                'Either head_ontology_url or biolink_adapter must be supplied.'
+                'Either head_ontology_url or biolink_adapter must be supplied.',
             )
 
         self.head_ontology_url = head_ontology_url
@@ -195,7 +222,7 @@ class OntologyAdapter(Tree):
 
 
     @classmethod
-    def _load_ontology(cls, url: str) -> "Idontknow":
+    def _load_ontology(cls, url: str) -> Idontknow:
 
         logger.info(f'Loading ontology from `{url}`.')
         return cls.reverse_name_and_ac(obonet.read_obo(url))
@@ -243,24 +270,24 @@ class OntologyAdapter(Tree):
 
         # subtree of tail ontology at join node
         tail_ontology_subtree = nx.dfs_tree(
-            self.tail_ontology.reverse(), self.tail_join_node
+            self.tail_ontology.reverse(), self.tail_join_node,
         ).reverse()
 
         # transfer node attributes from tail ontology to subtree
         for node in tail_ontology_subtree.nodes:
 
             tail_ontology_subtree.nodes[node].update(
-                self.tail_ontology.nodes[node]
+                self.tail_ontology.nodes[node],
             )
 
         # rename tail join node to match head join node
         tail_ontology_subtree = nx.relabel_nodes(
-            tail_ontology_subtree, {self.tail_join_node: self.head_join_node}
+            tail_ontology_subtree, {self.tail_join_node: self.head_join_node},
         )
 
         # combine head ontology and tail subtree
         self.hybrid_ontology = nx.compose(
-            self.hybrid_ontology, tail_ontology_subtree
+            self.hybrid_ontology, tail_ontology_subtree,
         )
 
 
@@ -274,27 +301,27 @@ class OntologyAdapter(Tree):
             if self.head_ontology:
 
                 self.head_join_node = self.find_join_node_by_name(
-                    self.head_ontology, self.head_join_node
+                    self.head_ontology, self.head_join_node,
                 )
 
             else:
 
                 raise ValueError(
                     f'Head join node {self.head_join_node} not found in '
-                    f'head ontology.'
+                    f'head ontology.',
                 )
 
         if self.tail_join_node not in self.tail_ontology.nodes:
 
             self.tail_join_node = self.find_join_node_by_name(
-                self.tail_ontology, self.tail_join_node
+                self.tail_ontology, self.tail_join_node,
             )
 
             if not self.tail_join_node:
 
                 raise ValueError(
                     f'Tail join node {self.tail_join_node} not found in '
-                    f'tail ontology.'
+                    f'tail ontology.',
                 )
 
 
@@ -340,6 +367,12 @@ class OntologyAdapter(Tree):
         Returns the ancestry of a node in the ontology.
         """
 
+        nx = _misc.try_import('networkx')
+
+        if not nx:
+
+                return None
+
         ontology = self.hybrid_ontology or self.head_ontology
 
         # check if node in ontology
@@ -347,4 +380,4 @@ class OntologyAdapter(Tree):
 
             return None
 
-        return list(dfs_tree(ontology, node))
+        return list(nx.dfs_tree(ontology, node))

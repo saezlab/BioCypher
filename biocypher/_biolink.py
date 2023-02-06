@@ -20,7 +20,7 @@ from ._logger import logger
 
 logger.debug(f'Loading module {__name__}.')
 
-from typing import Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 import re
 import json
 import pickle
@@ -30,10 +30,8 @@ import collections
 from linkml_runtime.linkml_model import meta as lml_meta
 import bmt
 
-from . import _misc
+from . import _misc, _cache, _ontology
 from ._config import module_data_path
-from . import _cache
-from . import _ontology
 
 __all__ = ['BiolinkAdapter']
 
@@ -207,7 +205,7 @@ class BiolinkAdapter(_ontology.Tree):
         # 'biocypher' after running set_model? How would we get default?
         # - yes it is, we should default to biocypher, isn't it?
         logger.info(
-            f'Creating BioLink model toolkit from `{self.model_name}` model.',
+            f'Creating Biolink model toolkit from `{self.model_name}` model.',
         )
 
         self.toolkit = (
@@ -219,7 +217,7 @@ class BiolinkAdapter(_ontology.Tree):
     def _update_model_version(self):
 
         self.biolink_version = self.toolkit.get_model_version()
-        logger.info(f'Bioloink model version: `{self.biolink_version}`.')
+        logger.info(f'Biolink model version: `{self.biolink_version}`.')
 
     def translate_schema_to_biolink(self):
         """
@@ -251,7 +249,8 @@ class BiolinkAdapter(_ontology.Tree):
                 name_or_synonym = values['synonym_for']
 
             entity_biolink_class = self.toolkit.get_element(
-                name_or_synonym)  # element name
+                name_or_synonym,
+            )  # element name
 
             if entity_biolink_class:
 
@@ -487,12 +486,12 @@ class BiolinkAdapter(_ontology.Tree):
 
             if isinstance(
                 properties['class_definition'],
-                lml_meta.TypeDefinition
+                lml_meta.TypeDefinition,
             ):
 
                 logger.warning(
                     f'Leaf `{class_name}` is a type definition, not a class. '
-                    'This is not supported yet.'
+                    'This is not supported yet.',
                 )
                 continue
 
