@@ -36,12 +36,7 @@ from . import _misc
 from ._misc import is_str
 from ._logger import logger
 
-__all__ = [
-    'BC_TYPES',
-    'Edge',
-    'Node',
-    'RelAsNode',
-]
+__all__ = ['BC_TYPES', 'Edge', 'Entity', 'Node', 'RelAsNode']
 
 logger.debug(f'Loading module {__name__}.')
 
@@ -89,7 +84,7 @@ class Node(
             defaults = ('id', None),
         ),
         Entity,
-    ):
+):
     """
     Handoff class to represent biomedical entities as Neo4j nodes.
 
@@ -125,7 +120,7 @@ class Node(
             label: str,
             id_type: str = 'id',
             props: dict | None = None,
-        ):
+    ):
         """
         Add id field to properties.
 
@@ -140,8 +135,8 @@ class Node(
         props = cls._type_in_properties(props)
         props = cls._process_str_props(props)
 
-        new = super(Node, cls).__new__(
-            cls, id, label.capitalize(), id_type = id_type, props = props,
+        new = super().__new__(
+            cls, id, label, id_type = id_type, props = props,
         )
         new.entity = 'node'
 
@@ -194,7 +189,7 @@ class Edge(
             defaults = (None, None),
         ),
         Entity,
-    ):
+):
     """
     Handoff class to represent biomedical relationships in Neo4j.
 
@@ -226,7 +221,7 @@ class Edge(
             label: str,
             id: str | None = None,
             props: dict | None = None,
-        ):
+    ):
         """
         Check for reserved keywords.
 
@@ -239,7 +234,7 @@ class Edge(
         props = cls._type_in_properties(props)
         props = cls._process_str_props(props)
 
-        new = super(Edge, cls).__new__(
+        new = super().__new__(
             cls, source, target, label.upper(), id = id, props = props,
         )
         new.entity = 'edge'
@@ -288,7 +283,7 @@ class RelAsNode(
             ),
         ),
         Entity,
-    ):
+):
     """
     Class to represent relationships as nodes.
 
@@ -312,7 +307,7 @@ class RelAsNode(
             node: Node,
             source: Edge,
             target: Edge,
-        ):
+    ):
 
         for attr, t in cls.__new__.__annotations__.items():
 
@@ -323,7 +318,7 @@ class RelAsNode(
                     f'of type `{t.__name__}`.',
                 )
 
-        new = super(RelAsNode, cls).__new__(cls, node, source, target)
+        new = super().__new__(cls, node, source, target)
 
         return new
 
