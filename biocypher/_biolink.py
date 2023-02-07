@@ -256,7 +256,7 @@ class BiolinkAdapter(_ontology.Tree):
 
                 # find ancestors of biolink type in PascalCase
                 ancestors = self.trim_biolink_ancestry(
-                    self.toolkit.get_ancestors(entity, formatted=True),
+                    self.toolkit.get_ancestors(name_or_synonym, formatted=True),
                 )
 
                 if values.get('synonym_for'):

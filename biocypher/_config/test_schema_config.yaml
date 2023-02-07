@@ -24,107 +24,113 @@ Title: BioCypher graph schema configuration file
 
 # regular node
 protein:
-  represented_as: node
-  preferred_id: uniprot
-  label_in_input: protein
-  properties:
-    name: str
-    score: float
-    taxon: int
-    genes: str[]
+    represented_as: node
+    preferred_id: uniprot
+    label_in_input: protein
+    properties:
+        name: str
+        score: float
+        taxon: int
+        genes: str[]
 
 microRNA:
-  represented_as: node
-  preferred_id: mirbase.mature
-  label_in_input: mirna
+    represented_as: node
+    preferred_id: mirbase.mature
+    label_in_input: mirna
 
 complex:
-  synonym_for: macromolecular complex mixin
-  represented_as: node
-  preferred_id: complexportal
-  label_in_input: complex
+    synonym_for: macromolecular complex mixin
+    represented_as: node
+    preferred_id: complexportal
+    label_in_input: complex
+
+# another real synonym
+behaviour:
+    synonym_for: behavioral feature
+    represented_as: node
+    label_in_input: behaviour
 
 # virtual leaves for multiple inputs
 pathway:
-  represented_as: node
-  preferred_id: [reactome, wikipathways]
-  label_in_input: [reactome, wikipathways]
+    represented_as: node
+    preferred_id: [reactome, wikipathways]
+    label_in_input: [reactome, wikipathways]
 
 # merge muliple inputs
 gene:
-  represented_as: node
-  preferred_id: hgnc
-  label_in_input: [hgnc, ensg]
-  exclude_properties: accession
-  properties:
-    taxon: int
+    represented_as: node
+    preferred_id: hgnc
+    label_in_input: [hgnc, ensg]
+    exclude_properties: accession
+    properties:
+        taxon: int
 
 disease:
-  represented_as: node
-  preferred_id: doid
-  label_in_input: Disease
+    represented_as: node
+    preferred_id: doid
+    label_in_input: Disease
 
 # ad hoc child
 side effect:
-  is_a: phenotypic feature
-  represented_as: node
-  preferred_id: sider.effect
-  label_in_input: sider
+    is_a: phenotypic feature
+    represented_as: node
+    preferred_id: sider.effect
+    label_in_input: sider
 
 sequence variant:
-  represented_as: node
-  preferred_id: [clinically relevant, known, somatic]
-  label_in_input: [Clinically_relevant_variant, Known_variant, Somatic_mutation]
-  properties:
-    source: str
-    original_source: str
-    effect: str
-    biotype: str
+    represented_as: node
+    preferred_id: [clinically relevant, known, somatic]
+    label_in_input: [Clinically_relevant_variant, Known_variant, Somatic_mutation]
+    properties:
+        source: str
+        original_source: str
+        effect: str
+        biotype: str
 
 altered gene product level:
-  represented_as: node
-  label_in_input: agpl
+    represented_as: node
+    label_in_input: agpl
 
 decreased gene product level:
-  represented_as: node
-  label_in_input: agpl_decreased
+    represented_as: node
+    label_in_input: agpl_decreased
 
 lethal variant:
-  represented_as: node
-  label_in_input: lethal
+    represented_as: node
+    label_in_input: lethal
 
 # virtual leaves of ad hoc child
 snRNA sequence:
-  is_a: nucleic acid entity
-  represented_as: node
-  preferred_id: [intact, rnacentral]
-  label_in_input: [intact_snrna, rnacentral_snrna]
-  properties:
-    ac: str
-    fullName: str
-    shortName: str
-    preferredName: str
-  exclude_properties: sequence
+    is_a: nucleic acid entity
+    represented_as: node
+    preferred_id: [intact, rnacentral]
+    label_in_input: [intact_snrna, rnacentral_snrna]
+    properties:
+        ac: str
+        fullName: str
+        shortName: str
+        preferredName: str
+    exclude_properties: sequence
 
 DNA sequence:
-  is_a: nucleic acid entity
-  represented_as: node
-  preferred_id: ensembl
-  label_in_input: dna
-  properties:
-    ac: str
-    fullName: str
-    shortName: str
-    preferredName: str
-    sequence: str
+    is_a: nucleic acid entity
+    represented_as: node
+    preferred_id: ensembl
+    label_in_input: dna
+    properties:
+        ac: str
+        fullName: str
+        shortName: str
+        preferredName: str
+        sequence: str
 
 # virtual leaves of ad hoc multiple inheritance
 dsDNA sequence:
-  is_a: [DNA sequence, nucleic acid entity]
-  inherit_properties: True
-  represented_as: node
-  preferred_id: [intact, uniparc]
-  label_in_input: [intact_dsdna, uniprot_archive_dsdna]
+    is_a: [DNA sequence, nucleic acid entity]
+    inherit_properties: true
+    represented_as: node
+    preferred_id: [intact, uniparc]
+    label_in_input: [intact_dsdna, uniprot_archive_dsdna]
 
 
 # ---
@@ -146,66 +152,63 @@ dsDNA sequence:
 
 # added to custom biolink
 post translational interaction:
-  represented_as: node
-  label_as_edge: INTERACTS_POST_TRANSLATIONAL
-  source: Protein
-  target: Protein
-  label_in_input: post_translational
-  properties:
-    effect: int
-    directed: bool
+    represented_as: node
+    label_as_edge: INTERACTS_POST_TRANSLATIONAL
+    source: Protein
+    target: Protein
+    label_in_input: post_translational
+    properties:
+        effect: int
+        directed: bool
 
 # auto label as edge
 phosphorylation:
-  represented_as: edge
-  source: Protein
-  target: Protein
-  label_in_input: phosphorylation
+    represented_as: edge
+    source: Protein
+    target: Protein
+    label_in_input: phosphorylation
 
 # merge edges
 gene to disease association:
-  represented_as: edge
-  label_as_edge: PERTURBED_IN_DISEASE
-  source: Protein
-  target: Disease
-  label_in_input: [protein_disease, gene_disease]
-  exclude_properties: accession
-  properties:
-    directional: bool
-    score: float
-    residue: str
-    level: int
+    represented_as: edge
+    label_as_edge: PERTURBED_IN_DISEASE
+    source: Protein
+    target: Disease
+    label_in_input: [protein_disease, gene_disease]
+    exclude_properties: accession
+    properties:
+        directional: bool
+        score: float
+        residue: str
+        level: int
 
 # multiple inheritance
 mutation to tissue association:
-  is_a: [genotype to tissue association, entity to tissue association, association]
-  represented_as: edge
-  label_as_edge: Is_Mutated_In
-  source: Gene
-  target: Tissue
-  label_in_input: Gene_Is_Mutated_In_Cell_Tissue
-  properties:
-    confidence: int
-    site: str
+    is_a: [genotype to tissue association, entity to tissue association, association]
+    represented_as: edge
+    label_as_edge: Is_Mutated_In
+    source: Gene
+    target: Tissue
+    label_in_input: Gene_Is_Mutated_In_Cell_Tissue
+    properties:
+        confidence: int
+        site: str
 
 
 # multiple input to multiple virtual leaves
 variant to gene association: # -> Known.... and Somatic....
-  represented_as: edge
-  source: [known.sequence variant, somatic.sequence variant]
-  target: gene
-  label_in_input: [
-    VARIANT_FOUND_IN_GENE_Known_variant_Gene,
-    VARIANT_FOUND_IN_GENE_Somatic_mutation_Gene
-  ]
+    represented_as: edge
+    source: [known.sequence variant, somatic.sequence variant]
+    target: gene
+    label_in_input: [VARIANT_FOUND_IN_GENE_Known_variant_Gene, VARIANT_FOUND_IN_GENE_Somatic_mutation_Gene]
 
 # property filter
 gene to gene association:
-  represented_as: edge
-  source: gene
-  target: gene
-  label_in_input: gene_gene
-  properties:
-    directional: bool
-    curated: bool
-    score: float
+    represented_as: edge
+    source: gene
+    target: gene
+    label_in_input: gene_gene
+    properties:
+        directional: bool
+        curated: bool
+        score: float

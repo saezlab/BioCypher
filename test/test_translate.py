@@ -37,7 +37,7 @@ def biolink_adapter(version_node, translator):
     return BiolinkAdapter(
         schema=version_node.schema,
         translator = translator,
-        model='biocypher',  # this is the default
+        model='biocypher/_config/biocypher-biolink-model.yaml',  # this is the default
         # unstable, move to test yaml
         use_cache = False,
     )
@@ -330,6 +330,18 @@ def test_multiple_inheritance(biolink_adapter):
 
 
 def test_synonym(biolink_adapter):
+
+    prot = biolink_adapter.biolink_schema.get('protein')
+
+    assert prot
+    assert 'Protein' in prot['ancestors']  # self in ancestors
+    assert 'Polypeptide' in prot['ancestors']
+
+    beha = biolink_adapter.biolink_schema.get('behaviour')
+
+    assert beha
+    assert 'BehavioralFeature' in beha['ancestors']
+    assert 'BiologicalEntity' in beha['ancestors']
 
     comp = biolink_adapter.biolink_schema.get('complex')
 
