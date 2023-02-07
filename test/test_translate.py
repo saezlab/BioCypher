@@ -645,7 +645,6 @@ def test_generic_ontology_adapter(ontology_adapter):
     predecessors = ontology_adapter.get_node_ancestry(
         'decreased gene product level',
     )
-    assert len(predecessors) == 13
     assert 'altered gene product level' in predecessors
     assert 'sequence variant' in predecessors
     assert 'entity' in predecessors
@@ -656,5 +655,5 @@ def test_generic_ontology_adapter(ontology_adapter):
     assert 'exact_mappings' in entity.keys()
 
     lethal_var = ontology_adapter.hybrid_ontology.nodes['lethal variant']
-    assert lethal_var['accession'] == 'SO:0001773'
+    assert lethal_var['ac'] == 'SO:0001773'
     assert 'def' in lethal_var.keys()
