@@ -214,7 +214,7 @@ def test_merge_multiple_inputs_node(version_node, translator):
 
     # check translator.translate for unique return type
     assert all([type(n) == Node for n in t])
-    assert all([n.label == 'Gene' for n in t])
+    assert all([n.label == 'gene' for n in t])
 
 
 def test_merge_multiple_inputs_edge(version_node, translator):
