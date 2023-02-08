@@ -33,24 +33,25 @@ Todo:
     - import ID types from pypath dictionary (later, externalised
       dictionary)? biolink?
 """
-
 from __future__ import annotations
+
+from collections.abc import Iterable, Generator
 
 from ._logger import logger
 
 logger.debug(f'Loading module {__name__}.')
 
-from typing import Any, Generator, Iterable, Literal
-import collections
+from typing import Any, Literal
 import importlib as imp
+import collections
 
 from more_itertools import peekable
 
 from . import _misc
-from ._entity import BC_TYPES, Edge, Node, RelAsNode
 from ._config import config, argconf
+from ._entity import BC_TYPES, Edge, Node, RelAsNode
 
-__all__ = ['Translator']
+__all__ = ['PROP_SYNONYMS', 'Translator']
 
 PROP_SYNONYMS = {
     'licence': 'license',
@@ -82,7 +83,7 @@ class Translator:
             self,
             schema: dict[str, dict],
             strict_mode: bool | None = None,
-        ):
+    ):
         """
         Create a translator object for one database schema.
 
@@ -123,7 +124,7 @@ class Translator:
     def translate(
             self,
             items: INPUT_TYPES | BC_TYPES | Iterable[INPUT_TYPES | BC_TYPES],
-        ) -> Generator[BC_TYPES, None, None]:
+    ) -> Generator[BC_TYPES, None, None]:
         """
         Translate graph components to the current schema.
 
@@ -172,7 +173,7 @@ class Translator:
             _type: str,
             props: dict,
             _id: str = None,
-        ) -> Edge | RelAsNode | None:
+    ) -> Edge | RelAsNode | None:
         """
         Creates one Edge.
 
@@ -239,7 +240,7 @@ class Translator:
             ontology_class: str,
             props: dict,
             _id: str | None = None,
-        ) -> RelAsNode:
+    ) -> RelAsNode:
         """
         Create node representation of a record represented by edge by default.
 
@@ -310,7 +311,7 @@ class Translator:
             _id: str,
             _type: str,
             props: dict,
-        ) -> Node | None:
+    ) -> Node | None:
         """
         Creates one Node.
 
@@ -519,7 +520,7 @@ class Translator:
             key_sqb = ':' + key + ']'
 
             # TODO this conditional probably does not cover all cases
-            if a in query or b in query:
+            if key_par in query or key_sqb in query:
 
                 rev_key = self.reverse_mappings[key]
 
