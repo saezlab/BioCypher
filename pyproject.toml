@@ -67,6 +67,10 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 log_cli = true
 log_level = "INFO"
+markers = [
+  "inject_driver_args(driver_args): Arguments for the Driver",
+  "requires_neo4j: Requires connection to a Neo4j server"
+]
 
 [tool.black]
 line-length = 80
