@@ -6,51 +6,9 @@ from biocypher._driver import Driver
 from biocypher import _misc
 
 
-def init_driver():
-
-    # neo4j database needs to be running!
-    return Driver(
-        wipe=True,
-        increment_version=False,
-        user_schema_config_path="biocypher/_config/test_schema_config.yaml",
-        clear_cache=True,
-    )
-
-
-@pytest.fixture
-def driver():
-
-    d = init_driver()
-
-    yield d
-
-    # teardown
-    d.query("MATCH (n:Test)" "DETACH DELETE n")
-    d.query("MATCH (n:Int1)" "DETACH DELETE n")
-    d.query("MATCH (n:Int2)" "DETACH DELETE n")
-
-    # to deal with merging on non-existing nodes
-    # see test_add_single_biocypher_edge_missing_nodes()
-    d.query("MATCH (n2) WHERE n2.id = 'src'" "DETACH DELETE n2")
-    d.query("MATCH (n3) WHERE n3.id = 'tar'" "DETACH DELETE n3")
-    d.close()
-
-
-requires_neo4j = pytest.mark.skipif(
-    init_driver().db_status() != 'online',
-    reason='This test requires connection to a Neo4j server.'
-)
-
-
 @requires_neo4j
-def test_wipe():
-    # just convenience function to wipe the database in testing env
-    d = Driver(
-        wipe=True,
-        user_schema_config_path='biocypher/_config/test_schema_config.yaml',
-    )
-
-    d.close()
+@pytest.mark.inject_driver_args(driver_args = {'wipe': True})
+def test_wipe(driver):
 
     assert True
 
@@ -60,13 +18,10 @@ def test_create_driver(driver):
     assert isinstance(driver, Driver)
 
 
-def test_create_offline():
-    d = Driver(
-        offline=True,
-        user_schema_config_path='biocypher/_config/test_schema_config.yaml',
-    )
-    assert isinstance(d, Driver)
-    d.close()
+@pytest.mark.inject_driver_args(driver_args = {'offline': True})
+def test_create_offline(driver):
+
+    assert isinstance(driver, Driver)
 
 
 @requires_neo4j
@@ -402,13 +357,15 @@ def test_treelib_vis(driver):
     pass
 
 
-def test_schema_config_from_web():
-    driver = Driver(
-        offline = True,
-        user_schema_config_path = (
+@pytest.mark.inject_driver_args(
+    driver_args = {
+        'offline': True,
+        'user_schema_config_path': (
             'https://raw.githubusercontent.com/saezlab/BioCypher/'
             'main/biocypher/_config/test_schema_config.yaml'
-        )
-    )
+        ),
+    },
+)
+def test_schema_config_from_web(driver):
 
     assert driver.translator._ontology_mapping
