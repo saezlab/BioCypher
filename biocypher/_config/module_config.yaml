@@ -4,7 +4,7 @@ Title: BioCypher python module configuration file
 neo4j_uri: neo4j://localhost:7687
 neo4j_db: neo4j # DB name
 neo4j_user: neo4j # user name
-neo4j_pw: your_password_here # password
+neo4j_pw: neo4j # password
 neo4j_insert_batch_size: 30000
 # Offline mode: do not connect to a running Neo4j instance
 # Can be used e.g. for writing CSV files for admin import
