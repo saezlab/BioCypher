@@ -12,7 +12,9 @@ __all__ = ['test_access_translate', 'test_add_biocypher_edge_generator', 'test_a
 @pytest.mark.inject_driver_args(driver_args = {'wipe': True})
 def test_wipe(driver):
 
-    assert True
+    query = 'MATCH (n:BioCypher) RETURN n'
+    r, summary = driver.query(query)
+    assert len(r) == 1
 
 
 def test_create_driver(driver):
