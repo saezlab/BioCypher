@@ -1,6 +1,8 @@
 import pytest
 
 from biocypher import config as bcy_config
+from biocypher import Driver
+from biocypher._config import neo4j_config
 
 
 def pytest_addoption(parser):
@@ -32,10 +34,12 @@ def neo4j_param(request):
         'neo4j_uri',
     )
 
-    return tuple(
-        request.config.getoption(f'--{key}') or bcy_config(key)
+    param = {
+        key: request.config.getoption(f'--{key}') or bcy_config(key)
         for key in keys
-    )
+    }
+
+    return neo4j_config(config = param)
 
 
 @pytest.fixture(name = 'driver')
