@@ -156,7 +156,7 @@ def config(*args, **kwargs) -> Optional[Any]:
     globals()['_config'].update(kwargs)
 
 
-def neo4j_config() -> dict:
+def neo4j_config(config: dict = None) -> dict:
     """
     Retrieves config values required for Neo4j connections.
 
@@ -167,7 +167,14 @@ def neo4j_config() -> dict:
     n4jprefix = re.compile('^neo4j_')
     db_prefix = {'name', 'uri', 'user', 'passwd'}
 
-    def config_key(key: str) -> str:
+
+    def driver_arg(key: str) -> str:
+        """
+        Process Neo4j parameter names.
+
+        Replaces config keys with Driver argument names for Neo4j connection
+        parameters.
+        """
 
         key = n4jprefix.sub('', key)
         key = _NEO4J_SYNONYMS.get(key, key)
@@ -175,9 +182,11 @@ def neo4j_config() -> dict:
         return f'db_{key}' if key in db_prefix else key
 
 
+    config = config or _config
+
     return {
-        config_key(k): v
-        for k, v in _config.items()
+        driver_arg(k): v
+        for k, v in config.items()
         if k.startswith('neo4j_')
     }
 
