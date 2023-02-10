@@ -1,8 +1,10 @@
 import pytest
 
-from biocypher import config as bcy_config
 from biocypher import Driver
+from biocypher import config as bcy_config
 from biocypher._config import neo4j_config
+
+__all__ = ['create_driver', 'neo4j_param', 'pytest_addoption', 'skip_if_offline']
 
 
 def pytest_addoption(parser):
@@ -46,7 +48,11 @@ def neo4j_param(request):
 def create_driver(request, neo4j_param):
 
     marker = request.node.get_closest_marker('inject_driver_args')
-    marker_args = marker.param[0] if marker else {}
+
+    marker_args = {}
+    # check if marker has attribute param
+    if marker and hasattr(marker, 'param'):
+        marker_args = marker.param
 
     driver_args = {
         'wipe': True,
@@ -62,14 +68,14 @@ def create_driver(request, neo4j_param):
     yield d
 
     # teardown
-    d.query("MATCH (n:Test)" "DETACH DELETE n")
-    d.query("MATCH (n:Int1)" "DETACH DELETE n")
-    d.query("MATCH (n:Int2)" "DETACH DELETE n")
+    d.query('MATCH (n:Test)' 'DETACH DELETE n')
+    d.query('MATCH (n:Int1)' 'DETACH DELETE n')
+    d.query('MATCH (n:Int2)' 'DETACH DELETE n')
 
     # to deal with merging on non-existing nodes
     # see test_add_single_biocypher_edge_missing_nodes()
-    d.query("MATCH (n2) WHERE n2.id = 'src'" "DETACH DELETE n2")
-    d.query("MATCH (n3) WHERE n3.id = 'tar'" "DETACH DELETE n3")
+    d.query("MATCH (n2) WHERE n2.id = 'src'" 'DETACH DELETE n2')
+    d.query("MATCH (n3) WHERE n3.id = 'tar'" 'DETACH DELETE n3')
     d.close()
 
 
@@ -78,6 +84,6 @@ def skip_if_offline(request, driver):
 
     marker = request.node.get_closest_marker('requires_neo4j')
 
-    if marker and driver.status != 'online':
+    if marker and driver.status != 'db online':
 
         pytest.skip('Requires connection to Neo4j server.')
