@@ -1,4 +1,3 @@
-from networkx.classes.graph import Graph
 from linkml_runtime.linkml_model.meta import ClassDefinition
 import pytest
 
@@ -617,9 +616,17 @@ def test_strict_mode_property_filter(translator):
 
 
 def test_networkx_from_treedict(biolink_adapter):
+
+    nx = _misc.try_import('networkx')
+
+    if not nx:
+
+        pytest.skip('NetworkX is required to run this test.')
+
     graph = biolink_adapter.networkx_tree()
 
-    assert isinstance(graph, Graph)
+
+    assert isinstance(graph, nx.Graph)
     assert 'sequence variant' in graph.nodes
 
     # make sure the mixins don't get lost
