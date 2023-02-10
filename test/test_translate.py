@@ -1,8 +1,6 @@
 from networkx.classes.graph import Graph
 from linkml_runtime.linkml_model.meta import ClassDefinition
-from networkx.algorithms.traversal.depth_first_search import dfs_tree
 import pytest
-import networkx as nx
 
 from biocypher import _misc
 from biocypher._meta import VersionNode
@@ -630,7 +628,15 @@ def test_networkx_from_treedict(biolink_adapter):
 
 
 def test_generic_ontology_adapter(ontology_adapter):
+
     assert isinstance(ontology_adapter, OntologyAdapter)
+
+    nx = _misc.try_import('networkx')
+
+    if not nx:
+
+        pytest.skip('NetworkX is required to run this test.')
+
     assert len(ontology_adapter.tail_ontology) == 7
     assert nx.is_directed_acyclic_graph(ontology_adapter.tail_ontology)
 
