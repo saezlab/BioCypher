@@ -153,10 +153,11 @@ class VersionNode:
             Node(
                 id = entity,
                 label = 'MetaNode',
-                id_type = params['preferred_id'],
-                props = params,
+                # id_type = params.get('preferred_id'),
+                # props = params,
             )
             for entity, params in self._schema.items()
+            if params.get('preferred_id')
         ]
 
         self.bcy_driver.add_biocypher_nodes(meta_nodes)
@@ -168,7 +169,7 @@ class VersionNode:
                 target = entity,
                 label = 'CONTAINS',
             )
-            for entity in self.schema.keys()
+            for entity in self._schema.keys()
         ]
 
         self.bcy_driver.add_biocypher_edges(contains)
