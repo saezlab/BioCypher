@@ -9,7 +9,7 @@
 # Distributed under GPLv3 license, see the file `LICENSE`.
 #
 
-from typing import Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 from datetime import datetime
 import copy
 import json
@@ -178,7 +178,7 @@ class VersionNode:
             Edge(
                 source = mn.id,
                 target = mn.props.get(side),
-                label = f'IS_{side.upper()}_OF'
+                label = f'IS_{side.upper()}_OF',
             )
             for mn in meta_nodes
             for side in ('source', 'target')
@@ -299,7 +299,11 @@ class VersionNode:
             All data from the latest version node.
         """
 
-        if self.bcy_driver and not self.offline:
+        if self.offline:
+            logger.info('Offline mode: no graph state to return.')
+            return {}
+
+        if self.bcy_driver:
 
             logger.info('Getting graph state.')
 
@@ -458,7 +462,7 @@ class VersionNode:
                             key = k,
                             value = v,
                             by = key,
-                        )
+                        ),
                     )
 
         return leaves
@@ -501,7 +505,7 @@ class VersionNode:
             key: str,
             value: dict,
             by: Literal['source', 'preferred_id'],
-        ) -> dict:
+    ) -> dict:
         """
         Create virtual leaves for multiple sources or preferred IDs.
 
@@ -536,7 +540,7 @@ class VersionNode:
                 'label_in_input': lab,
                 'represented_as': rep,
                 'virtual': True,
-                'is_a': [key] + _misc.to_list(value.get('is_a', []))
+                'is_a': [key] + _misc.to_list(value.get('is_a', [])),
             })
 
         return leaves
