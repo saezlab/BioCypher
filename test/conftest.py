@@ -84,6 +84,6 @@ def skip_if_offline(request, driver):
 
     marker = request.node.get_closest_marker('requires_neo4j')
 
-    if marker and driver.status != 'online':
+    if marker and driver.status != 'db online':
 
         pytest.skip('Requires connection to Neo4j server.')
