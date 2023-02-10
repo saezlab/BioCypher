@@ -26,6 +26,7 @@ import json
 import pickle
 import hashlib
 import collections
+import importlib as imp
 
 from linkml_runtime.linkml_model import meta as lml_meta
 import bmt
@@ -103,6 +104,18 @@ class BiolinkAdapter(_ontology.Tree):
         logger.info('Instantiating Biolink Adapter.')
 
         self.main()
+
+
+    def reload(self):
+        """
+        Reloads the object from the module level.
+        """
+
+        modname = self.__class__.__module__
+        mod = __import__(modname, fromlist = [modname.split('.')[0]])
+        imp.reload(mod)
+        new = getattr(mod, self.__class__.__name__)
+        setattr(self, '__class__', new)
 
 
     def main(self):
@@ -472,8 +485,11 @@ class BiolinkAdapter(_ontology.Tree):
 
     def update_tree(self):
         """
-        Create a tree representation of the ontology including the ancestors
-        of the leaves.
+        Creates tree representation in the form of an edge list.
+
+        The edge list is a flat dict, keys are children, values are parents.
+        The tree includes the ancestors of the leaves. It is stored under the
+        `_tree` attribute.
         """
 
         # refactor inheritance tree to be compatible with treelib

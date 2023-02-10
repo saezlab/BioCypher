@@ -11,7 +11,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
+import importlib as imp
 
 import obonet
 
@@ -28,6 +29,12 @@ if TYPE_CHECKING:
 class Tree:
 
     def update_tree(self):
+        """
+        Creates tree representation in the form of an edge list.
+
+        The edge list is a flat dict, keys are children, values are parents.
+        It is stored under the `_tree` attribute.
+        """
 
         raise NotImplementedError
 
@@ -83,32 +90,49 @@ class Tree:
 
         nx = _misc.try_import('networkx')
 
-        if nx:
+        return (
+            nx.DiGraph(e for e in self._tree.items() if e[1])
+                if nx else
+            None
+        )
 
-            graph = nx.DiGraph()
 
-            nes_tree = self.nested_tree()
+    def _update_node_attrs(self):
 
-            # Add nodes and their data from nested inheritance tree
-            queue = list(nes_tree.items())
-            while queue:
-                parent_class, children = queue.pop()
-                data = self._get_biolink_properties(parent_class)
-                graph.add_node(parent_class, **data)
-                for child_class, grandchildren in children.items():
-                    if isinstance(children, Mapping):
-                        queue.append((child_class, grandchildren))
+        self._node_attrs = None
 
-            # Add edges from nested inheritance tree
-            queue = list(nes_tree.items())
-            while queue:
-                parent_class, children = queue.pop()
-                for child_class, grandchildren in children.items():
-                    graph.add_edge(parent_class, child_class)
-                    if isinstance(grandchildren, Mapping):
-                        queue.append((child_class, grandchildren))
 
-        return graph
+    def _update_edge_attrs(self):
+
+        self._edge_attrs = None
+
+
+    def _attrs(self, what: Literal['node', 'edge']) -> dict[
+            str | tuple[str, str],
+            dict[str, Any]
+        ]:
+
+        getattr(self, f'_update_{what}_attrs')()
+
+        return getattr(self, f'_{what}_attrs')
+
+
+    @property
+    def node_attrs(self) -> dict[str, dict[str, Any]]:
+        """
+        Node attributes as a dict.
+        """
+
+        return self._attrs('node')
+
+
+    @property
+    def edge_attrs(self) -> dict[tuple[str, str], dict[str, Any]]:
+        """
+        Edge attributes as a dict.
+        """
+
+        return self._attrs('edge')
 
 
 class OntologyAdapter(Tree):
@@ -177,6 +201,18 @@ class OntologyAdapter(Tree):
         self.main()
 
 
+    def reload(self):
+        """
+        Reloads the object from the module level.
+        """
+
+        modname = self.__class__.__module__
+        mod = __import__(modname, fromlist = [modname.split('.')[0]])
+        imp.reload(mod)
+        new = getattr(mod, self.__class__.__name__)
+        setattr(self, '__class__', new)
+
+
     def main(self):
         """
         Main method to be run on instantiation.
@@ -222,7 +258,7 @@ class OntologyAdapter(Tree):
 
 
     @classmethod
-    def _load_ontology(cls, url: str) -> Idontknow:
+    def _load_ontology(cls, url: str):
 
         logger.info(f'Loading ontology from `{url}`.')
         return cls.reverse_name_and_ac(obonet.read_obo(url))
@@ -287,7 +323,7 @@ class OntologyAdapter(Tree):
 
         # combine head ontology and tail subtree
         self.hybrid_ontology = nx.compose(
-            self.hybrid_ontology, tail_ontology_subtree,
+            self.hybrid_ontology, tail_ontology_subtree.reverse(),
         )
 
 
@@ -339,27 +375,42 @@ class OntologyAdapter(Tree):
 
 
     def update_tree(self):
+        """
+        Creates tree representation in the form of an edge list.
 
-        if self.hybrid_ontology:
+        The edge list is a flat dict, keys are children, values are parents.
+        It is stored under the `_tree` attribute.
+        """
 
-            ontology = self.hybrid_ontology
+        nx = _misc.try_import('networkx')
 
-        else:
+        if not nx:
 
-            ontology = self.head_ontology
+            self._tree = None
 
-        tree = _misc.create_tree_visualisation(ontology)
+            return
 
-        # add synonym information
-        for class_name in self.schema:
-
-            syn = self.schema[class_name].get('synonym_for')
-
-            if syn:
-
-                tree.nodes[class_name].tag = f'{class_name} = {syn}'
+        ontology = self.hybrid_ontology or self.head_ontology
+        tree = {
+            target: source
+            for source, target, _ in nx.to_edgelist(ontology)
+        }
 
         self._tree = tree
+
+
+    def _update_node_attrs(self):
+
+        # add synonym information
+        # for class_name in self.schema:
+        #
+        #     syn = self.schema[class_name].get('synonym_for')
+        #
+        #     if syn:
+        #
+        #         tree.nodes[class_name].tag = f'{class_name} = {syn}'
+
+        self._node_attrs = None
 
 
     def get_node_ancestry(self, node: str) -> list | None:
