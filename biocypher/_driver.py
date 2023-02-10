@@ -44,7 +44,7 @@ from ._biolink import BiolinkAdapter
 from ._ontology import OntologyAdapter
 from ._translate import Translator
 
-__all__ = ['Driver']
+__all__ = ['Driver', 'INPUT_BC_TYPES']
 
 INPUT_BC_TYPES = Translator.INPUT_TYPES | BC_TYPES
 
@@ -66,7 +66,7 @@ class Driver(neo4j_utils.Driver):
         raise_errors: bool | None = None,
         wipe: bool = False,
         strict_mode: bool | None = None,
-        offline: Optional[bool] = None,
+        offline: bool | None = None,
         output_directory: str | None = None,
         increment_version: bool = True,
         user_schema_config_path: str | None = None,
@@ -143,10 +143,11 @@ class Driver(neo4j_utils.Driver):
         """
 
         neo4j_config = _neo4j_config()
-        driver_args = {
-            arg: _misc.if_none(locals().get(arg), neo4j_config.get(arg))
-            for arg in inspect.signature(neo4j_utils.Driver).parameters
-        }
+
+        driver_args = {}
+        driver_sig = inspect.signature(neo4j_utils.Driver).parameters
+        for arg in driver_sig:
+            driver_args[arg] = _misc.if_none(locals().get(arg), neo4j_config.get(arg))
 
         self.csv_delim = delimiter or _config('csv_delimiter')
         self.csv_adelim = array_delimiter or _config('csv_array_delimiter')
@@ -190,7 +191,7 @@ class Driver(neo4j_utils.Driver):
                 'Offline mode requires a schema configuration. '
                 'Please provide one with the `user_schema_config_path` '
                 'argument or set the `user_schema_config_path` '
-                'configuration variable.'
+                'configuration variable.',
             )
 
         # if db representation node does not exist or explicitly
@@ -637,7 +638,7 @@ class Driver(neo4j_utils.Driver):
             self,
             dirname: str | None,
             db_name: str | None,
-        ) -> None:
+    ) -> None:
         """
         Instantiate the batch writer if it does not exist.
 
