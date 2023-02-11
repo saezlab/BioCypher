@@ -44,7 +44,7 @@ def neo4j_param(request):
     return neo4j_config(config = param)
 
 
-@pytest.fixture(name = 'driver')
+@pytest.fixture(name = 'driver', scope = 'session')
 def create_driver(request, neo4j_param):
 
     marker = request.node.get_closest_marker('inject_driver_args')
