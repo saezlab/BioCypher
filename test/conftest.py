@@ -52,18 +52,30 @@ def create_driver(request, neo4j_param):
     marker_args = {}
     # check if marker has attribute param
     if marker and hasattr(marker, 'param'):
+
         marker_args = marker.param
 
-    driver_args = {
-        'wipe': True,
-        'increment_version': False,
-        'user_schema_config_path': 'biocypher/_config/test_schema_config.yaml',
-        'clear_cache': True,
-    }
-    driver_args.update(marker_args)
-    driver_args.update(neo4j_param)
+    if not marker_args and 'DRIVER' in globals():
 
-    d = Driver(**driver_args)
+        d = globals()['DRIVER']
+
+    else:
+
+        driver_args = {
+            'wipe': True,
+            'increment_version': False,
+            'user_schema_config_path':
+                'biocypher/_config/test_schema_config.yaml',
+            'clear_cache': True,
+        }
+        driver_args.update(marker_args)
+        driver_args.update(neo4j_param)
+
+        d = Driver(**driver_args)
+
+        if not marker_args:
+
+            globals()['DRIVER'] = d
 
     yield d
 
