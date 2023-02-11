@@ -35,7 +35,6 @@ def biolink_adapter(version_node, translator):
         schema=version_node.schema,
         translator = translator,
         model='biocypher/_config/biocypher-biolink-model.yaml',  # this is the default
-        # unstable, move to test yaml
         use_cache = False,
     )
 
