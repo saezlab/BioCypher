@@ -13,6 +13,7 @@ from biocypher._entity import Edge, Node, RelAsNode
 from biocypher._biolink import BiolinkAdapter
 from biocypher._ontology import OntologyAdapter
 from biocypher._translate import Translator
+from biocypher._config import module_data_path
 
 __all__ = [
     'bw',
@@ -361,14 +362,14 @@ def test_write_hybrid_ontology_nodes(bw):
     nodes = []
     for i in range(4):
         nodes.append(
-            BioCypherNode(
-                node_id=f'agpl:000{i}',
-                node_label='altered gene product level',
-                properties={},
+            Node(
+                id=f'agpl:000{i}',
+                label='altered gene product level',
+                props={},
             ),
         )
 
-    passed = bw.write_nodes(nodes)
+    passed = bw.write(nodes)
 
     h_csv = os.path.join(path, 'AlteredGeneProductLevel-header.csv')
     p_csv = os.path.join(path, 'AlteredGeneProductLevel-part000.csv')
@@ -405,9 +406,9 @@ def test_tab_delimiter(tab_bw):
 
     nodes = _get_nodes(8)
 
-    passed_n0 = tab_bw.write_nodes(nodes[:4])
-    passed_n1 = tab_bw.write_nodes(nodes[4:])
-    tab_bw.write_import_call()
+    passed_n0 = tab_bw.write(nodes[:4])
+    passed_n1 = tab_bw.write(nodes[4:])
+    tab_bw.write_call()
 
     call_path = os.path.join(path, 'neo4j-admin-import-call.sh')
 
@@ -1283,9 +1284,9 @@ def test_write_synonym(bw):
 
     nodes = [
         Node(
-            node_id = f'p{i + 1}',
-            node_label = 'complex',
-            properties = {
+            id = f'p{i + 1}',
+            label = 'complex',
+            props = {
                 'name': 'StringProperty1',
                 'score': 4.32,
                 'taxon': 9606,
@@ -1294,7 +1295,7 @@ def test_write_synonym(bw):
         for i in range(4)
     ]
 
-    passed = bw.write_nodes(nodes)
+    passed = bw.write(nodes)
 
     with open(csv_path) as f:
 
@@ -1318,10 +1319,10 @@ def test_write_synonym(bw):
 def test_duplicate_nodes(bw):
     nodes = _get_nodes(4)
     nodes.append(
-        BioCypherNode(
-            node_id='p1',
-            node_label='protein',
-            properties={
+        Node(
+            id='p1',
+            label='protein',
+            props={
                 'name': 'StringProperty1',
                 'score': 4.32,
                 'taxon': 9606,
@@ -1330,44 +1331,43 @@ def test_duplicate_nodes(bw):
         ),
     )
 
-    passed = bw.write_nodes(nodes)
+    passed = bw.write(nodes)
 
-    assert 'protein' in bw.duplicate_node_types
-    assert 'p1' in bw.duplicate_node_ids
+    assert 'protein' in bw.duplicate_node_labels
+    assert 'p1' in bw.duplicate_nodes
 
 
 def test_duplicate_edges(bw):
     edges = _get_edges(4)
     edges.append(
-        BioCypherEdge(
-            source_id='p1',
-            target_id='p2',
-            relationship_label='PERTURBED_IN_DISEASE',
+        Edge(
+            source='p1',
+            target='p2',
+            label='PERTURBED_IN_DISEASE',
         ),
     )
 
-    passed = bw.write_edges(edges)
+    passed = bw.write(edges)
 
     assert 'PERTURBED_IN_DISEASE' in bw.duplicate_edge_types
-    assert 'p1_p2' in bw.duplicate_edge_ids
+    assert 'p1_p2' in bw.duplicate_edges
 
 
 
 def test_get_duplicate_edges(bw):
     edges = _get_edges(4)
     edges.append(
-        BioCypherEdge(
-            source_id='p1',
-            target_id='p2',
-            relationship_label='PERTURBED_IN_DISEASE',
+        Edge(
+            source='p1',
+            target='p2',
+            label='PERTURBED_IN_DISEASE',
         ),
     )
 
-    bw.write_edges(edges)
+    bw.write(edges)
 
-    d = bw.get_duplicate_edges()
-    types = d[0]
-    ids = d[1]
+    types = bw.duplicate_edge_types
+    ids = bw.duplicate_edges
 
     assert 'PERTURBED_IN_DISEASE' in types
     assert 'p1_p2' in ids
@@ -1375,10 +1375,10 @@ def test_get_duplicate_edges(bw):
 
 def test_write_strict(bw_strict):
 
-    n1 = BioCypherNode(
-        node_id='p1',
-        node_label='protein',
-        properties={
+    n1 = Node(
+        id='p1',
+        label='protein',
+        props={
             'name': 'StringProperty1',
             'score': 4.32,
             'taxon': 9606,
@@ -1389,7 +1389,7 @@ def test_write_strict(bw_strict):
         },
     )
 
-    passed = bw_strict.write_nodes([n1])
+    passed = bw_strict.write([n1])
 
     assert passed
 
