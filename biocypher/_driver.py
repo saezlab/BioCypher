@@ -144,10 +144,21 @@ class Driver(neo4j_utils.Driver):
 
         neo4j_config = _neo4j_config()
 
+        driver_args_a = {
+            arg: _misc.if_none(locals().get(arg), neo4j_config.get(arg))
+            for arg in inspect.signature(neo4j_utils.Driver).parameters
+        }
+
         driver_args = {}
         driver_sig = inspect.signature(neo4j_utils.Driver).parameters
         for arg in driver_sig:
-            driver_args[arg] = _misc.if_none(locals().get(arg), neo4j_config.get(arg))
+            driver_args[arg] = _misc.if_none(
+                locals().get(arg),
+                neo4j_config.get(arg)
+            )
+
+        print(driver_args)
+        print(driver_args_a)
 
         self.csv_delim = delimiter or _config('csv_delimiter')
         self.csv_adelim = array_delimiter or _config('csv_array_delimiter')

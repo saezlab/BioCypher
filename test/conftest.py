@@ -92,10 +92,14 @@ def create_driver(request, neo4j_param):
 
 
 @pytest.fixture(autouse = True)
-def skip_if_offline(request, driver):
+def skip_if_offline(request):
 
     marker = request.node.get_closest_marker('requires_neo4j')
 
-    if marker and driver.status != 'db online':
+    if marker:
 
-        pytest.skip('Requires connection to Neo4j server.')
+        driver = request.getfixturevalue('driver')
+
+        if driver.status != 'db online':
+
+            pytest.skip('Requires connection to Neo4j server.')
