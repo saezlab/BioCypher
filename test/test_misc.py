@@ -3,6 +3,12 @@ import networkx as nx
 
 import biocypher._misc as _misc
 
+__all__ = [
+    'test_disjoint_tree',
+    'test_tree_vis',
+    'test_tree_vis_from_networkx',
+]
+
 
 example_tree = {
     'B': 'A',

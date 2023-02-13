@@ -154,7 +154,7 @@ class Driver(neo4j_utils.Driver):
         for arg in driver_sig:
             driver_args[arg] = _misc.if_none(
                 locals().get(arg),
-                neo4j_config.get(arg)
+                neo4j_config.get(arg),
             )
 
         print(driver_args)

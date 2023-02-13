@@ -25,7 +25,9 @@ if TYPE_CHECKING:
 
     from biocypher._driver import Driver
 
-__all__ = ['VersionNode']
+__all__ = [
+    'VersionNode',
+]
 
 
 class VersionNode:

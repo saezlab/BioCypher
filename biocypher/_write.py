@@ -70,33 +70,41 @@ for ordering of the earlier part files ("01, 02").
 
 3. start db, test for consistency
 """
+from collections.abc import Iterable
 
 from ._logger import logger
 
 logger.debug(f'Loading module {__name__}.')
 
-from typing import Any, Iterable, Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Literal
 from datetime import datetime
 from collections import OrderedDict, defaultdict
 import os
 import re
 import glob
-import importlib as imp
 import warnings
+import importlib as imp
 
-import biocypher._misc as _misc
 from biocypher._config import config as _config
 from biocypher._config import argconf as _argconf
+import biocypher._misc as _misc
 from ._entity import BC_TYPES, Edge, Node, RelAsNode
 from ._ontology import OntologyAdapter
 from ._translate import Translator
 
-__all__ = ['BatchWriter', 'ENTITIES']
+__all__ = [
+    'BATCH_SIZE_FALLBACK',
+    'BatchWriter',
+    'ENTITIES',
+    'N4_ALL_TYPES',
+    'N4_TYPES',
+    'PY_TYPES',
+]
 
 if TYPE_CHECKING:
 
-    from ._translate import Translator
     from ._ontology import OntologyAdapter
+    from ._translate import Translator
 
 N4_ALL_TYPES = {
     'int',
@@ -402,7 +410,7 @@ class BatchWriter:
             self,
             entities: Iterable[BC_TYPES],
             batch_size: int | None = None,
-        ) -> bool:
+    ) -> bool:
         """
         Top level method for writing graph components and their headers.
 
@@ -435,7 +443,7 @@ class BatchWriter:
             label: str,
             instance: Node | Edge | None = None,
             what: ENTITIES | None = None,
-        ):
+    ):
 
         propt = {}
         what = what or getattr(instance, 'entity', 'node')
@@ -528,7 +536,7 @@ class BatchWriter:
             self,
             entities: Iterable[Node] | Iterable[Edge],
             batch_size: int | None = None,
-        ) -> bool:
+    ) -> bool:
         """
         Process mixed type node or edge records and write the into CSV files.
 
@@ -656,14 +664,14 @@ class BatchWriter:
 
         logger.info(
             f'Processed {processed_here} '
-            f'and written to CSV {written_here} items.'
+            f'and written to CSV {written_here} items.',
         )
 
         if processed_here and not written_here:
 
             logger.warning(
                 'Looks like no items has been written out in this call! '
-                'Maybe all were duplicates, maybe you forgot to call `reset`?'
+                'Maybe all were duplicates, maybe you forgot to call `reset`?',
             )
 
         # --- where this comment belongs to?
@@ -723,13 +731,13 @@ class BatchWriter:
             )
             header.extend([':LABEL'] if node else [':END_ID', ':TYPE'])
 
-            with open(hdr_path, 'w', encoding="utf-8") as f:
+            with open(hdr_path, 'w', encoding='utf-8') as f:
 
                 # concatenate with delimiter
                 f.write(self.delim.join(header))
 
             # add file path to neo4 admin import statement
-            switch = "node" if node else "relationship"
+            switch = 'node' if node else 'relationship'
             self.call['node'].append(f'--{switch}s="{hdr_path},{prt_path}"')
 
         return True
@@ -771,7 +779,7 @@ class BatchWriter:
 
             logger.error(
                 f'{whatcap}s must be passed as '
-                f'type BioCypher{whatcap}.'
+                f'type BioCypher{whatcap}.',
             )
             return False
 
@@ -798,7 +806,7 @@ class BatchWriter:
 
                 logger.error(
                     f'One `{e.label}` {what} with {e_display} is '
-                    f'missing the following properties: {", ".join(missing)}.'
+                    f'missing the following properties: {", ".join(missing)}.',
                 )
                 return False
 
@@ -806,7 +814,7 @@ class BatchWriter:
 
                 logger.error(
                     f'One `{e.label}` node with {e_display} has t'
-                    f'he following unexpected properties: {", ".join(excess)}.'
+                    f'he following unexpected properties: {", ".join(excess)}.',
                 )
                 return False
 

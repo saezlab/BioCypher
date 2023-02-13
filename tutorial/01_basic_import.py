@@ -1,6 +1,7 @@
 from tutorial.data_generator import Protein
-
 import biocypher
+
+__all__ = ['main']
 
 
 def main():
@@ -19,8 +20,8 @@ def main():
     # Create BioCypher driver
     driver = biocypher.Driver(
         offline=True,  # start without connecting to Neo4j instance
-        db_name="basicimport",  # name of database for import call
-        user_schema_config_path="tutorial/01_schema_config.yaml",
+        db_name='basicimport',  # name of database for import call
+        user_schema_config_path='tutorial/01_schema_config.yaml',
     )
     # Run the import
     driver.write_nodes(node_generator())
@@ -29,5 +30,5 @@ def main():
     driver.write_import_call()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

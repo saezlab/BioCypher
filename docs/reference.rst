@@ -2,8 +2,6 @@
 Reference
 #########
 
-.. _driver:
-
 `_driver.py`: the BioCypher Neo4j Driver
 ========================================
 .. automodule:: biocypher._driver

@@ -15,17 +15,28 @@ from __future__ import annotations
 Manage the cache directory of Biocypher.
 """
 
-import os
-import hashlib
-import json
 from typing import Any
+import os
+import json
 import pickle
+import hashlib
 
 import appdirs
 
 import biocypher._misc as _misc
 import biocypher._config as _config
 import biocypher._logger as _logger
+
+__all__ = [
+    'cache_dir',
+    'cache_key',
+    'cache_path',
+    'ensure_cachedir',
+    'load',
+    'remove',
+    'save',
+    'wipe',
+]
 
 
 def cache_key(*args: Any) -> str:

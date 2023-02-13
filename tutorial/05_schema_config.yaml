@@ -1,16 +1,16 @@
 protein:
-  represented_as: node
-  preferred_id: [uniprot, entrez]
-  label_in_input: [uniprot_protein, entrez_protein]
-  properties:
-    sequence: str
-    description: str
-    taxon: str
-    mass: int
-    
+    represented_as: node
+    preferred_id: [uniprot, entrez]
+    label_in_input: [uniprot_protein, entrez_protein]
+    properties:
+        sequence: str
+        description: str
+        taxon: str
+        mass: int
+
 protein isoform:
-  is_a: protein
-  inherit_properties: true
-  represented_as: node
-  preferred_id: uniprot
-  label_in_input: uniprot_isoform
+    is_a: protein
+    inherit_properties: true
+    represented_as: node
+    preferred_id: uniprot
+    label_in_input: uniprot_isoform

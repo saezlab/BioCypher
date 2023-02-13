@@ -24,51 +24,51 @@ Title: BioCypher graph schema configuration file
 
 protein: # this is the Biolink entity name and will be used as the node label
          # do not modify or else the Biolink translation will fail
-  represented_as: node
-  preferred_id: uniprot # this is the CURIE URI prefix as given by Bioregistry
-  label_in_input: protein # modify this to allow translation
+    represented_as: node
+    preferred_id: uniprot # this is the CURIE URI prefix as given by Bioregistry
+    label_in_input: protein # modify this to allow translation
   # this is the entity name (ie, type) in the input database
 
 drug:
-  represented_as: node
-  preferred_id: pubchem.compound
-  label_in_input: drug
+    represented_as: node
+    preferred_id: pubchem.compound
+    label_in_input: drug
 
 microRNA:
-  represented_as: node
-  preferred_id: mirbase.mature
-  label_in_input: mirna
+    represented_as: node
+    preferred_id: mirbase.mature
+    label_in_input: mirna
 
 macromolecular complex mixin:
-  represented_as: node
-  preferred_id: complexportal
-  label_in_input: complex
+    represented_as: node
+    preferred_id: complexportal
+    label_in_input: complex
 
 organism taxon:
-  represented_as: node
-  preferred_id: ncbitaxon
-  label_in_input: taxon
+    represented_as: node
+    preferred_id: ncbitaxon
+    label_in_input: taxon
 
 publication:
-  represented_as: node
-  preferred_id: pubmed
+    represented_as: node
+    preferred_id: pubmed
 
 confidence level:
-  represented_as: node
-  preferred_id: id
+    represented_as: node
+    preferred_id: id
 
 cell:
-  represented_as: node
-  preferred_id: cl
+    represented_as: node
+    preferred_id: cl
 
 disease:
-  represented_as: node
-  preferred_id: icd10
+    represented_as: node
+    preferred_id: icd10
 
 pathway:
-  represented_as: node
-  preferred_id: [reactome, wikipathways]
-  label_in_input: [reactome, wikipathways]
+    represented_as: node
+    preferred_id: [reactome, wikipathways]
+    label_in_input: [reactome, wikipathways]
 
 # ---
 # Associations
@@ -87,51 +87,51 @@ pathway:
 # ontologies, such as https://www.ebi.ac.uk/ols/ontologies/mi/.
 
 pairwise molecular interaction:
-  represented_as: node
-  preferred_id: intact
+    represented_as: node
+    preferred_id: intact
 
 disease to entity association mixin:
-  represented_as: edge
-  preferred_id: id
-  source: Disease
-  target: Protein
+    represented_as: edge
+    preferred_id: id
+    source: Disease
+    target: Protein
 
 entity to disease association mixin:
-  represented_as: edge
-  preferred_id: id
-  source: Protein
-  target: Disease
+    represented_as: edge
+    preferred_id: id
+    source: Protein
+    target: Disease
 
 # below not in biolink
 # will insert into custom biolink yaml, get hierarchy from there
 post translational interaction:
-  represented_as: node
-  preferred_id: id
-  source: Protein
+    represented_as: node
+    preferred_id: id
+    source: Protein
   # optional other sources/targets?
   # source and target need to adhere to Biolink naming, otherwise the
   # meta-graph will not work
-  target: Protein
-  label_in_input: post_translational
-  label_as_edge: INTERACTS_POST_TRANSLATIONAL
+    target: Protein
+    label_in_input: post_translational
+    label_as_edge: INTERACTS_POST_TRANSLATIONAL
 phosphorylation:
-  represented_as: edge
-  preferred_id: id
-  source: Protein
-  target: Protein
+    represented_as: edge
+    preferred_id: id
+    source: Protein
+    target: Protein
 acetylation:
-  represented_as: edge
-  preferred_id: id
-  source: Protein
-  target: Protein
+    represented_as: edge
+    preferred_id: id
+    source: Protein
+    target: Protein
 
 post transcriptional interaction:
-  represented_as: node
-  preferred_id: id
-  source: microRNA
-  target: Protein
-  label_in_input: post_transcriptional
-  label_as_edge: INTERACTS_POST_TRANSCRIPTIONAL
+    represented_as: node
+    preferred_id: id
+    source: microRNA
+    target: Protein
+    label_in_input: post_transcriptional
+    label_as_edge: INTERACTS_POST_TRANSCRIPTIONAL
 
 ## CROssBAR list of source database attributes
 # UniProtKB (related MongoDB collections: Proteins):

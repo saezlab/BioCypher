@@ -34,4 +34,3 @@
    serves as a versioning system and simultaneously as a means of
    transmitting information about the graph structure for the case of
    re-loading an existing database for updating it with new information.
-

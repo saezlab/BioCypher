@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 #
 # Copyright 2021, Heidelberg University Clinic
@@ -15,13 +14,13 @@ Graph database standard for molecular biology
 """
 
 __all__ = [
-    "__version__",
-    "__author__",
-    "module_data",
-    "config",
-    "logfile",
-    "log",
-    "Driver",
+    '__version__',
+    '__author__',
+    'module_data',
+    'config',
+    'logfile',
+    'log',
+    'Driver',
 ]
 
 from ._config import config, module_data

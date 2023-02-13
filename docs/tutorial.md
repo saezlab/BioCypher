@@ -25,7 +25,7 @@ schema is at `tutorial/01_schema_config.yaml`. Data generation happens in
 The basic operation of adding data to the knowledge graph requires two
 components: an input stream of data (which we call adapter) and a configuration
 for the resulting desired output (the schema configuration). The former will be
-simulated by calling the `Protein` class of our data generator 10 times. 
+simulated by calling the `Protein` class of our data generator 10 times.
 
 ```{code-block} python
 from data_generator import Protein
@@ -34,8 +34,8 @@ proteins = [Protein() for _ in range(10)]
 
 Each protein in our simulated data has a UniProt ID, a label
 ("uniprot_protein"), and a dictionary of properties describing it. This is -
-purely by coincidence - very close to the input BioCypher expects (for nodes): 
-- a unique identifier 
+purely by coincidence - very close to the input BioCypher expects (for nodes):
+- a unique identifier
 - an input label (to allow mapping to the ontology, see the second step below)
 - a dictionary of further properties (which can be empty)
 
@@ -49,8 +49,8 @@ where required.
 def node_generator():
     for protein in proteins:
         yield (
-          protein.get_id(), 
-          protein.get_label(), 
+          protein.get_id(),
+          protein.get_label(),
           protein.get_properties()
         )
 ```
@@ -348,13 +348,13 @@ by any queries for the generic `protein` class, while still carrying
 information about their namespace and avoiding identifier conflicts.
 
 ```{note}
-The only change affected upon the code from the previous section is the 
+The only change affected upon the code from the previous section is the
 referral to the updated schema configuration file.
 ```
 
 ```{hint}
-In the output, we now generate two separate files for the `protein` class, one 
-for each subclass (with names in PascalCase). 
+In the output, we now generate two separate files for the `protein` class, one
+for each subclass (with names in PascalCase).
 ```
 
 ## Section 3: Handling properties
@@ -368,10 +368,10 @@ Thus, it is often desirable to filter out properties that are not needed to
 save time, disk space, and memory.
 
 ```{note}
-Maintaining consistent properties per entity type is particularly important 
-when using the admin import feature of Neo4j, which requires consistency 
+Maintaining consistent properties per entity type is particularly important
+when using the admin import feature of Neo4j, which requires consistency
 between the header and data files. Properties that are introduced into only
-some of the rows will lead to column misalignment and import failure. In 
+some of the rows will lead to column misalignment and import failure. In
 "online mode", this is not an issue.
 ```
 
@@ -426,7 +426,7 @@ remove the `mass` key from the `properties` dictionary.
 
 ```{tip}
 BioCypher provides feedback about property conflicts; try running the code
-for this example (`04_properties.py`) with the schema configuration of the 
+for this example (`04_properties.py`) with the schema configuration of the
 previous section (`03_schema_config.yaml`) and see what happens.
 ```
 
@@ -443,10 +443,10 @@ Sometimes, explicit designation of properties requires a lot of maintenance
 work, particularly for classes with many properties. In these cases, it may be
 more convenient to inherit properties from a parent class. This is done by
 adding a `properties` key to a suitable parent class configuration, and then
-defining inheritance via the `is_a` key in the child class configuration and 
+defining inheritance via the `is_a` key in the child class configuration and
 setting the `inherit_properties` key to `true`.
 
-Let's say we have an additional `protein isoform` class, which can reasonably 
+Let's say we have an additional `protein isoform` class, which can reasonably
 inherit from `protein` and should carry the same properties as the parent. We
 can add the following to our schema configuration:
 
@@ -468,7 +468,7 @@ the updated schema configuration.
 ```
 
 ```{hint}
-We now create three separate data files, all of which are children of the 
+We now create three separate data files, all of which are children of the
 `protein` class; two implicit children (`uniprot.protein` and `entrez.protein`)
 and one explicit child (`protein isoform`).
 ```
@@ -490,7 +490,7 @@ are an extension thereof. Similarly, the `is_a` key is used to define
 inheritance, and the `inherit_properties` key is used to inherit properties
 from a parent class. Relationships also possess a `preferred_id` key, a
 `label_in_input` key, and a `properties` key, which work in the same way as for
-nodes. 
+nodes.
 
 Relationships also have a `represented_as` key, which in this case can be
 either `node` or `edge`. The `node` option is used to "reify" the relationship

@@ -28,15 +28,7 @@ import appdirs
 
 import biocypher._misc as _misc
 
-__all__ = [
-    'config',
-    'module_data',
-    'module_data_path',
-    'neo4j_config',
-    'read_config',
-    'reset',
-    'save',
-]
+__all__ = ['argconf', 'arginstconf', 'config', 'module_data', 'module_data_path', 'neo4j_config', 'read_config', 'reset', 'save']
 
 
 _SYNONYMS = {
@@ -93,7 +85,7 @@ def module_data(name: str) -> Any:
     return _read_yaml(path)
 
 
-def _read_yaml(path: str) -> Optional[dict]:
+def _read_yaml(path: str) -> dict | None:
 
     if os.path.exists(path):
 
@@ -131,7 +123,7 @@ def read_config() -> dict:
     return defaults
 
 
-def config(*args, **kwargs) -> Optional[Any]:
+def config(*args, **kwargs) -> Any | None:
     """
     Set or get module config parameters.
 

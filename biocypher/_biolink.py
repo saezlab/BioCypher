@@ -25,8 +25,8 @@ import re
 import json
 import pickle
 import hashlib
-import collections
 import importlib as imp
+import collections
 
 from linkml_runtime.linkml_model import meta as lml_meta
 import bmt

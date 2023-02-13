@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 from typing import (
+    TYPE_CHECKING,
     Any,
     Mapping,
     KeysView,
     Generator,
     ItemsView,
-    TYPE_CHECKING,
     ValuesView,
 )
-import collections
 from collections.abc import Iterable
 import re
+import collections
 
 from neo4j_utils._misc import LIST_LIKE, if_none, to_list  # noqa: F401
 import treelib
@@ -27,10 +27,13 @@ __all__ = [
     'ensure_iterable',
     'ensure_iterable_2',
     'first',
-    'plain_tuple',
+    'nested_tree',
     'prettyfloat',
     'sc',
     'to_set',
+    'tree_figure',
+    'try_import',
+    'tuple_child',
 ]
 
 SIMPLE_TYPES = (
@@ -173,7 +176,7 @@ def first(value: Any) -> Any:
         return next(iter(value), None)
 
 
-def tree_figure(tree: dict | 'nx.Graph') -> treelib.Tree:
+def tree_figure(tree: dict | nx.Graph) -> treelib.Tree:
     """
     Creates a visualisation of the inheritance tree using treelib.
     """
@@ -194,7 +197,7 @@ def tree_figure(tree: dict | 'nx.Graph') -> treelib.Tree:
 
     if len(root) > 1:
         raise ValueError(
-            'Inheritance tree cannot have more than one root node.'
+            'Inheritance tree cannot have more than one root node.',
         )
     else:
         root = root[0]

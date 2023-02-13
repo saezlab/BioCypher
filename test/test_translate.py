@@ -9,7 +9,41 @@ from biocypher._biolink import BiolinkAdapter
 from biocypher._ontology import OntologyAdapter
 from biocypher._translate import Translator
 
-__all__ = ['biolink_adapter', 'ontology_adapter', 'test_ad_hoc_children_node', 'test_biolink_adapter', 'test_biolink_yaml_extension', 'test_custom_bmt_yaml', 'test_exclude_properties', 'test_generic_ontology_adapter', 'test_inherit_properties', 'test_leaves_of_ad_hoc_child', 'test_log_missing_nodes', 'test_merge_multiple_inputs_edge', 'test_merge_multiple_inputs_node', 'test_multiple_inheritance', 'test_multiple_inputs_multiple_virtual_leaves_rel_as_node', 'test_networkx_from_treedict', 'test_properties_from_config', 'test_reverse_translate_query', 'test_reverse_translate_term', 'test_show_ontology', 'test_specific_and_generic_ids', 'test_strict_mode_error', 'test_strict_mode_property_filter', 'test_synonym', 'test_translate_edges', 'test_translate_identifiers', 'test_translate_nodes', 'test_translate_query', 'test_translate_term', 'test_virtual_leaves_inherit_is_a', 'test_virtual_leaves_inherit_properties', 'translator', 'version_node']
+__all__ = [
+    'biolink_adapter',
+    'ontology_adapter',
+    'test_ad_hoc_children_node',
+    'test_biolink_adapter',
+    'test_biolink_yaml_extension',
+    'test_custom_bmt_yaml',
+    'test_exclude_properties',
+    'test_generic_ontology_adapter',
+    'test_inherit_properties',
+    'test_leaves_of_ad_hoc_child',
+    'test_log_missing_nodes',
+    'test_merge_multiple_inputs_edge',
+    'test_merge_multiple_inputs_node',
+    'test_multiple_inheritance',
+    'test_multiple_inputs_multiple_virtual_leaves_rel_as_node',
+    'test_networkx_from_treedict',
+    'test_properties_from_config',
+    'test_reverse_translate_query',
+    'test_reverse_translate_term',
+    'test_show_ontology',
+    'test_specific_and_generic_ids',
+    'test_strict_mode_error',
+    'test_strict_mode_property_filter',
+    'test_synonym',
+    'test_translate_edges',
+    'test_translate_identifiers',
+    'test_translate_nodes',
+    'test_translate_query',
+    'test_translate_term',
+    'test_virtual_leaves_inherit_is_a',
+    'test_virtual_leaves_inherit_properties',
+    'translator',
+    'version_node',
+]
 
 
 @pytest.fixture

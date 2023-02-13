@@ -109,8 +109,8 @@ class Tree:
 
     def _attrs(self, what: Literal['node', 'edge']) -> dict[
             str | tuple[str, str],
-            dict[str, Any]
-        ]:
+            dict[str, Any],
+    ]:
 
         getattr(self, f'_update_{what}_attrs')()
 

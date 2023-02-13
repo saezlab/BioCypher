@@ -5,7 +5,33 @@ from biocypher import _misc
 from biocypher._driver import Driver
 from biocypher._entity import Edge, Node, RelAsNode
 
-__all__ = ['test_access_translate', 'test_add_biocypher_edge_generator', 'test_add_biocypher_edge_list', 'test_add_biocypher_interaction_as_RelAsNode_generator', 'test_add_biocypher_interaction_as_relasnode_list', 'test_add_biocypher_node_generator', 'test_add_biocypher_node_list', 'test_add_generic_id_node', 'test_add_invalid_biocypher_edge', 'test_add_invalid_biocypher_node', 'test_add_single_biocypher_edge_explicit_node_creation', 'test_add_single_biocypher_edge_missing_nodes', 'test_add_single_biocypher_node', 'test_add_specific_id_node', 'test_connect_to_db', 'test_create_driver', 'test_create_offline', 'test_explain', 'test_log_missing_ontology_classes', 'test_pretty_explain', 'test_pretty_profile', 'test_profile', 'test_schema_config_from_web', 'test_treelib_vis', 'test_wipe']
+__all__ = [
+    'test_access_translate',
+    'test_add_biocypher_edge_generator',
+    'test_add_biocypher_edge_list',
+    'test_add_biocypher_interaction_as_RelAsNode_generator',
+    'test_add_biocypher_interaction_as_relasnode_list',
+    'test_add_biocypher_node_generator',
+    'test_add_biocypher_node_list',
+    'test_add_generic_id_node',
+    'test_add_invalid_biocypher_edge',
+    'test_add_invalid_biocypher_node',
+    'test_add_single_biocypher_edge_explicit_node_creation',
+    'test_add_single_biocypher_edge_missing_nodes',
+    'test_add_single_biocypher_node',
+    'test_add_specific_id_node',
+    'test_connect_to_db',
+    'test_create_driver',
+    'test_create_offline',
+    'test_explain',
+    'test_log_missing_ontology_classes',
+    'test_pretty_explain',
+    'test_pretty_profile',
+    'test_profile',
+    'test_schema_config_from_web',
+    'test_treelib_vis',
+    'test_wipe',
+]
 
 
 @pytest.mark.requires_neo4j

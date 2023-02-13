@@ -137,14 +137,14 @@ import biocypher
 
 # offline mode
 d = biocypher.Driver(
-   db_name = "neo4j", 
+   db_name = "neo4j",
    offline = True
 )
 
 # online mode
 d = biocypher.Driver(
-   db_name = "neo4j", 
-   db_user = "neo4j", 
+   db_name = "neo4j",
+   db_user = "neo4j",
    db_passwd = "neo4j"
 )
 ```
