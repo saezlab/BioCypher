@@ -213,14 +213,14 @@ def version_node():
 @pytest.fixture
 def translator(version_node):
 
-    return Translator(leaves=version_node.leaves)
+    return Translator(schema=version_node.schema)
 
 
 @pytest.fixture
 def bw(version_node, translator):
 
     biolink_adapter = BiolinkAdapter(
-        schema=version_node.leaves,
+        schema=version_node.schema,
         translator=translator,
     )
 
@@ -235,7 +235,6 @@ def bw(version_node, translator):
         schema=version_node.schema,
         ontology_adapter=ontology_adapter,
         translator=translator,
-        biolink_adapter=biolink_adapter,
         dirname=path,
         delimiter=';',
         array_delimiter='|',
@@ -264,7 +263,7 @@ def bw_strict(version_node, translator):
     ontology_adapter = OntologyAdapter(biolink_adapter=biolink_adapter)
 
     bw = BatchWriter(
-        schema=version_node.leaves,
+        schema=version_node.schema,
         ontology_adapter=ontology_adapter,
         translator=translator,
         dirname=path_strict,
@@ -297,7 +296,7 @@ def tab_bw(version_node, translator):
     )
 
     tab_bw = BatchWriter(
-        leaves=version_node.leaves,
+        schema=version_node.schema,
         ontology_adapter=tmp_ontology_adapter,
         translator=translator,
         dirname=path,
