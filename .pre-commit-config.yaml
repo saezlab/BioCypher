@@ -8,6 +8,11 @@ default_stages:
 -   push
 minimum_pre_commit_version: 2.7.1
 repos:
+-   repo: https://github.com/deeenes/unexport
+    rev: 0.4.0-patch0-8
+    hooks:
+    -   id: unexport
+        args: [--refactor, --single_quotes]
 -   repo: https://github.com/google/yapf
     rev: v0.32.0
     hooks:
@@ -26,15 +31,10 @@ repos:
     -   id: fixit-run-rules
         stages: [manual]
 -   repo: https://github.com/timothycrosley/isort
-    rev: 5.10.1
+    rev: 5.12.0
     hooks:
     -   id: isort
         additional_dependencies: [toml]
--   repo: https://github.com/hakancelikdev/pyall
-    rev: 0.2.0
-    hooks:
-    -   id: pyall
-        args: [--refactor]
 -   repo: https://github.com/snok/pep585-upgrade
     rev: v1.0.1
     hooks:
