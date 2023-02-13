@@ -291,7 +291,7 @@ class Driver(neo4j_utils.Driver):
         # get structure
         for leaf in self.db_meta.schema.items():
 
-            if leaf[1]['represented_as'] == 'node':
+            if leaf[1].get('represented_as') == 'node':
 
                 label_cc = _misc.cc(leaf[0])
                 label_sc = _misc.sc(leaf[0])
