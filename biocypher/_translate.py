@@ -197,6 +197,11 @@ class Translator:
             found in the schema.
         """
 
+        # first, check strict mode properties
+        if self.strict_mode:
+
+            self._check_strict_props(props, _type)
+
         # match the input label (_type) to
         # a Biolink label from schema_config
         ontology_class = self._get_ontology_mapping(_type)
@@ -261,6 +266,11 @@ class Translator:
         Returns:
             A triplet of one node and two edges in BioCypher representation.
         """
+
+        # first, check strict mode properties
+        if self.strict_mode:
+
+            self._check_strict_props(props, ontology_class)
 
         if _id:
             # if it brings its own ID, use it
@@ -328,6 +338,11 @@ class Translator:
             found in the schema.
         """
 
+        # first check for strict mode properties
+        if self.strict_mode:
+
+            self._check_strict_props(props, _type)
+
         # find the node in schema that represents biolink node type
         ontology_class = self._get_ontology_mapping(_type)
 
@@ -348,6 +363,27 @@ class Translator:
                 props = filtered_props,
             )
 
+    def _check_strict_props(self, props: dict, _type: str) -> None:
+        """
+        Checks if all required properties are present in the record. Raises
+        value error if not.
+        """
+
+        # rename 'license' to 'licence' if present
+        if 'license' in props:
+
+            props['licence'] = props.pop('license')
+
+        # which of _required_props are missing in props?
+        missing_keys = self._required_props - set(props.keys())
+
+        if missing_keys:
+            err = (
+                'Missing mandatory properties for entity of type '
+                f'{_type}: {", ".join(missing_keys)}'
+            )
+            logger.error(err)
+            raise ValueError(err)
 
     def _id_type(self, _ontology_class: str) -> str:
         """

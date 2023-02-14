@@ -57,10 +57,6 @@ class Entity:
             )
             del props[':TYPE']
 
-        if 'license' in props:
-
-            props['licence'] = props.pop('license')
-
         return props
 
     @staticmethod
