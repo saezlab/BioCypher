@@ -267,14 +267,12 @@ class BiolinkAdapter(_ontology.Tree):
 
             if entity_biolink_class:
 
-                # find ancestors of biolink type in PascalCase
-                ancestors = self.trim_biolink_ancestry(
-                    self.toolkit.get_ancestors(name_or_synonym, formatted=True),
-                )
+                # find ancestors of biolink type in lower sentence case
+                ancestors = self.toolkit.get_ancestors(name_or_synonym, formatted=False)
 
                 if values.get('synonym_for'):
                     # add synonym to ancestors
-                    ancestors.insert(0, self.name_sentence_to_pascal(entity))
+                    ancestors.insert(0, entity)
 
                 input_label = values.get('label_in_input')
 
@@ -379,19 +377,17 @@ class BiolinkAdapter(_ontology.Tree):
             elif self.toolkit.get_ancestors(parent):
 
                 bla = _misc.to_list(
-                    self.trim_biolink_ancestry(
-                        self.toolkit.get_ancestors(parent, formatted=True),
-                    ),
+                    self.toolkit.get_ancestors(parent, formatted=False),
                 )
                 ancestors += bla
                 break
 
             else:
 
-                ancestors += [self.name_sentence_to_pascal(parent)]
+                ancestors += [parent]
 
         if ancestors:
-            ancestors.insert(0, self.name_sentence_to_pascal(entity))
+            ancestors.insert(0, entity)
         else:
             raise ValueError(
                 f'Parent `{parent}` of `{entity}` not found in Biolink '
@@ -434,17 +430,15 @@ class BiolinkAdapter(_ontology.Tree):
                 break
             elif self.toolkit.get_ancestors(parent):
                 bla = _misc.to_list(
-                    self.trim_biolink_ancestry(
-                        self.toolkit.get_ancestors(parent, formatted=True),
-                    ),
+                        self.toolkit.get_ancestors(parent, formatted=False),
                 )
                 ancestors += bla
                 break
             else:
-                ancestors += [self.name_sentence_to_pascal(parent)]
+                ancestors += [parent]
 
         if ancestors:
-            ancestors.insert(0, self.name_sentence_to_pascal(entity))
+            ancestors.insert(0, entity)
         else:
             raise ValueError(
                 f'Parent `{parent}` of `{entity}` not found in Biolink '
