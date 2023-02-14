@@ -435,15 +435,15 @@ class Translator:
             set(props.keys())
         )
 
-        if self.strict_mode and missing_keys & self._required_props:
-
-            missing_required = missing_keys & self._required_props
-            err = (
-                'Missing mandatory properties for entity of BioLink type '
-                f'{ontology_class}: {", ".join(missing_required)}'
-            )
-            logger.error(err)
-            raise ValueError(err)
+        # # due to _check_strict_props, this may not be needed any more, here
+        # if self.strict_mode and missing_keys & self._required_props:
+        #     missing_required = missing_keys & self._required_props
+        #     err = (
+        #         'Missing mandatory properties for entity of BioLink type '
+        #         f'{ontology_class}: {", ".join(missing_required)}'
+        #     )
+        #     logger.error(err)
+        #     raise ValueError(err)
 
         # add missing properties with default values
         props.update({k: None for k in missing_keys})

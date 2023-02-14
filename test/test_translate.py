@@ -643,9 +643,9 @@ def test_strict_mode_property_filter(translator):
 
     l = list(translator.translate([p1]))
 
-    assert 'source' in l[0].get_properties().keys()
-    assert 'licence' in l[0].get_properties().keys()
-    assert 'version' in l[0].get_properties().keys()
+    assert 'source' in l[0].props.keys()
+    assert 'licence' in l[0].props.keys()
+    assert 'version' in l[0].props.keys()
 
 
 def test_networkx_from_treedict(biolink_adapter):
