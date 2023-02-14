@@ -207,12 +207,12 @@ def test_biolink_yaml_extension(biolink_adapter):
     assert (
         p1['class_definition'].description
         == 'A pairwise interaction between two proteins'
-        and 'PairwiseMolecularInteraction' in p1['ancestors']
-        and 'Entity' in p1['ancestors']
+        and 'pairwise molecular interaction' in p1['ancestors']
+        and 'entity' in p1['ancestors']
         and p2['class_definition'].description
         == 'The action of one protein phosphorylating another protein'
-        and 'PostTranslationalInteraction' in p2['ancestors']
-        and 'Entity' in p2['ancestors']
+        and 'post translational interaction' in p2['ancestors']
+        and 'entity' in p2['ancestors']
     )
 
 
@@ -288,8 +288,8 @@ def test_multiple_inputs_multiple_virtual_leaves_rel_as_node(biolink_adapter):
 
     assert (
         isinstance(vtg['class_definition'], ClassDefinition)
-        and 'VariantToGeneAssociation' in kvtg['ancestors']
-        and 'VariantToGeneAssociation' in svtg['ancestors']
+        and 'variant to gene association' in kvtg['ancestors']
+        and 'variant to gene association' in svtg['ancestors']
     )
 
 
@@ -321,7 +321,7 @@ def test_ad_hoc_children_node(biolink_adapter):
 
     se = biolink_adapter.biolink_schema['side effect']
 
-    assert 'PhenotypicFeature' in se['ancestors']
+    assert 'phenotypic feature' in se['ancestors']
 
 
 def test_leaves_of_ad_hoc_child(biolink_adapter):
@@ -329,14 +329,14 @@ def test_leaves_of_ad_hoc_child(biolink_adapter):
     snrna = biolink_adapter.biolink_schema.get('intact.snRNA sequence')
 
     assert snrna
-    assert 'SnRNASequence' in snrna['ancestors']
+    assert 'snRNA sequence' in snrna['ancestors']
 
     dsdna = biolink_adapter.biolink_schema.get('intact.dsDNA sequence')
 
     assert dsdna['ancestors'][1:4] == [
-        'DsDNASequence',
-        'DNASequence',
-        'NucleicAcidEntity',
+        'dsDNA sequence',
+        'DNA sequence',
+        'nucleic acid entity',
     ]
 
 
@@ -352,10 +352,10 @@ def test_multiple_inheritance(biolink_adapter):
 
     mta = biolink_adapter.biolink_schema.get('mutation to tissue association')
 
-    assert 'MutationToTissueAssociation' in mta['ancestors']
-    assert 'GenotypeToTissueAssociation' in mta['ancestors']
-    assert 'EntityToTissueAssociation' in mta['ancestors']
-    assert 'Association' in mta['ancestors']
+    assert 'mutation to tissue association' in mta['ancestors']
+    assert 'genotype to tissue association' in mta['ancestors']
+    assert 'entity to tissue association' in mta['ancestors']
+    assert 'association' in mta['ancestors']
 
 
 def test_synonym(biolink_adapter):
@@ -363,20 +363,20 @@ def test_synonym(biolink_adapter):
     prot = biolink_adapter.biolink_schema.get('protein')
 
     assert prot
-    assert 'Protein' in prot['ancestors']  # self in ancestors
-    assert 'Polypeptide' in prot['ancestors']
+    assert 'protein' in prot['ancestors']  # self in ancestors
+    assert 'polypeptide' in prot['ancestors']
 
     beha = biolink_adapter.biolink_schema.get('behaviour')
 
     assert beha
-    assert 'BehavioralFeature' in beha['ancestors']
-    assert 'BiologicalEntity' in beha['ancestors']
+    assert 'behavioral feature' in beha['ancestors']
+    assert 'biological entity' in beha['ancestors']
 
     comp = biolink_adapter.biolink_schema.get('complex')
 
     assert comp
-    assert 'Complex' in comp['ancestors']
-    assert 'MacromolecularComplexMixin' in comp['ancestors']
+    assert 'complex' in comp['ancestors']
+    assert 'macromolecular complex mixin' in comp['ancestors']
 
 
 def test_properties_from_config(translator):
