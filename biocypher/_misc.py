@@ -89,7 +89,7 @@ def to_set(value: Any) -> set:
 
     else:
 
-        value = set(value)
+        return set(value)
 
 
 def tuple_child(value: Any) -> bool:
