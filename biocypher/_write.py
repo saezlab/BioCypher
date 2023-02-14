@@ -596,6 +596,8 @@ class BatchWriter:
                 continue
 
             _id = e.id if node else f'{e.source} -> {e.target}'
+            # TODO would actually be better to be able to use edge id and more
+            # flexible edge id generation (e.g. with hash of edge properties)
             self.seen[what][_id] += 1
             label = e.label
 
@@ -622,6 +624,7 @@ class BatchWriter:
                         self.ontology_adapter.get_node_ancestry(label) or
                         (label,)
                     )
+                    # TODO doesn't seem to work
                     all_labels = sorted(_misc.cc(l) for l in all_labels)
                     all_labels = OrderedDict.fromkeys(all_labels)
                     all_labels = self.adelim.join(all_labels)

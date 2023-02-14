@@ -8,12 +8,12 @@ import pytest
 
 from biocypher._meta import VersionNode
 from biocypher._write import BatchWriter
+from biocypher._config import module_data_path
 from biocypher._driver import Driver
 from biocypher._entity import Edge, Node, RelAsNode
 from biocypher._biolink import BiolinkAdapter
 from biocypher._ontology import OntologyAdapter
 from biocypher._translate import Translator
-from biocypher._config import module_data_path
 
 __all__ = [
     'bw',
@@ -329,6 +329,9 @@ def test_write_node_data_headers_import_call(bw):
     passed_1 = bw.write(nodes[4:])
     bw.write_call()
 
+    assert passed_0
+    assert passed_1
+
     p_csv = os.path.join(path, 'Protein-header.csv')
     m_csv = os.path.join(path, 'Microrna-header.csv')
     call = os.path.join(path, 'neo4j-admin-import-call.sh')
@@ -340,8 +343,6 @@ def test_write_node_data_headers_import_call(bw):
     with open(call) as f:
         c = f.read()
 
-    assert passed_0
-    assert passed_1
     assert unformat(p) == (
         ':ID;id:string;id_type:string;name:string;'
         'score:double;taxon:long;:LABEL'
