@@ -55,14 +55,14 @@ def main():
         user_schema_config_path='tutorial/06_schema_config.yaml',
     )
     # Run the import
-    driver.write_nodes(node_generator())
-    driver.write_edges(edge_generator())
+    driver.write_csv(node_generator())
+    driver.write_csv(edge_generator())
 
     # Write command line call
     driver.write_import_call()
 
     # Visualise ontology schema
-    driver.show_ontology_structure()
+    driver.show_ontology()
 
 
 if __name__ == '__main__':

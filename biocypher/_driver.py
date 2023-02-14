@@ -740,7 +740,7 @@ class Driver(neo4j_utils.Driver):
             The write was successful.
         """
 
-        return self.batch_writer.write_import_call()
+        return self.batch_writer.write_call()
 
 
     def log_missing_ontology_classes(self) -> set[str] | None:
@@ -833,7 +833,7 @@ class Driver(neo4j_utils.Driver):
         """
 
         self.start_ontology_adapter()
-        self.biolink_adapter.show()
+        self.ontology_adapter.show()
 
 
     def translate_term(self, term: str) -> str:

@@ -77,7 +77,7 @@ class Tree:
 
         logger.info(
             'Showing ontology structure, '
-            f'based on Biolink {self.biolink_version}:',
+            f'based on Biolink {self.biolink_adapter.biolink_version}:',
         )
 
         self.tree.show()
