@@ -38,7 +38,7 @@ cachedir:
 clear_cache: false
 
 # database schema options
-required_props: [source, license, version]
+required_props: [source, licence, version]
 # Strict mode: do not allow to create new nodes or relationships without
-# specifying source, version, and license parameters
+# specifying source, version, and licence parameters
 strict_mode: false
