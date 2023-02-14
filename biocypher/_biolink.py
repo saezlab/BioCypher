@@ -520,6 +520,14 @@ class BiolinkAdapter(_ontology.Tree):
         # while there are still parents that are not in the tree
         # but why? and why we don't build the whole tree this way?
         # now we build it twice -- denes
+        # because there are many-to-one relationships in the tree and indirect
+        # parents (connecting to the top level `entity`) that are not in the
+        # schema, particularly between mixins and their children and the more
+        # abstract classes (few will have `biological entity` in their graph);
+        # we want to make sure that all parents are in the tree, otherwise the
+        # ontology overview will not work for instance.
+        # if we find a way to do that in one go without losing those other
+        # members, i'm happy do that -- sebastian
         while parents - children:
 
             missing = parents - children
