@@ -507,13 +507,24 @@ class BiolinkAdapter(_ontology.Tree):
 
             if properties['class_definition']['is_a'] is not None:
 
-                parent = properties['class_definition']['is_a']
+                parent = [str(properties['class_definition']['is_a'])]
 
-                # add to tree
+                mixins = list(properties['class_definition']['mixins'])
+
+                if mixins:
+                    parent.extend(mixins)
+
+                # add to flat treedict
                 tree[class_name] = parent
 
         # find parents that are not in tree (apart from root node)
-        parents = set(tree.values())
+        parents = set()
+        for value in tree.values():
+            if isinstance(value, list):
+                for v in value:
+                    parents.add(v)
+            else:
+                parents.add(value)
         parents.discard(None)
         children = set(tree.keys())
 
@@ -534,20 +545,36 @@ class BiolinkAdapter(_ontology.Tree):
 
             # add missing parents to tree
             for child in missing:
+                element = self.toolkit.get_element(child)
+                if element:
+                    # get parent
+                    parent = element['is_a']
 
-                parent = self.toolkit.get_parent(child)
+                    if not parent:
 
-                if parent:
+                        if self.toolkit.is_mixin(child):
 
-                    tree[child] = parent
+                            tree[child] = ['mixin']
 
-                # remove root and mixins
-                if self.toolkit.is_mixin(child):
+                    else:
 
-                    tree[child] = 'mixin'
+                        parent = [parent]
 
-            # updating these seems redundant -- denes
-            parents = set(tree.values())
+                        # get mixins
+                        mixins = element['mixins']
+
+                        if mixins:
+                            parent.extend(mixins)
+
+                        tree[child] = parent
+
+            parents = set()
+            for value in tree.values():
+                if isinstance(value, list):
+                    for v in value:
+                        parents.add(v)
+                else:
+                    parents.add(value)
             parents.discard(None)
             children = set(tree.keys())
 
