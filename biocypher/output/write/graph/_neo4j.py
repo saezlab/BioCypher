@@ -45,6 +45,13 @@ class _Neo4jBatchWriter(_BatchWriter):
 
         return "bin/"
 
+    def _quote_string(self, value: str) -> str:
+        """
+        Quote a string. Quote character is escaped by doubling it.
+        """
+
+        return f"{self.quote}{value.replace(self.quote, self.quote * 2)}{self.quote}"
+
     def _write_array_string(self, string_list):
         """
         Abstract method to output.write the string representation of an array into a .csv file
@@ -57,7 +64,7 @@ class _Neo4jBatchWriter(_BatchWriter):
             str: The string representation of an array for the neo4j admin import
         """
         string = self.adelim.join(string_list)
-        return f"{self.quote}{string}{self.quote}"
+        return self._quote_string(string)
 
     def _write_node_headers(self):
         """

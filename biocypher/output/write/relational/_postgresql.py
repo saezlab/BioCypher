@@ -57,6 +57,13 @@ class _PostgreSQLBatchWriter(_BatchWriter):
             )
             return "VARCHAR"
 
+    def _quote_string(self, value: str) -> str:
+        """
+        Quote a string.
+        """
+
+        return f"{self.quote}{value}{self.quote}"
+
     def _write_array_string(self, string_list) -> str:
         """
         Abstract method to output.write the string representation of an array into a .csv file
