@@ -133,7 +133,7 @@ methods can be found below.
 .. autosummary::
    :toctree: modules
 
-   _pandas.Pandas
+   _pandas.PandasKG
 
 .. _api_connect:
 
@@ -174,7 +174,7 @@ methods can be found below.
 .. autosummary::
    :toctree: modules
 
-   _neo4j_driver.get_driver
+   _get_connector.get_connector
    _neo4j_driver._Neo4jDriver
 
 

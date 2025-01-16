@@ -23,18 +23,13 @@ def postgresql_param(request):
         # remove '_postgresql' suffix
         key_short = key[:-11]
         # change into format of input parameters
-        cli[f"db_{key_short}"] = (
-            request.config.getoption(f"--{key}") or param[key_short]
-        )
+        cli[f"db_{key_short}"] = request.config.getoption(f"--{key}") or param[key_short]
 
     # hardcoded string for test-db name. test-db will be created for testing and
     # droped after testing.  Do not take db_name from config to avoid accidental
     # testing on the production database
 
-    cli["db_name"] = (
-        request.config.getoption("--database_name_postgresql")
-        or "postgresql-biocypher-test-TG2C7GsdNw"
-    )
+    cli["db_name"] = request.config.getoption("--database_name_postgresql") or "postgresql-biocypher-test-TG2C7GsdNw"
 
     return cli
 
@@ -53,10 +48,7 @@ def skip_if_offline_postgresql(request, postgresql_param):
         )
 
         # an empty command, just to test if connection is possible
-        command = (
-            f"PGPASSWORD={password} psql -c '' --host {host} "
-            "--port {port} --user {user}"
-        )
+        command = f"PGPASSWORD={password} psql -c '' --host {host} " f"--port {port} --user {user}"
         process = subprocess.run(command, shell=True)
 
         # returncode is 0 when success
@@ -65,9 +57,7 @@ def skip_if_offline_postgresql(request, postgresql_param):
 
 
 @pytest.fixture(scope="function")
-def bw_comma_postgresql(
-    postgresql_param, translator, deduplicator, tmp_path_session
-):
+def bw_comma_postgresql(postgresql_param, translator, deduplicator, tmp_path_session):
     bw_comma = _PostgreSQLBatchWriter(
         translator=translator,
         deduplicator=deduplicator,
@@ -84,9 +74,7 @@ def bw_comma_postgresql(
 
 
 @pytest.fixture(scope="function")
-def bw_tab_postgresql(
-    postgresql_param, translator, deduplicator, tmp_path_session
-):
+def bw_tab_postgresql(postgresql_param, translator, deduplicator, tmp_path_session):
     bw_tab = _PostgreSQLBatchWriter(
         translator=translator,
         deduplicator=deduplicator,
@@ -115,8 +103,7 @@ def create_database_postgres(postgresql_param):
 
     # create the database
     command = (
-        f"PGPASSWORD={password} psql -c 'CREATE DATABASE \"{dbname}\";' "
-        "--host {host} --port {port} --user {user}"
+        f"PGPASSWORD={password} psql -c 'CREATE DATABASE \"{dbname}\";' " f"--host {host} --port {port} --user {user}"
     )
     process = subprocess.run(command, shell=True)
 
@@ -125,7 +112,6 @@ def create_database_postgres(postgresql_param):
 
     # teardown
     command = (
-        f"PGPASSWORD={password} psql -c 'DROP DATABASE \"{dbname}\";' "
-        "--host {host} --port {port} --user {user}"
+        f"PGPASSWORD={password} psql -c 'DROP DATABASE \"{dbname}\";' " f"--host {host} --port {port} --user {user}"
     )
     process = subprocess.run(command, shell=True)

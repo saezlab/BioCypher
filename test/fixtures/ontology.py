@@ -6,9 +6,7 @@ from biocypher._ontology import Ontology, OntologyAdapter
 
 @pytest.fixture(scope="module")
 def ontology_mapping():
-    return OntologyMapping(
-        config_file="biocypher/_config/test_schema_config.yaml"
-    )
+    return OntologyMapping(config_file="biocypher/_config/test_schema_config.yaml")
 
 
 @pytest.fixture(scope="module")
@@ -22,16 +20,12 @@ def simple_ontology_mapping():
 
 @pytest.fixture(scope="module")
 def extended_ontology_mapping():
-    return OntologyMapping(
-        config_file="biocypher/_config/test_schema_config_extended.yaml"
-    )
+    return OntologyMapping(config_file="biocypher/_config/test_schema_config_extended.yaml")
 
 
 @pytest.fixture(scope="module")
 def disconnected_mapping():
-    return OntologyMapping(
-        config_file="biocypher/_config/test_schema_config_disconnected.yaml"
-    )
+    return OntologyMapping(config_file="biocypher/_config/test_schema_config_disconnected.yaml")
 
 
 @pytest.fixture(scope="module")

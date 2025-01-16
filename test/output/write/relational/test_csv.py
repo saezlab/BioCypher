@@ -36,21 +36,13 @@ def test_pandas_csv_writer_nodes(bw_comma_csv, _get_nodes):
 
     import_call = bw_comma_csv._construct_import_call()
     assert "import pandas as pd" in import_call
-    assert (
-        "protein = pd.read_csv('./protein.csv', header=0, index_col=0)"
-        in import_call
-    )
-    assert (
-        "microRNA = pd.read_csv('./microRNA.csv', header=0, index_col=0)"
-        in import_call
-    )
+    assert "protein = pd.read_csv('./protein.csv', header=0, index_col=0)" in import_call
+    assert "microRNA = pd.read_csv('./microRNA.csv', header=0, index_col=0)" in import_call
 
     write_result = bw_comma_csv.write_import_call()
     assert write_result
 
-    import_script_path = os.path.join(
-        bw_comma_csv.output_directory, bw_comma_csv._get_import_script_name()
-    )
+    import_script_path = os.path.join(bw_comma_csv.output_directory, bw_comma_csv._get_import_script_name())
     assert "import_pandas_csv.py" in import_script_path
 
 

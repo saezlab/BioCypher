@@ -75,10 +75,7 @@ class Protein(Node):
         random_length = random.randint(20, 50)
 
         properties["sequence"] = "".join(
-            [
-                random.choice("ACDEFGHIKLMNPQRSTVWY")
-                for _ in range(random_length)
-            ],
+            [random.choice("ACDEFGHIKLMNPQRSTVWY") for _ in range(random_length)],
         )
 
         ## random description
@@ -139,10 +136,7 @@ class RandomPropertyProtein(Protein):
         random_length = random.randint(20, 50)
 
         properties["sequence"] = "".join(
-            [
-                random.choice("ACDEFGHIKLMNPQRSTVWY")
-                for _ in range(random_length)
-            ],
+            [random.choice("ACDEFGHIKLMNPQRSTVWY") for _ in range(random_length)],
         )
 
         ## random description

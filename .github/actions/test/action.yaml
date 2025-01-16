@@ -39,3 +39,9 @@ runs:
       if: runner.os != 'Windows'
     - name: Check code quality
       uses: pre-commit/action@v3.0.0
+    # TODO: enable ruff once it does not throw thousands of errors
+    # - name: Run Ruff
+    #   run: |
+    #     poetry run ruff check .
+    #     poetry run ruff format --check .
+    #   shell: bash

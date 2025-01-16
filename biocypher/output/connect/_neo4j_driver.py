@@ -1,32 +1,19 @@
-#!/usr/bin/env python
-
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 BioCypher 'online' mode. Handles connection and manipulation of a running DBMS.
 """
-import subprocess
 
-from biocypher._logger import logger
-
-logger.debug(f"Loading module {__name__}.")
+import itertools
 
 from collections.abc import Iterable
-import itertools
 
 import neo4j_utils
 
 from biocypher import _misc
-from biocypher._config import config as _config
 from biocypher._create import BioCypherEdge, BioCypherNode
+from biocypher._logger import logger
 from biocypher._translate import Translator
 
+logger.debug(f"Loading module {__name__}.")
 __all__ = ["_Neo4jDriver"]
 
 
@@ -96,7 +83,7 @@ class _Neo4jDriver:
 
         # find current version node
         db_version = self._driver.query(
-            "MATCH (v:BioCypher) " "WHERE NOT (v)-[:PRECEDES]->() " "RETURN v",
+            "MATCH (v:BioCypher) WHERE NOT (v)-[:PRECEDES]->() RETURN v",
         )
         # add version node
         self.add_biocypher_nodes(self.translator.ontology)
@@ -143,18 +130,10 @@ class _Neo4jDriver:
             label = _misc.sentencecase_to_pascalcase(leaf[0], sep=r"\s\.")
             if leaf[1]["represented_as"] == "node":
                 if major_neo4j_version >= 5:
-                    s = (
-                        f"CREATE CONSTRAINT `{label}_id` "
-                        f"IF NOT EXISTS FOR (n:`{label}`) "
-                        "REQUIRE n.id IS UNIQUE"
-                    )
+                    s = f"CREATE CONSTRAINT `{label}_id` " f"IF NOT EXISTS FOR (n:`{label}`) " "REQUIRE n.id IS UNIQUE"
                     self._driver.query(s)
                 else:
-                    s = (
-                        f"CREATE CONSTRAINT `{label}_id` "
-                        f"IF NOT EXISTS ON (n:`{label}`) "
-                        "ASSERT n.id IS UNIQUE"
-                    )
+                    s = f"CREATE CONSTRAINT `{label}_id` " f"IF NOT EXISTS ON (n:`{label}`) " "ASSERT n.id IS UNIQUE"
                     self._driver.query(s)
 
     def _get_neo4j_version(self):
@@ -170,9 +149,7 @@ class _Neo4jDriver:
             )[0][0]["version"]
             return neo4j_version
         except Exception as e:
-            logger.warning(
-                f"Error detecting Neo4j version: {e} use default version 4.0.0."
-            )
+            logger.warning(f"Error detecting Neo4j version: {e} use default version 4.0.0.")
             return "4.0.0"
 
     def add_nodes(self, id_type_tuples: Iterable[tuple]) -> tuple:
@@ -364,11 +341,7 @@ class _Neo4jDriver:
         # merging only on the ids of the entities, passing the
         # properties on match and on create;
         # TODO add node labels?
-        node_query = (
-            "UNWIND $rels AS r "
-            "MERGE (src {id: r.source_id}) "
-            "MERGE (tar {id: r.target_id}) "
-        )
+        node_query = "UNWIND $rels AS r " "MERGE (src {id: r.source_id}) " "MERGE (tar {id: r.target_id}) "
 
         self._driver.query(node_query, parameters={"rels": rels})
 
@@ -386,37 +359,8 @@ class _Neo4jDriver:
 
         method = "explain" if explain else "profile" if profile else "query"
 
-        result = getattr(self._driver, method)(
-            edge_query, parameters={"rels": rels}
-        )
+        result = getattr(self._driver, method)(edge_query, parameters={"rels": rels})
 
         logger.info("Finished merging edges.")
 
         return result
-
-
-def get_driver(
-    dbms: str,
-    translator: "Translator",
-):
-    """
-    Function to return the writer class.
-
-    Returns:
-        class: the writer class
-    """
-
-    dbms_config = _config(dbms)
-
-    if dbms == "neo4j":
-        return _Neo4jDriver(
-            database_name=dbms_config["database_name"],
-            wipe=dbms_config["wipe"],
-            uri=dbms_config["uri"],
-            user=dbms_config["user"],
-            password=dbms_config["password"],
-            multi_db=dbms_config["multi_db"],
-            translator=translator,
-        )
-
-    return None

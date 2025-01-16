@@ -4,10 +4,7 @@
 def test_inheritance_loop(ontology_mapping):
     assert "gene to variant association" in ontology_mapping.schema.keys()
 
-    assert (
-        "gene to variant association"
-        not in ontology_mapping.extended_schema.keys()
-    )
+    assert "gene to variant association" not in ontology_mapping.extended_schema.keys()
 
 
 def test_virtual_leaves_node(ontology_mapping):
@@ -15,10 +12,7 @@ def test_virtual_leaves_node(ontology_mapping):
 
 
 def test_getting_properties_via_config(ontology_mapping):
-    assert (
-        "name"
-        in ontology_mapping.extended_schema["protein"].get("properties").keys()
-    )
+    assert "name" in ontology_mapping.extended_schema["protein"].get("properties").keys()
 
 
 def test_preferred_id_optional(ontology_mapping):

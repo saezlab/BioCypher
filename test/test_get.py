@@ -1,12 +1,16 @@
-from datetime import datetime, timedelta
-import os
 import json
+import os
 
-from hypothesis import given
-from hypothesis import strategies as st
+from datetime import datetime, timedelta
+
 import pytest
 
-from biocypher._get import Resource, APIRequest, Downloader, FileDownload
+from hypothesis import (
+    given,
+    strategies as st,
+)
+
+from biocypher._get import APIRequest, Downloader, FileDownload, Resource
 
 
 @pytest.fixture
@@ -108,9 +112,7 @@ def test_download_file(downloader):
     assert initial_download_time == os.path.getmtime(paths[0])
 
     # manipulate cache dict to test expiration
-    downloader.cache_dict["test_resource"]["date_downloaded"] = str(
-        datetime.now() - timedelta(days=8)
-    )
+    downloader.cache_dict["test_resource"]["date_downloaded"] = str(datetime.now() - timedelta(days=8))
 
     paths = downloader.download(resource)
     assert len(paths) == 1
@@ -145,11 +147,7 @@ def test_download_lists(downloader):
     assert os.path.exists(paths[2])
     assert os.path.exists(paths[3])
     expected_paths = [
-        os.path.realpath(
-            os.path.join(
-                downloader.cache_dir, "test_resource1", "test_config.yaml"
-            )
-        ),
+        os.path.realpath(os.path.join(downloader.cache_dir, "test_resource1", "test_config.yaml")),
         os.path.realpath(
             os.path.join(
                 downloader.cache_dir,
@@ -227,10 +225,7 @@ def test_download_zip_and_expiration():
     paths = downloader.download(resource)
     with open(downloader.cache_file, "r") as f:
         cache = json.load(f)
-    assert (
-        cache["test_resource"]["url"][0]
-        == "https://github.com/biocypher/biocypher/raw/main/test/test_CSVs.zip",
-    )
+    assert cache["test_resource"]["url"][0] == "https://github.com/biocypher/biocypher/raw/main/test/test_CSVs.zip"
     assert cache["test_resource"]["lifetime"] == 7
     assert cache["test_resource"]["date_downloaded"]
 
@@ -238,17 +233,13 @@ def test_download_zip_and_expiration():
         assert os.path.exists(path)
 
     # use files downloaded here and manipulate cache file to test expiration
-    downloader.cache_dict["test_resource"]["date_downloaded"] = str(
-        datetime.now() - timedelta(days=4)
-    )
+    downloader.cache_dict["test_resource"]["date_downloaded"] = str(datetime.now() - timedelta(days=4))
     paths = downloader.download(resource)
     # should not download again
     assert "tmp" in paths[0]
 
     # minus 8 days from date_downloaded
-    downloader.cache_dict["test_resource"]["date_downloaded"] = str(
-        datetime.now() - timedelta(days=8)
-    )
+    downloader.cache_dict["test_resource"]["date_downloaded"] = str(datetime.now() - timedelta(days=8))
 
     paths = downloader.download(resource)
     # should download again
@@ -291,9 +282,7 @@ def test_cache_api_request(downloader):
 
     # api1 and api2 have been cached
     # test cached api request
-    test_paths = downloader.download(
-        api1, api2
-    )  # get the path(s) of cached API request(s)
+    test_paths = downloader.download(api1, api2)  # get the path(s) of cached API request(s)
     assert isinstance(test_paths, list)
     assert len(paths) == len(test_paths)
 
@@ -320,27 +309,20 @@ def test_api_expiration():
     paths = downloader.download(resource)
     with open(downloader.cache_file, "r") as f:
         cache = json.load(f)
-    assert (
-        cache["test_resource"]["url"][0]
-        == "https://rest.uniprot.org/uniprotkb/P12345.json",
-    )
+    assert cache["test_resource"]["url"][0] == "https://rest.uniprot.org/uniprotkb/P12345.json"
     assert cache["test_resource"]["lifetime"] == 7
     assert cache["test_resource"]["date_downloaded"]
 
     assert os.path.exists(paths[0])
 
     # use files downloaded here and manipulate cache file to test expiration
-    downloader.cache_dict["test_resource"]["date_downloaded"] = str(
-        datetime.now() - timedelta(days=4)
-    )
+    downloader.cache_dict["test_resource"]["date_downloaded"] = str(datetime.now() - timedelta(days=4))
     paths = downloader.download(resource)
     # should not download again
     assert "tmp" in paths[0]
 
     # minus 8 days from date_downloaded
-    downloader.cache_dict["test_resource"]["date_downloaded"] = str(
-        datetime.now() - timedelta(days=8)
-    )
+    downloader.cache_dict["test_resource"]["date_downloaded"] = str(datetime.now() - timedelta(days=8))
 
     paths = downloader.download(resource)
     # should download again
@@ -362,10 +344,7 @@ def test_download_with_parameter():
 
     with open(downloader.cache_file, "r") as f:
         cache = json.load(f)
-    assert (
-        cache["zenodo"]["url"][0]
-        == "https://zenodo.org/records/7773985/files/CollecTRI_source.tsv",
-    )
+    assert cache["zenodo"]["url"][0] == "https://zenodo.org/records/7773985/files/CollecTRI_source.tsv?download=1"
     # load resource from cache
     paths2 = downloader.download(resource)
     assert "tmp" in paths2[0]

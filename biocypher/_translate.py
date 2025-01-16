@@ -1,31 +1,21 @@
-#!/usr/bin/env python
-
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 BioCypher 'translation' module. Responsible for translating between the raw
 input data and the BioCypherNode and BioCypherEdge objects.
 """
-from ._logger import logger
 
-logger.debug(f"Loading module {__name__}.")
-
-from typing import Any, Union, Optional
-from collections.abc import Iterable, Generator
+from collections.abc import Generator, Iterable
+from typing import Any, Optional, Union
 
 from more_itertools import peekable
 
 from . import _misc
 from ._create import BioCypherEdge, BioCypherNode, BioCypherRelAsNode
+from ._logger import logger
 from ._ontology import Ontology
 
-__all__ = ["BiolinkAdapter", "Translator"]
+logger.debug(f"Loading module {__name__}.")
+
+__all__ = ["Translator"]
 
 
 class Translator:
@@ -66,6 +56,20 @@ class Translator:
         self.reverse_mappings = {}
 
         self._update_ontology_types()
+
+    def translate_entities(self, entities):
+        entities = peekable(entities)
+        if (
+            isinstance(entities.peek(), BioCypherNode)
+            or isinstance(entities.peek(), BioCypherEdge)
+            or isinstance(entities.peek(), BioCypherRelAsNode)
+        ):
+            translated_entities = entities
+        elif len(entities.peek()) < 4:
+            translated_entities = self.translate_nodes(entities)
+        else:
+            translated_entities = self.translate_edges(entities)
+        return translated_entities
 
     def translate_nodes(
         self,
@@ -131,8 +135,7 @@ class Translator:
 
         return (
             self.ontology.mapping.extended_schema[_bl_type]["preferred_id"]
-            if "preferred_id"
-            in self.ontology.mapping.extended_schema.get(_bl_type, {})
+            if "preferred_id" in self.ontology.mapping.extended_schema.get(_bl_type, {})
             else "id"
         )
 
@@ -141,9 +144,7 @@ class Translator:
         Filters properties for those specified in schema_config if any.
         """
 
-        filter_props = self.ontology.mapping.extended_schema[bl_type].get(
-            "properties", {}
-        )
+        filter_props = self.ontology.mapping.extended_schema[bl_type].get("properties", {})
 
         # strict mode: add required properties (only if there is a whitelist)
         if self.strict_mode and filter_props:
@@ -151,36 +152,24 @@ class Translator:
                 {"source": "str", "licence": "str", "version": "str"},
             )
 
-        exclude_props = self.ontology.mapping.extended_schema[bl_type].get(
-            "exclude_properties", []
-        )
+        exclude_props = self.ontology.mapping.extended_schema[bl_type].get("exclude_properties", [])
 
         if isinstance(exclude_props, str):
             exclude_props = [exclude_props]
 
         if filter_props and exclude_props:
-            filtered_props = {
-                k: v
-                for k, v in props.items()
-                if (k in filter_props.keys() and k not in exclude_props)
-            }
+            filtered_props = {k: v for k, v in props.items() if (k in filter_props.keys() and k not in exclude_props)}
 
         elif filter_props:
-            filtered_props = {
-                k: v for k, v in props.items() if k in filter_props.keys()
-            }
+            filtered_props = {k: v for k, v in props.items() if k in filter_props.keys()}
 
         elif exclude_props:
-            filtered_props = {
-                k: v for k, v in props.items() if k not in exclude_props
-            }
+            filtered_props = {k: v for k, v in props.items() if k not in exclude_props}
 
         else:
             return props
 
-        missing_props = [
-            k for k in filter_props.keys() if k not in filtered_props.keys()
-        ]
+        missing_props = [k for k in filter_props.keys() if k not in filtered_props.keys()]
         # add missing properties with default values
         for k in missing_props:
             filtered_props[k] = None
@@ -213,20 +202,17 @@ class Translator:
         # TODO remove for performance reasons once safe
         edge_tuples = peekable(edge_tuples)
         if len(edge_tuples.peek()) == 4:
-            edge_tuples = [
-                (None, src, tar, typ, props)
-                for src, tar, typ, props in edge_tuples
-            ]
+            edge_tuples = [(None, src, tar, typ, props) for src, tar, typ, props in edge_tuples]
 
         for _id, _src, _tar, _type, _props in edge_tuples:
             # check for strict mode requirements
             if self.strict_mode:
-                if not "source" in _props:
+                if "source" not in _props:
                     raise ValueError(
                         f"Edge {_id if _id else (_src, _tar)} does not have a `source` property.",
                         " This is required in strict mode.",
                     )
-                if not "licence" in _props:
+                if "licence" not in _props:
                     raise ValueError(
                         f"Edge {_id if _id else (_src, _tar)} does not have a `licence` property.",
                         " This is required in strict mode.",
@@ -240,9 +226,7 @@ class Translator:
                 # filter properties for those specified in schema_config if any
                 _filtered_props = self._filter_props(bl_type, _props)
 
-                rep = self.ontology.mapping.extended_schema[bl_type][
-                    "represented_as"
-                ]
+                rep = self.ontology.mapping.extended_schema[bl_type]["represented_as"]
 
                 if rep == "node":
                     if _id:
@@ -251,13 +235,7 @@ class Translator:
 
                     else:
                         # source target concat
-                        node_id = (
-                            str(_src)
-                            + "_"
-                            + str(_tar)
-                            + "_"
-                            + "_".join(str(v) for v in _filtered_props.values())
-                        )
+                        node_id = str(_src) + "_" + str(_tar) + "_" + "_".join(str(v) for v in _filtered_props.values())
 
                     n = BioCypherNode(
                         node_id=node_id,
@@ -268,7 +246,7 @@ class Translator:
                     # directionality check TODO generalise to account for
                     # different descriptions of directionality or find a
                     # more consistent solution for indicating directionality
-                    if _filtered_props.get("directed") == True:
+                    if _filtered_props.get("directed") == True:  # noqa: E712 (seems to not work without '== True')
                         l1 = "IS_SOURCE_OF"
                         l2 = "IS_TARGET_OF"
 
@@ -298,9 +276,7 @@ class Translator:
                     yield BioCypherRelAsNode(n, e_s, e_t)
 
                 else:
-                    edge_label = self.ontology.mapping.extended_schema[
-                        bl_type
-                    ].get("label_as_edge")
+                    edge_label = self.ontology.mapping.extended_schema[bl_type].get("label_as_edge")
 
                     if edge_label is None:
                         edge_label = bl_type

@@ -1,23 +1,14 @@
-#!/usr/bin/env python
-
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 Configuration of the module logger.
 """
 
 __all__ = ["get_logger", "log", "logfile"]
 
-from datetime import datetime
+import logging
 import os
 import pydoc
-import logging
+
+from datetime import datetime
 
 from biocypher import _config
 from biocypher._metadata import __version__
@@ -63,10 +54,7 @@ def get_logger(name: str = "biocypher") -> logging.Logger:
         log_to_disk = _config.config("biocypher").get("log_to_disk")
 
         if log_to_disk:
-            logdir = (
-                _config.config("biocypher").get("log_directory")
-                or "biocypher-log"
-            )
+            logdir = _config.config("biocypher").get("log_directory") or "biocypher-log"
             os.makedirs(logdir, exist_ok=True)
             logfile = os.path.join(logdir, f"biocypher-{date_time}.log")
 

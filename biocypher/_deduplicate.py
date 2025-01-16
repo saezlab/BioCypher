@@ -1,8 +1,7 @@
+from ._create import BioCypherEdge, BioCypherNode, BioCypherRelAsNode
 from ._logger import logger
 
 logger.debug(f"Loading module {__name__}.")
-
-from ._create import BioCypherEdge, BioCypherNode, BioCypherRelAsNode
 
 
 class Deduplicator:
@@ -45,9 +44,7 @@ class Deduplicator:
         if entity.get_id() in self.seen_entity_ids:
             self.duplicate_entity_ids.add(entity.get_id())
             if entity.get_label() not in self.duplicate_entity_types:
-                logger.warning(
-                    f"Duplicate node type {entity.get_label()} found. "
-                )
+                logger.warning(f"Duplicate node type {entity.get_label()} found. ")
                 self.duplicate_entity_types.add(entity.get_label())
             return True
 
@@ -69,18 +66,14 @@ class Deduplicator:
 
         # concatenate source and target if no id is present
         if not relationship.get_id():
-            _id = (
-                f"{relationship.get_source_id()}_{relationship.get_target_id()}"
-            )
+            _id = f"{relationship.get_source_id()}_{relationship.get_target_id()}"
         else:
             _id = relationship.get_id()
 
         if _id in self.seen_relationships[relationship.get_type()]:
             self.duplicate_relationship_ids.add(_id)
             if relationship.get_type() not in self.duplicate_relationship_types:
-                logger.warning(
-                    f"Duplicate edge type {relationship.get_type()} found. "
-                )
+                logger.warning(f"Duplicate edge type {relationship.get_type()} found. ")
                 self.duplicate_relationship_types.add(relationship.get_type())
             return True
 

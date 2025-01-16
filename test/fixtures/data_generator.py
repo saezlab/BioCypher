@@ -8,7 +8,7 @@ def _get_nodes(length: int) -> list:
     nodes = []
     for i in range(length):
         bnp = BioCypherNode(
-            node_id=f"p{i+1}",
+            node_id=f"p{i + 1}",
             node_label="protein",
             preferred_id="uniprot",
             properties={
@@ -20,7 +20,7 @@ def _get_nodes(length: int) -> list:
         )
         nodes.append(bnp)
         bnm = BioCypherNode(
-            node_id=f"m{i+1}",
+            node_id=f"m{i + 1}",
             node_label="microRNA",
             preferred_id="mirbase",
             properties={
@@ -38,14 +38,14 @@ def _get_nodes_non_compliant_names(length: int) -> list:
     nodes = []
     for i in range(length):
         bnp = BioCypherNode(
-            node_id=f"p{i+1}",
+            node_id=f"p{i + 1}",
             node_label="Patient (person)",
             preferred_id="snomedct",
             properties={},
         )
         nodes.append(bnp)
         bnm = BioCypherNode(
-            node_id=f"m{i+1}",
+            node_id=f"m{i + 1}",
             node_label="1$He524ll<o wor.ld <(",
             preferred_id="snomedct",
             properties={},
@@ -121,7 +121,7 @@ def _get_rel_as_nodes(length):
     rels = []
     for i in range(length):
         n = BioCypherNode(
-            node_id=f"i{i+1}",
+            node_id=f"i{i + 1}",
             node_label="post translational interaction",
             properties={
                 "directed": True,
@@ -129,8 +129,8 @@ def _get_rel_as_nodes(length):
             },
         )
         e1 = BioCypherEdge(
-            source_id=f"i{i+1}",
-            target_id=f"p{i+1}",
+            source_id=f"i{i + 1}",
+            target_id=f"p{i + 1}",
             relationship_label="IS_SOURCE_OF",
         )
         e2 = BioCypherEdge(

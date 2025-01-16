@@ -1,5 +1,5 @@
-import os
 import glob
+import os
 
 from biocypher._logger import logger
 from biocypher.output.write._batch_writer import _BatchWriter
@@ -52,9 +52,7 @@ class _PostgreSQLBatchWriter(_BatchWriter):
         try:
             return self.DATA_TYPE_LOOKUP[string]
         except KeyError:
-            logger.info(
-                'Could not determine data type {string}. Using default "VARCHAR"'
-            )
+            logger.info('Could not determine data type {string}. Using default "VARCHAR"')
             return "VARCHAR"
 
     def _write_array_string(self, string_list) -> str:
@@ -140,9 +138,7 @@ class _PostgreSQLBatchWriter(_BatchWriter):
                     command += f"DROP TABLE IF EXISTS {pascal_label};\n"
 
                 # table creation requires comma separation
-                command += (
-                    f'CREATE TABLE {pascal_label}({",".join(columns)});\n'
-                )
+                command += f"CREATE TABLE {pascal_label}({','.join(columns)});\n"
                 f.write(command)
 
                 for parts_path in parts_paths:
@@ -239,9 +235,7 @@ class _PostgreSQLBatchWriter(_BatchWriter):
                     command += f"DROP TABLE IF EXISTS {pascal_label};\n"
 
                 # table creation requires comma separation
-                command += (
-                    f'CREATE TABLE {pascal_label}({",".join(out_list)});\n'
-                )
+                command += f"CREATE TABLE {pascal_label}({','.join(out_list)});\n"
                 f.write(command)
 
                 for parts_path in parts_paths:
@@ -292,9 +286,7 @@ class _PostgreSQLBatchWriter(_BatchWriter):
             if {self.db_password}:
                 # set password variable inline
                 import_call += f"PGPASSWORD={self.db_password} "
-            import_call += (
-                f"{self.import_call_bin_prefix}psql -f {import_file_path}"
-            )
+            import_call += f"{self.import_call_bin_prefix}psql -f {import_file_path}"
             import_call += f" --dbname {self.db_name}"
             import_call += f" --host {self.db_host}"
             import_call += f" --port {self.db_port}"

@@ -1,11 +1,12 @@
 import os
 
-from neo4j.exceptions import ServiceUnavailable
 import pytest
 
+from neo4j.exceptions import ServiceUnavailable
+
 from biocypher import config as bcy_config
-from biocypher.output.write.graph._neo4j import _Neo4jBatchWriter
 from biocypher.output.connect._neo4j_driver import _Neo4jDriver
+from biocypher.output.write.graph._neo4j import _Neo4jBatchWriter
 
 
 @pytest.fixture(scope="function")
@@ -74,9 +75,7 @@ def neo4j_param(request):
 
     param = bcy_config("neo4j")
 
-    cli = {
-        key: request.config.getoption(f"--{key}") or param[key] for key in keys
-    }
+    cli = {key: request.config.getoption(f"--{key}") or param[key] for key in keys}
 
     return cli
 
@@ -139,12 +138,12 @@ def create_driver(request, neo4j_param, translator):
     yield d
 
     # teardown
-    d._driver.query("MATCH (n:Test)" "DETACH DELETE n")
-    d._driver.query("MATCH (n:Int1)" "DETACH DELETE n")
-    d._driver.query("MATCH (n:Int2)" "DETACH DELETE n")
+    d._driver.query("MATCH (n:Test)DETACH DELETE n")
+    d._driver.query("MATCH (n:Int1)DETACH DELETE n")
+    d._driver.query("MATCH (n:Int2)DETACH DELETE n")
 
     # to deal with merging on non-existing nodes
     # see test_add_single_biocypher_edge_missing_nodes()
-    d._driver.query("MATCH (n2) WHERE n2.id = 'src'" "DETACH DELETE n2")
-    d._driver.query("MATCH (n3) WHERE n3.id = 'tar'" "DETACH DELETE n3")
+    d._driver.query("MATCH (n2) WHERE n2.id = 'src'DETACH DELETE n2")
+    d._driver.query("MATCH (n3) WHERE n3.id = 'tar'DETACH DELETE n3")
     d._driver.close()

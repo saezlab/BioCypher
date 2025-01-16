@@ -1,21 +1,23 @@
 import os
 
-import yaml
 import pytest
+import yaml
 
 from biocypher import BioCypher
+from biocypher.output.in_memory._get_in_memory_kg import IN_MEMORY_DBMS
+from biocypher.output.write._get_writer import DBMS_TO_CLASS
 
 
 def test_biocypher(core):
     assert core._dbms == "neo4j"
-    assert core._offline == True
-    assert core._strict_mode == False
+    assert core._offline
+    assert not core._strict_mode
 
 
 def test_log_missing_types(core, translator):
     core._translator = translator
     core._translator.notype = {}
-    assert core.log_missing_input_labels() == None
+    assert core.log_missing_input_labels() is None
 
     core._translator.notype = {"a": 1, "b": 2}
     real_missing_types = core.log_missing_input_labels()
@@ -39,46 +41,26 @@ def test_log_duplicates(core, deduplicator, _get_nodes):
 
 @pytest.mark.parametrize("length", [4], scope="function")
 def test_write_schema_info(core, _get_nodes, _get_edges, _get_rel_as_nodes):
+    core._offline = False
+    core._dbms = "csv"
     core.add(_get_nodes)
     core.add(_get_edges)
     core.add(_get_rel_as_nodes)
 
     schema = core.write_schema_info()
 
-    assert schema.get("is_schema_info") == True
-    assert schema.get("protein").get("present_in_knowledge_graph") == True
-    assert schema.get("protein").get("is_relationship") == False
-    assert schema.get("microRNA").get("present_in_knowledge_graph") == True
-    assert schema.get("microRNA").get("is_relationship") == False
-    assert (
-        schema.get("gene to disease association").get(
-            "present_in_knowledge_graph"
-        )
-        == True
-    )
-    assert (
-        schema.get("gene to disease association").get("is_relationship") == True
-    )
-    assert (
-        schema.get("mutation to tissue association").get(
-            "present_in_knowledge_graph"
-        )
-        == True
-    )
-    assert (
-        schema.get("mutation to tissue association").get("is_relationship")
-        == True
-    )
-    assert (
-        schema.get("post translational interaction").get(
-            "present_in_knowledge_graph"
-        )
-        == True
-    )
-    assert (
-        schema.get("post translational interaction").get("is_relationship")
-        == True
-    )
+    assert schema.get("is_schema_info")
+    assert schema.get("protein").get("present_in_knowledge_graph")
+    assert not schema.get("protein").get("is_relationship")
+    assert schema.get("microRNA").get("present_in_knowledge_graph")
+    assert not schema.get("microRNA").get("is_relationship")
+    assert schema.get("gene to disease association").get("present_in_knowledge_graph")
+
+    assert schema.get("gene to disease association").get("is_relationship")
+    assert schema.get("mutation to tissue association").get("present_in_knowledge_graph")
+    assert schema.get("mutation to tissue association").get("is_relationship")
+    assert schema.get("post translational interaction").get("present_in_knowledge_graph")
+    assert schema.get("post translational interaction").get("is_relationship")
 
     path = os.path.join(core._output_directory, "schema_info.yaml")
     assert os.path.exists(path)
@@ -106,18 +88,55 @@ def test_show_full_ontology_structure_without_schema():
     assert "lethal variant" in treevis
 
 
-# def test_access_translate(driver):
+def test_in_memory_kg_only_in_online_mode(core):
+    for in_memory_dbms in IN_MEMORY_DBMS:
+        core._dbms = in_memory_dbms
+        core._offline = True
+        with pytest.raises(ValueError) as e:
+            core.get_kg()
+        assert "Getting the in-memory KG is only available in online mode for " in str(e.value)
 
-#     driver.start_ontology()
 
-#     assert driver.translate_term('mirna') == 'MicroRNA'
-#     assert (driver.reverse_translate_term('SideEffect') == 'sider')
-#     assert (
-#         driver.translate_query('MATCH (n:reactome) RETURN n') ==
-#         'MATCH (n:Reactome.Pathway) RETURN n'
-#     )
-#     assert (
-#         driver.reverse_translate_query(
-#             'MATCH (n:Wikipathways.Pathway) RETURN n',
-#         ) == 'MATCH (n:wikipathways) RETURN n'
-#     )
+def test_no_in_memory_kg_for_dbms(core):
+    for dbms in ["neo4j", "arangodb", "rdf"]:
+        core._dbms = dbms
+        core._offline = False
+        with pytest.raises(ValueError) as e:
+            core.get_kg()
+        assert "Getting the in-memory KG is only available in online mode for " in str(e.value)
+
+
+def test_no_in_memory_instance_found(core):
+    core._dbms = "csv"
+    core._offline = False
+
+    with pytest.raises(ValueError) as e:
+        core.get_kg()
+    assert str(e.value) == "No in-memory KG instance found. Please call `add()` first."
+
+
+def test_online_mode_not_supported_for_dbms(core):
+    for dbms in ["arangodb", "rdf", "postgres", "sqlite3"]:
+        core._dbms = dbms
+        core._offline = False
+        with pytest.raises(NotImplementedError) as e:
+            core._get_driver()
+        assert str(e.value) == f"Online mode is not supported for the DBMS {dbms}."
+
+
+def test_get_driver_in_offline_mode(core):
+    for dbms in ["neo4j"]:
+        core._dbms = dbms
+        core._offline = True
+        with pytest.raises(NotImplementedError) as e:
+            core._get_driver()
+        assert str(e.value) == "Cannot get driver in offline mode."
+
+
+def test_get_writer_in_online_mode(core):
+    for dbms in DBMS_TO_CLASS.keys():
+        core._dbms = dbms
+        core._offline = False
+        with pytest.raises(NotImplementedError) as e:
+            core._get_writer()
+        assert str(e.value) == "Cannot get writer in online mode."

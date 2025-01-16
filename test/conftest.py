@@ -1,20 +1,17 @@
-from glob import glob
-from test.fixtures.ontology import hybrid_ontology
 import os
 import shutil
 
+from glob import glob
+
 import pytest
 
-from biocypher._translate import Translator
 from biocypher._deduplicate import Deduplicator
-from biocypher.output.in_memory._pandas import Pandas
+from biocypher._translate import Translator
 
 # load all fixtures from the fixtures directory
 pytest_plugins = [
     fixture_file.replace(os.sep, ".").replace(".py", "")
-    for fixture_file in glob(
-        f"test{os.sep}fixtures{os.sep}[!__]*.py", recursive=True
-    )
+    for fixture_file in glob(f"test{os.sep}fixtures{os.sep}[!__]*.py", recursive=True)
 ]
 
 
@@ -29,8 +26,7 @@ def pytest_addoption(parser):
         # postgresl
         (
             "database_name_postgresql",
-            "The PostgreSQL database to be used for tests. Defaults to "
-            '"postgresql-biocypher-test-TG2C7GsdNw".',
+            "The PostgreSQL database to be used for tests. Defaults to " '"postgresql-biocypher-test-TG2C7GsdNw".',
         ),
         ("user_postgresql", "Tests access PostgreSQL as this user."),
         ("password_postgresql", "Password to access PostgreSQL."),
@@ -85,11 +81,3 @@ def deduplicator():
 @pytest.fixture(scope="module")
 def translator(hybrid_ontology):
     return Translator(hybrid_ontology)
-
-
-@pytest.fixture(scope="function")
-def _pd(deduplicator):
-    return Pandas(
-        translator=None,
-        deduplicator=deduplicator,
-    )

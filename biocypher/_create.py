@@ -1,23 +1,16 @@
-#!/usr/bin/env python
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 BioCypher 'create' module. Handles the creation of BioCypher node and edge
 dataclasses.
 """
+
+import os
+
+from dataclasses import dataclass, field
+from typing import Union
+
 from ._logger import logger
 
 logger.debug(f"Loading module {__name__}.")
-
-from typing import Union
-from dataclasses import field, dataclass
-import os
 
 __all__ = [
     "BioCypherEdge",
@@ -71,8 +64,7 @@ class BioCypherNode:
 
         if ":TYPE" in self.properties.keys():
             logger.warning(
-                "Keyword ':TYPE' is reserved for Neo4j. "
-                "Removing from properties.",
+                "Keyword ':TYPE' is reserved for Neo4j. Removing from properties.",
                 # "Renaming to 'type'."
             )
             # self.properties["type"] = self.properties[":TYPE"]
@@ -209,24 +201,21 @@ class BioCypherEdge:
 
         if ":TYPE" in self.properties.keys():
             logger.debug(
-                "Keyword ':TYPE' is reserved for Neo4j. "
-                "Removing from properties.",
+                "Keyword ':TYPE' is reserved for Neo4j. Removing from properties.",
                 # "Renaming to 'type'."
             )
             # self.properties["type"] = self.properties[":TYPE"]
             del self.properties[":TYPE"]
         elif "id" in self.properties.keys():
             logger.debug(
-                "Keyword 'id' is reserved for Neo4j. "
-                "Removing from properties.",
+                "Keyword 'id' is reserved for Neo4j. Removing from properties.",
                 # "Renaming to 'type'."
             )
             # self.properties["type"] = self.properties[":TYPE"]
             del self.properties["id"]
         elif "_ID" in self.properties.keys():
             logger.debug(
-                "Keyword '_ID' is reserved for Postgres. "
-                "Removing from properties.",
+                "Keyword '_ID' is reserved for Postgres. Removing from properties.",
                 # "Renaming to 'type'."
             )
             # self.properties["type"] = self.properties[":TYPE"]
@@ -334,20 +323,17 @@ class BioCypherRelAsNode:
     def __post_init__(self):
         if not isinstance(self.node, BioCypherNode):
             raise TypeError(
-                f"BioCypherRelAsNode.node must be a BioCypherNode, "
-                f"not {type(self.node)}.",
+                f"BioCypherRelAsNode.node must be a BioCypherNode, " f"not {type(self.node)}.",
             )
 
         if not isinstance(self.source_edge, BioCypherEdge):
             raise TypeError(
-                f"BioCypherRelAsNode.source_edge must be a BioCypherEdge, "
-                f"not {type(self.source_edge)}.",
+                f"BioCypherRelAsNode.source_edge must be a BioCypherEdge, " f"not {type(self.source_edge)}.",
             )
 
         if not isinstance(self.target_edge, BioCypherEdge):
             raise TypeError(
-                f"BioCypherRelAsNode.target_edge must be a BioCypherEdge, "
-                f"not {type(self.target_edge)}.",
+                f"BioCypherRelAsNode.target_edge must be a BioCypherEdge, " f"not {type(self.target_edge)}.",
             )
 
     def get_node(self) -> BioCypherNode:

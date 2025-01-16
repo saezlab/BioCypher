@@ -23,6 +23,9 @@ classifiers = [
 repository = "https://github.com/biocypher/biocypher"
 readme = "README.md"
 
+[project]
+requires-python = ">=3.10"
+
 [project.urls]
 Homepage = "https://biocypher.org"
 Documentation = "https://biocypher.org"
@@ -30,7 +33,7 @@ Repository = "https://github.com/biocypher/biocypher.git"
 Issues = "https://github.com/biocypher/biocypher/issues"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 PyYAML = ">=5.0"
 more_itertools = "*"
 appdirs = "*"
@@ -50,22 +53,18 @@ sphinx-rtd-theme = ">=1.0.0"
 sphinx-last-updated-by-git = ">=0.3"
 sphinx-autodoc-typehints = ">=1.18.0"
 myst-parser = "^0.18.0"
-yapf = "^0.32.0"
 pytest = ">=6.0"
-tox = ">=3.20.1"
 pre-commit = ">=2.17.0"
 bump2version = "*"
 coverage = ">=6.0"
 pytest-cov = "^3.0.0"
 hypothesis = "^6.50.1"
-isort = "^5.10.1"
 ipython = "^8.7.0"
 ipykernel = "^6.23.1"
 sphinxext-opengraph = "^0.8.2"
 coverage-badge = "^1.1.0"
 nbsphinx = "^0.9.2"
-black = "^23.9.1"
-flake8 = "^6.1.0"
+ruff = "^0.2.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -83,48 +82,34 @@ markers = [
   "inject_driver_args(driver_args): Arguments for the Driver",
 ]
 
-[tool.black]
-line-length = 80
-target-version = ['py310']
-include = '\.pyi?$'
-exclude = '''
-(
-  /(
-      \.eggs
-    | \.git
-    | \.hg
-    | \.mypy_cache
-    | \.tox
-    | \.venv
-    | _build
-    | buck-out
-    | build
-    | dist
-  )/
-)
-'''
+[tool.ruff]
+line-length = 120
 
-[tool.isort]
-from_first = true
-line_length = 80
-multi_line_output = 3
-include_trailing_comma = true
-use_parentheses = true
-known_num="numpy,pandas"
-sections = "FUTURE,STDLIB,THIRDPARTY,NUM,FIRSTPARTY,LOCALFOLDER"
-no_lines_before="LOCALFOLDER"
-balanced_wrapping = true
-force_grid_wrap = 0
-length_sort = "1"
-indent = "    "
-profile = "black"
-
-[tool.flake8]
-ignore = ["E203", "D200", "D202", "D401", "D105", "W504"]
-per-file-ignores = [
-    "docs/source/conf.py:D100",
-    "tests/*:D100,D101,D102",
-    "*/__init__.py:F401"
+[tool.ruff.lint]
+select = ["ALL"]
+# Exclude directories similar to your black configuration
+exclude = [
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".tox",
+    ".venv",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
 ]
-max-line-length = 80
-count = true
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 80
+
+[tool.ruff.lint.per-file-ignores]
+"test/*" = ["ANN001", "ANN201", "D100", "D101", "D102", "D103", "D104", "I001", "S101"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["numpy", "pandas"]
+combine-as-imports = true
+lines-between-types = 1
+force-wrap-aliases = true
+split-on-trailing-comma = true

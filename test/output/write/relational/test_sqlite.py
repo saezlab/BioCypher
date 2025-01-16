@@ -1,6 +1,6 @@
 import os
-import sqlite3
 import platform
+import sqlite3
 import subprocess
 
 import pytest
@@ -46,14 +46,10 @@ def test_construct_import_call(bw_tab_sqlite, _get_nodes):
     write_result = bw_tab_sqlite.write_import_call()
     assert write_result
 
-    import_script_path = os.path.join(
-        bw_tab_sqlite.outdir, bw_tab_sqlite._get_import_script_name()
-    )
+    import_script_path = os.path.join(bw_tab_sqlite.outdir, bw_tab_sqlite._get_import_script_name())
     system = platform.system()
     if system == "Windows":
-        output = subprocess.run(
-            ["cmd", "/c", import_script_path], check=True, shell=True
-        )
+        output = subprocess.run(["cmd", "/c", import_script_path], check=True, shell=True)
     elif system == "Linux" or system == "Darwin":
         output = subprocess.run(["bash", import_script_path], check=True)
     else:

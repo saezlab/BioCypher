@@ -22,9 +22,7 @@ def test_increment_version(driver):
     driver._driver.query(query, db="test")
     driver._update_meta_graph()
 
-    result, summary = driver._driver.query(
-        "MATCH (n:BioCypher) " "RETURN n", db="test"
-    )
+    result, summary = driver._driver.query("MATCH (n:BioCypher) RETURN n", db="test")
 
     assert len(result) == 2
 
@@ -64,7 +62,7 @@ def test_add_single_biocypher_node(driver):
     node = BioCypherNode(node_id="test_id1", node_label="Test")
     driver.add_biocypher_nodes(node)
     result, summary = driver._driver.query(
-        "MATCH (n:Test) " "WITH n, n.id AS id " "RETURN id ",
+        "MATCH (n:Test) WITH n, n.id AS id RETURN id ",
     )
     assert result[0]["id"] == "test_id1"
 
@@ -76,11 +74,9 @@ def test_add_biocypher_node_list(driver):
     node_2 = BioCypherNode(node_id="test_id2", node_label="Test")
     driver.add_biocypher_nodes([node_1, node_2])
     result, summary = driver._driver.query(
-        "MATCH (n:Test) " "WITH n, n.id AS id " "RETURN id ",
+        "MATCH (n:Test) WITH n, n.id AS id RETURN id ",
     )
-    assert set([result[0]["id"], result[1]["id"]]) == set(
-        ["test_id1", "test_id2"]
-    )
+    assert set([result[0]["id"], result[1]["id"]]) == set(["test_id1", "test_id2"])
 
 
 @pytest.mark.requires_neo4j
@@ -95,7 +91,7 @@ def test_add_biocypher_node_generator(driver):
 
     driver.add_biocypher_nodes(node_generator)
     result, summary = driver._driver.query(
-        "MATCH (n:Test) " "WITH n, n.id AS id " "RETURN id ",
+        "MATCH (n:Test) WITH n, n.id AS id RETURN id ",
     )
 
     ids = [n["id"] for n in result]
@@ -110,7 +106,7 @@ def test_add_specific_id_node(driver):
     driver.add_biocypher_nodes(node)
 
     result, summary = driver._driver.query(
-        "MATCH (n:Gene) " "RETURN n",
+        "MATCH (n:Gene) RETURN n",
     )
 
     assert result[0]["n"].get("id") == "CHAT"
@@ -123,7 +119,7 @@ def test_add_generic_id_node(driver):
     driver.add_biocypher_nodes(node)
 
     result, summary = driver._driver.query(
-        "MATCH (n:Gene) " "RETURN n",
+        "MATCH (n:Gene) RETURN n",
     )
 
     assert result[0]["n"].get("id") is not None
@@ -150,11 +146,7 @@ def test_add_single_biocypher_edge_explicit_node_creation(driver):
         "WITH n1, n2, n1.id AS id1, n2.id AS id2, type(r) AS label "
         "RETURN id1, id2, label",
     )
-    assert (
-        result[0]["id1"] == "src"
-        and result[0]["id2"] == "tar"
-        and result[0]["label"] == "Test"
-    )
+    assert result[0]["id1"] == "src" and result[0]["id2"] == "tar" and result[0]["label"] == "Test"
 
 
 @pytest.mark.requires_neo4j
@@ -170,11 +162,7 @@ def test_add_single_biocypher_edge_missing_nodes(driver):
         "WITH n1, n2, n1.id AS id1, n2.id AS id2, type(r) AS label "
         "RETURN id1, id2, label",
     )
-    assert (
-        result[0]["id1"] == "src"
-        and result[0]["id2"] == "tar"
-        and result[0]["label"] == "Test"
-    )
+    assert result[0]["id1"] == "src" and result[0]["id2"] == "tar" and result[0]["label"] == "Test"
 
 
 @pytest.mark.requires_neo4j
@@ -252,9 +240,10 @@ def test_add_biocypher_interaction_as_BioCypherRelAsNode_list(driver):
     edge_2 = BioCypherEdge("tar", "int1", "is_target_of")
     edge_3 = BioCypherEdge("src", "int2", "is_source_of")
     edge_4 = BioCypherEdge("tar", "int2", "is_target_of")
-    relationship_1, relationship_2 = BioCypherRelAsNode(
-        interaction_node_1, edge_1, edge_2
-    ), BioCypherRelAsNode(interaction_node_2, edge_3, edge_4)
+    relationship_1, relationship_2 = (
+        BioCypherRelAsNode(interaction_node_1, edge_1, edge_2),
+        BioCypherRelAsNode(interaction_node_2, edge_3, edge_4),
+    )
     driver.add_biocypher_edges([relationship_1, relationship_2])
     result, summary = driver._driver.query(
         "MATCH (n2)-[e4:is_target_of]->(i2:Int2)<-[e3:is_source_of]-"
@@ -287,9 +276,10 @@ def test_add_biocypher_interaction_as_BioCypherRelAsNode_generator(driver):
     edge_2 = BioCypherEdge("tar", "int1", "is_target_of")
     edge_3 = BioCypherEdge("src", "int2", "is_source_of")
     edge_4 = BioCypherEdge("tar", "int2", "is_target_of")
-    relationship_1, relationship_2 = BioCypherRelAsNode(
-        interaction_node_1, edge_1, edge_2
-    ), BioCypherRelAsNode(interaction_node_2, edge_3, edge_4)
+    relationship_1, relationship_2 = (
+        BioCypherRelAsNode(interaction_node_1, edge_1, edge_2),
+        BioCypherRelAsNode(interaction_node_2, edge_3, edge_4),
+    )
     relasnode_list = [relationship_1, relationship_2]
 
     def gen(lis):
@@ -321,9 +311,7 @@ def test_add_biocypher_interaction_as_BioCypherRelAsNode_generator(driver):
 @pytest.mark.requires_neo4j
 def test_pretty_profile(driver):
     prof, printout = driver._driver.profile(
-        "UNWIND [1,2,3,4,5] as id "
-        "MERGE (n:Test {id: id}) "
-        "MERGE (x:Test {id: id + 1})",
+        "UNWIND [1,2,3,4,5] as id MERGE (n:Test {id: id}) MERGE (x:Test {id: id + 1})",
     )
 
     assert "args" in prof and "ProduceResults" in printout[1]
@@ -332,9 +320,7 @@ def test_pretty_profile(driver):
 @pytest.mark.requires_neo4j
 def test_pretty_explain(driver):
     plan, printout = driver._driver.explain(
-        "UNWIND [1,2,3,4,5] as id "
-        "MERGE (n:Test {id: id}) "
-        "MERGE (x:Test {id: id + 1})",
+        "UNWIND [1,2,3,4,5] as id MERGE (n:Test {id: id}) MERGE (x:Test {id: id + 1})",
     )
 
     assert "args" in plan and "ProduceResults" in printout[0]

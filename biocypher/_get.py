@@ -1,38 +1,26 @@
-#!/usr/bin/env python
-
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 BioCypher get module. Used to download and cache data from external sources.
 """
 
 from __future__ import annotations
 
-from typing import Optional
+import ftplib
+import json
+import os
 import shutil
-
-import requests
-
-from ._logger import logger
-
-logger.debug(f"Loading module {__name__}.")
 
 from abc import ABC
 from datetime import datetime, timedelta
 from tempfile import TemporaryDirectory
-import os
-import json
-import ftplib
+from typing import Optional
 
 import pooch
+import requests
 
-from ._misc import to_list, is_nested
+from ._logger import logger
+from ._misc import is_nested, to_list
+
+logger.debug(f"Loading module {__name__}.")
 
 
 class Resource(ABC):
@@ -43,7 +31,6 @@ class Resource(ABC):
         lifetime: int = 0,
     ):
         """
-
         A Resource is a file, a list of files, an API request, or a list of API
         requests, any of which can be downloaded from the given URL(s) and
         cached locally. This class implements checks of the minimum requirements
@@ -153,7 +140,6 @@ class Downloader:
         Returns:
             list[str]: The path or paths to the downloaded resource(s).
 
-
         """
         expired = self._is_cache_expired(resource)
 
@@ -163,14 +149,10 @@ class Downloader:
                 logger.info(f"Asking for download of resource {resource.name}.")
                 paths = self._download_files(cache, resource)
             elif isinstance(resource, APIRequest):
-                logger.info(
-                    f"Asking for download of api request {resource.name}."
-                )
+                logger.info(f"Asking for download of api request {resource.name}.")
                 paths = self._download_api_request(resource)
-
             else:
                 raise TypeError(f"Unknown resource type: {type(resource)}")
-
         else:
             paths = self.get_cached_version(resource)
         self._update_cache_record(resource)
@@ -181,17 +163,14 @@ class Downloader:
         Check if resource or API request cache is expired.
 
         Args:
-
-            resource (Resource): The resource or API request to download.
+            resource (Resource): The resource to download.
 
         Returns:
-            bool: True if cache is expired, False if not.
+            bool: cache is expired or not.
         """
         cache_record = self._get_cache_record(resource)
         if cache_record:
-            download_time = datetime.strptime(
-                cache_record.get("date_downloaded"), "%Y-%m-%d %H:%M:%S.%f"
-            )
+            download_time = datetime.strptime(cache_record.get("date_downloaded"), "%Y-%m-%d %H:%M:%S.%f")
             lifetime = timedelta(days=resource.lifetime)
             expired = download_time + lifetime < datetime.now()
         else:
@@ -200,9 +179,7 @@ class Downloader:
 
     def _delete_expired_cache(self, resource: Resource):
         cache_resource_path = self.cache_dir + "/" + resource.name
-        if os.path.exists(cache_resource_path) and os.path.isdir(
-            cache_resource_path
-        ):
+        if os.path.exists(cache_resource_path) and os.path.isdir(cache_resource_path):
             shutil.rmtree(cache_resource_path)
 
     def _download_files(self, cache, file_download: FileDownload):
@@ -219,9 +196,7 @@ class Downloader:
         """
         if file_download.is_dir:
             files = self._get_files(file_download)
-            file_download.url_s = [
-                file_download.url_s + "/" + file for file in files
-            ]
+            file_download.url_s = [file_download.url_s + "/" + file for file in files]
             file_download.is_dir = False
             paths = self._download_or_cache(file_download, cache)
         elif isinstance(file_download.url_s, list):
@@ -236,9 +211,7 @@ class Downloader:
                 paths.append(path)
         else:
             paths = []
-            fname = file_download.url_s[
-                file_download.url_s.rfind("/") + 1 :
-            ].split("?")[0]
+            fname = file_download.url_s[file_download.url_s.rfind("/") + 1 :].split("?")[0]
             results = self._retrieve(
                 url=file_download.url_s,
                 fname=fname,
@@ -259,31 +232,22 @@ class Downloader:
         Download an API request and return the path.
 
         Args:
-            api_request(APIRequest): The API request result that is being
-                cached.
+            api_request(APIRequest): The API request result that is being cached.
         Returns:
             list[str]: The path to the cached API request.
 
         """
-        urls = (
-            api_request.url_s
-            if isinstance(api_request.url_s, list)
-            else [api_request.url_s]
-        )
+        urls = api_request.url_s if isinstance(api_request.url_s, list) else [api_request.url_s]
         paths = []
         for url in urls:
             fname = url[url.rfind("/") + 1 :].rsplit(".", 1)[0]
-            logger.info(
-                f"Asking for caching API of {api_request.name} {fname}."
-            )
+            logger.info(f"Asking for caching API of {api_request.name} {fname}.")
             response = requests.get(url=url)
 
             if response.status_code != 200:
                 response.raise_for_status()
             response_data = response.json()
-            api_path = os.path.join(
-                self.cache_dir, api_request.name, f"{fname}.json"
-            )
+            api_path = os.path.join(self.cache_dir, api_request.name, f"{fname}.json")
 
             os.makedirs(os.path.dirname(api_path), exist_ok=True)
             with open(api_path, "w") as f:
@@ -300,7 +264,6 @@ class Downloader:
 
         Returns:
             list[str]: The paths to the cached resource(s).
-
         """
         cached_location = os.path.join(self.cache_dir, resource.name)
         logger.info(f"Use cached version from {cached_location}.")
@@ -390,9 +353,7 @@ class Downloader:
             files = ftp.nlst()
             ftp.quit()
         else:
-            raise NotImplementedError(
-                "Only FTP directories are supported at the moment."
-            )
+            raise NotImplementedError("Only FTP directories are supported at the moment.")
 
         return files
 

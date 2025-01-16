@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 Module data directory, including:
 
@@ -15,12 +5,13 @@ Module data directory, including:
 * The default config files
 """
 
-from typing import Any, Optional
 import os
 import warnings
 
-import yaml
+from typing import Any, Optional
+
 import appdirs
+import yaml
 
 __all__ = ["module_data", "module_data_path", "read_config", "config", "reset"]
 
@@ -88,21 +79,13 @@ def read_config() -> dict:
     defaults = module_data("biocypher_config")
     user = _read_yaml(_USER_CONFIG_FILE) or {}
     # TODO account for .yml?
-    local = (
-        _read_yaml("biocypher_config.yaml")
-        or _read_yaml("config/biocypher_config.yaml")
-        or {}
-    )
+    local = _read_yaml("biocypher_config.yaml") or _read_yaml("config/biocypher_config.yaml") or {}
 
     for key in defaults:
-        value = (
-            local[key] if key in local else user[key] if key in user else None
-        )
+        value = local[key] if key in local else user[key] if key in user else None
 
         if value is not None:
-            if isinstance(
-                defaults[key], str
-            ):  # first level config (like title)
+            if isinstance(defaults[key], str):  # first level config (like title)
                 defaults[key] = value
             else:
                 defaults[key].update(value)

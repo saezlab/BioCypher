@@ -1,35 +1,28 @@
-#!/usr/bin/env python
-
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 Handy functions for use in various places.
 """
+
+import re
+
+from collections.abc import Iterable
+from typing import (
+    Any,
+    Generator,
+    ItemsView,
+    KeysView,
+    Mapping,
+    Union,
+    ValuesView,
+)
+
+import networkx as nx
+import stringcase
+
+from treelib import Tree
+
 from ._logger import logger
 
 logger.debug(f"Loading module {__name__}.")
-
-from typing import (
-    Any,
-    Union,
-    Mapping,
-    KeysView,
-    Generator,
-    ItemsView,
-    ValuesView,
-)
-from collections.abc import Iterable
-import re
-
-from treelib import Tree
-import networkx as nx
-import stringcase
 
 __all__ = ["LIST_LIKE", "SIMPLE_TYPES", "ensure_iterable", "to_list"]
 
@@ -110,9 +103,7 @@ def _get_inheritance_tree(inheritance_graph: Union[dict, nx.Graph]) -> dict:
     if isinstance(inheritance_graph, nx.Graph):
         inheritance_tree = nx.to_dict_of_lists(inheritance_graph)
 
-        multiple_parents_present = _multiple_inheritance_present(
-            inheritance_tree
-        )
+        multiple_parents_present = _multiple_inheritance_present(inheritance_tree)
         if multiple_parents_present:
             logger.warning(
                 "The ontology contains multiple inheritance (one child node "
@@ -143,17 +134,12 @@ def _find_root_node(inheritance_tree: dict) -> tuple[set, str]:
         if "entity" in root:
             root = "entity"  # TODO: default: good standard?
         else:
-            raise ValueError(
-                "Inheritance tree cannot have more than one root node. "
-                f"Found {len(root)}: {root}."
-            )
+            raise ValueError("Inheritance tree cannot have more than one root node. " f"Found {len(root)}: {root}.")
     else:
         root = root[0]
     if not root:
         # find key whose value is None
-        root = list(inheritance_tree.keys())[
-            list(inheritance_tree.values()).index(None)
-        ]
+        root = list(inheritance_tree.keys())[list(inheritance_tree.values()).index(None)]
     return classes, root
 
 

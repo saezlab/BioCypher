@@ -1,8 +1,9 @@
-import os
 import glob
+import os
 
-from rdflib import RDF, CSVW, RDFS, Graph, Literal, Namespace
 import pytest
+
+from rdflib import CSVW, RDF, RDFS, Graph, Literal, Namespace
 
 
 @pytest.mark.parametrize("length", [4], scope="function")
@@ -51,68 +52,68 @@ def test_rdf_write_data(bw_rdf, length, _get_nodes, _get_edges):
     for i in range(4):
         # assert the properties of the nodes
         assert (
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
             biocypher_namespace["score"],
             Literal(4 / (i + 1)),
         ) in graph
         assert (
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
             CSVW.name,
             Literal("StringProperty1"),
         ) in graph
         assert (
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
             biocypher_namespace["taxon"],
             Literal(9606),
         ) in graph
         assert (
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
             biocypher_namespace["genes"],
             Literal("gene1"),
         ) in graph
         assert (
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
             biocypher_namespace["genes"],
             Literal("gene2"),
         ) in graph
         assert (
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
             biocypher_namespace["id"],
-            Literal(f"p{i+1}"),
+            Literal(f"p{i + 1}"),
         ) in graph
         assert (
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
             biocypher_namespace["preferred_id"],
             Literal("uniprot"),
         ) in graph
         assert (
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
             RDF.type,
             biocypher_namespace["Protein"],
         ) in graph
 
         assert (
-            biocypher_namespace[f"m{i+1}"],
+            biocypher_namespace[f"m{i + 1}"],
             CSVW.name,
             Literal("StringProperty1"),
         ) in graph
         assert (
-            biocypher_namespace[f"m{i+1}"],
+            biocypher_namespace[f"m{i + 1}"],
             biocypher_namespace["taxon"],
             Literal(9606),
         ) in graph
         assert (
-            biocypher_namespace[f"m{i+1}"],
+            biocypher_namespace[f"m{i + 1}"],
             biocypher_namespace["id"],
-            Literal(f"m{i+1}"),
+            Literal(f"m{i + 1}"),
         ) in graph
         assert (
-            biocypher_namespace[f"m{i+1}"],
+            biocypher_namespace[f"m{i + 1}"],
             biocypher_namespace["preferred_id"],
             Literal("mirbase"),
         ) in graph
         assert (
-            biocypher_namespace[f"m{i+1}"],
+            biocypher_namespace[f"m{i + 1}"],
             RDF.type,
             biocypher_namespace["MicroRNA"],
         ) in graph
@@ -126,7 +127,7 @@ def test_rdf_write_data(bw_rdf, length, _get_nodes, _get_edges):
         assert (
             biocypher_namespace[f"prel{i}"],
             biocypher_namespace["object"],
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
         ) in graph
         assert (
             biocypher_namespace[f"prel{i}"],
@@ -152,7 +153,7 @@ def test_rdf_write_data(bw_rdf, length, _get_nodes, _get_edges):
         assert (
             biocypher_namespace[f"mrel{i}"],
             biocypher_namespace["object"],
-            biocypher_namespace[f"p{i+1}"],
+            biocypher_namespace[f"p{i + 1}"],
         ) in graph
         assert (
             biocypher_namespace[f"mrel{i}"],

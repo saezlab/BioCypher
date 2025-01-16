@@ -1,21 +1,12 @@
-#!/usr/bin/env python
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 Package metadata (version, authors, etc).
 """
 
 __all__ = ["get_metadata"]
 
+import importlib.metadata
 import os
 import pathlib
-import importlib.metadata
 
 import toml
 
@@ -52,10 +43,7 @@ def get_metadata():
 
     if not meta:
         try:
-            meta = {
-                k.lower(): v
-                for k, v in importlib.metadata.metadata(here.name).items()
-            }
+            meta = {k.lower(): v for k, v in importlib.metadata.metadata(here.name).items()}
 
         except importlib.metadata.PackageNotFoundError:
             pass

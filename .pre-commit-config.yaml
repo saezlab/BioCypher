@@ -4,23 +4,18 @@ fail_fast: false
 default_language_version:
     python: python3
 default_stages:
--   commit
--   push
+-   pre-commit
+-   pre-push
 minimum_pre_commit_version: 2.7.1
 repos:
--   repo: https://github.com/ambv/black
-    rev: 23.7.0
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.2.0
     hooks:
-    -   id: black
--   repo: https://github.com/timothycrosley/isort
-    rev: 5.12.0
-    hooks:
-    -   id: isort
-        additional_dependencies: [toml]
--   repo: https://github.com/snok/pep585-upgrade
-    rev: v1.0
-    hooks:
-    -   id: upgrade-type-hints
+    -   id: ruff
+        args:
+        - --select=E,F,I  # Only error, flake8, and isort rules
+        - --fix
+    -   id: ruff-format
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -39,12 +34,3 @@ repos:
     -   id: fix-encoding-pragma
         args: [--remove] # for Python3 codebase, it's not necessary
     -   id: requirements-txt-fixer
--   repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.10.0
-    hooks:
-    -   id: python-no-eval
-    -   id: python-use-type-annotations
-    -   id: python-check-blanket-noqa
-    -   id: rst-backticks
-    -   id: rst-directive-colons
-    -   id: rst-inline-touching-normal

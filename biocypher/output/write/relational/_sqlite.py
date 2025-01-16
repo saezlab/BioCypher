@@ -44,7 +44,9 @@ class _SQLiteBatchWriter(_PostgreSQLBatchWriter):
             import_call += f'echo "Importing {table_part}..."\n'
             separator = self.delim
             import_part = f".import {table_part} {table_name}"
-            import_call += f"{self.import_call_bin_prefix}sqlite3 -separator $'{separator}' {self.db_name} \"{import_part}\""
+            import_call += (
+                f"{self.import_call_bin_prefix}sqlite3 -separator $'{separator}' {self.db_name} \"{import_part}\""
+            )
             import_call += '\necho "Done!"\n'
             import_call += "\n"
 

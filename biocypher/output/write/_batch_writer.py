@@ -1,17 +1,17 @@
-from abc import ABC, abstractmethod
-from types import GeneratorType
-from typing import Union, Optional
-from collections import OrderedDict, defaultdict
+import glob
 import os
 import re
-import glob
+
+from abc import ABC, abstractmethod
+from collections import OrderedDict, defaultdict
+from types import GeneratorType
 
 from more_itertools import peekable
 
 from biocypher._create import BioCypherEdge, BioCypherNode, BioCypherRelAsNode
+from biocypher._deduplicate import Deduplicator
 from biocypher._logger import logger
 from biocypher._translate import Translator
-from biocypher._deduplicate import Deduplicator
 from biocypher.output.write._writer import _Writer
 
 
@@ -20,86 +20,81 @@ class _BatchWriter(_Writer, ABC):
 
     @abstractmethod
     def _get_default_import_call_bin_prefix(self):
-        """
-        Abstract method to provide the default string for the import call bin prefix.
+        """Abstract method to provide the default string for the import call bin prefix.
 
-        Returns:
+        Returns
+        -------
             str: The database-specific string for the path to the import call bin prefix
+
         """
-        raise NotImplementedError(
-            "Database writer must override '_get_default_import_call_bin_prefix'"
-        )
+        raise NotImplementedError("Database writer must override '_get_default_import_call_bin_prefix'")
 
     @abstractmethod
     def _write_array_string(self, string_list):
-        """
-        Abstract method to write the string representation of an array into a .csv file.
+        """Abstract method to write the string representation of an array into a .csv file.
         Different databases require different formats of array to optimize import speed.
 
         Args:
+        ----
             string_list (list): list of ontology strings
 
         Returns:
+        -------
             str: The database-specific string representation of an array
+
         """
-        raise NotImplementedError(
-            "Database writer must override '_write_array_string'"
-        )
+        raise NotImplementedError("Database writer must override '_write_array_string'")
 
     @abstractmethod
     def _write_node_headers(self):
-        """
-        Abstract method that takes care of importing properties of a graph entity that is represented
+        """Abstract method that takes care of importing properties of a graph entity that is represented
         as a node as per the definition in the `schema_config.yaml`
 
-        Returns:
+        Returns
+        -------
             bool: The return value. True for success, False otherwise.
+
         """
-        raise NotImplementedError(
-            "Database writer must override '_write_node_headers'"
-        )
+        raise NotImplementedError("Database writer must override '_write_node_headers'")
 
     @abstractmethod
     def _write_edge_headers(self):
-        """
-        Abstract method to write a database import-file for a graph entity that is represented
+        """Abstract method to write a database import-file for a graph entity that is represented
         as an edge as per the definition in the `schema_config.yaml`,
         containing only the header for this type of edge.
 
-        Returns:
+        Returns
+        -------
             bool: The return value. True for success, False otherwise.
+
         """
-        raise NotImplementedError(
-            "Database writer must override '_write_edge_headers'"
-        )
+        raise NotImplementedError("Database writer must override '_write_edge_headers'")
 
     @abstractmethod
     def _construct_import_call(self) -> str:
-        """
-        Function to construct the import call detailing folder and
+        """Function to construct the import call detailing folder and
         individual node and edge headers and data files, as well as
         delimiters and database name. Built after all data has been
         processed to ensure that nodes are called before any edges.
 
-        Returns:
+        Returns
+        -------
             str: A bash command for csv import.
+
         """
-        raise NotImplementedError(
-            "Database writer must override '_construct_import_call'"
-        )
+        raise NotImplementedError("Database writer must override '_construct_import_call'")
 
     @abstractmethod
     def _get_import_script_name(self) -> str:
-        """
-        Returns the name of the import script.
+        """Returns the name of the import script.
         The name will be chosen based on the used database.
 
-        Returns:
+        Returns
+        -------
             str: The name of the import script (ending in .sh)
+
         """
-        raise NotImplementedError(
-            "Database writer must override '_get_import_script_name'"
-        )
+        raise NotImplementedError("Database writer must override '_get_import_script_name'")
 
     def __init__(
         self,
@@ -108,10 +103,10 @@ class _BatchWriter(_Writer, ABC):
         delimiter: str,
         array_delimiter: str = ",",
         quote: str = '"',
-        output_directory: Optional[str] = None,
+        output_directory: str | None = None,
         db_name: str = "neo4j",
-        import_call_bin_prefix: Optional[str] = None,
-        import_call_file_prefix: Optional[str] = None,
+        import_call_bin_prefix: str | None = None,
+        import_call_file_prefix: str | None = None,
         wipe: bool = True,
         strict_mode: bool = False,
         skip_bad_relationships: bool = False,
@@ -123,9 +118,7 @@ class _BatchWriter(_Writer, ABC):
         rdf_format: str = None,
         rdf_namespaces: dict = {},
     ):
-        """
-
-        Abtract parent class for writing node and edge representations to disk
+        """Abtract parent class for writing node and edge representations to disk
         using the format specified by each database type. The database-specific
         functions are implemented by the respective child-classes. This abstract
         class contains all methods expected by a bach writer instance, some of
@@ -146,6 +139,7 @@ class _BatchWriter(_Writer, ABC):
             - _get_import_script_name
 
         Args:
+        ----
             translator:
                 Instance of :py:class:`Translator` to enable translation of
                 nodes and manipulation of properties.
@@ -207,6 +201,7 @@ class _BatchWriter(_Writer, ABC):
 
             rdf_namespaces:
                 The namespaces for RDF.
+
         """
         super().__init__(
             translator=translator,
@@ -223,17 +218,13 @@ class _BatchWriter(_Writer, ABC):
         self.rdf_namespaces = rdf_namespaces
 
         self.delim, self.escaped_delim = self._process_delimiter(delimiter)
-        self.adelim, self.escaped_adelim = self._process_delimiter(
-            array_delimiter
-        )
+        self.adelim, self.escaped_adelim = self._process_delimiter(array_delimiter)
         self.quote = quote
         self.skip_bad_relationships = skip_bad_relationships
         self.skip_duplicate_nodes = skip_duplicate_nodes
 
         if import_call_bin_prefix is None:
-            self.import_call_bin_prefix = (
-                self._get_default_import_call_bin_prefix()
-            )
+            self.import_call_bin_prefix = self._get_default_import_call_bin_prefix()
         else:
             self.import_call_bin_prefix = import_call_bin_prefix
 
@@ -258,34 +249,27 @@ class _BatchWriter(_Writer, ABC):
 
     @property
     def import_call_file_prefix(self):
-        """
-        Property for output directory path.
-        """
-
+        """Property for output directory path."""
         if self._import_call_file_prefix is None:
             return self.outdir
         else:
             return self._import_call_file_prefix
 
     def _process_delimiter(self, delimiter: str) -> str:
-        """
-        Return escaped characters in case of receiving their string
+        """Return escaped characters in case of receiving their string
         representation (e.g. tab for '\t').
         """
-
         if delimiter == "\\t":
             return "\t", "\\t"
 
         else:
             return delimiter, delimiter
 
-    def write_nodes(
-        self, nodes, batch_size: int = int(1e6), force: bool = False
-    ):
-        """
-        Wrapper for writing nodes and their headers.
+    def write_nodes(self, nodes, batch_size: int = int(1e6), force: bool = False):
+        """Wrapper for writing nodes and their headers.
 
         Args:
+        ----
             nodes (BioCypherNode): a list or generator of nodes in
                 :py:class:`BioCypherNode` format
 
@@ -296,7 +280,9 @@ class _BatchWriter(_Writer, ABC):
 
 
         Returns:
+        -------
             bool: The return value. True for success, False otherwise.
+
         """
         # TODO check represented_as
 
@@ -315,19 +301,21 @@ class _BatchWriter(_Writer, ABC):
 
     def write_edges(
         self,
-        edges: Union[list, GeneratorType],
+        edges: list | GeneratorType,
         batch_size: int = int(1e6),
     ) -> bool:
-        """
-        Wrapper for writing edges and their headers.
+        """Wrapper for writing edges and their headers.
 
         Args:
+        ----
             edges (BioCypherEdge): a list or generator of edges in
                 :py:class:`BioCypherEdge` or :py:class:`BioCypherRelAsNode`
                 format
 
         Returns:
+        -------
             bool: The return value. True for success, False otherwise.
+
         """
         passed = False
         edges = list(edges)  # force evaluation to handle empty generator
@@ -365,7 +353,6 @@ class _BatchWriter(_Writer, ABC):
             logger.debug(
                 "No edges to write, possibly due to no matched Biolink classes.",
             )
-            pass
 
         if not passed:
             logger.error("Error while writing edge data.")
@@ -379,8 +366,7 @@ class _BatchWriter(_Writer, ABC):
         return True
 
     def _write_node_data(self, nodes, batch_size, force: bool = False):
-        """
-        Writes biocypher nodes to CSV conforming to the headers created
+        """Writes biocypher nodes to CSV conforming to the headers created
         with `_write_node_headers()`, and is actually required to be run
         before calling `_write_node_headers()` to set the
         :py:attr:`self.node_property_dict` for passing the node properties
@@ -388,14 +374,16 @@ class _BatchWriter(_Writer, ABC):
         :py:class:`BioCypherNode` class.
 
         Args:
+        ----
             nodes (BioCypherNode): a list or generator of nodes in
                 :py:class:`BioCypherNode` format
 
         Returns:
+        -------
             bool: The return value. True for success, False otherwise.
-        """
 
-        if isinstance(nodes, GeneratorType) or isinstance(nodes, peekable):
+        """
+        if isinstance(nodes, GeneratorType | peekable):
             logger.debug("Writing node CSV from generator.")
 
             bins = defaultdict(list)  # dict to store a list for each
@@ -422,20 +410,15 @@ class _BatchWriter(_Writer, ABC):
                     logger.warning(f"Node {label} has no id; skipping.")
                     continue
 
-                if not label in bins.keys():
+                if label not in bins.keys():
                     # start new list
                     all_labels = None
                     bins[label].append(node)
                     bin_l[label] = 1
 
                     # get properties from config if present
-                    if (
-                        label
-                        in self.translator.ontology.mapping.extended_schema
-                    ):
-                        cprops = self.translator.ontology.mapping.extended_schema.get(
-                            label
-                        ).get(
+                    if label in self.translator.ontology.mapping.extended_schema:
+                        cprops = self.translator.ontology.mapping.extended_schema.get(label).get(
                             "properties",
                         )
                     else:
@@ -473,18 +456,13 @@ class _BatchWriter(_Writer, ABC):
                     # get label hierarchy
                     # multiple labels:
                     if not force:
-                        all_labels = self.translator.ontology.get_ancestors(
-                            label
-                        )
+                        all_labels = self.translator.ontology.get_ancestors(label)
                     else:
                         all_labels = None
 
                     if all_labels:
                         # convert to pascal case
-                        all_labels = [
-                            self.translator.name_sentence_to_pascal(label)
-                            for label in all_labels
-                        ]
+                        all_labels = [self.translator.name_sentence_to_pascal(label) for label in all_labels]
                         # remove duplicates
                         all_labels = list(OrderedDict.fromkeys(all_labels))
                         # order alphabetically
@@ -492,9 +470,7 @@ class _BatchWriter(_Writer, ABC):
                         # concatenate with array delimiter
                         all_labels = self._write_array_string(all_labels)
                     else:
-                        all_labels = self.translator.name_sentence_to_pascal(
-                            label
-                        )
+                        all_labels = self.translator.name_sentence_to_pascal(label)
 
                     labels[label] = all_labels
 
@@ -539,16 +515,15 @@ class _BatchWriter(_Writer, ABC):
                 self.node_property_dict[label] = reference_props[label]
 
             return True
+        elif not isinstance(nodes, list):
+            logger.error("Nodes must be passed as list or generator.")
+            return False
         else:
-            if type(nodes) is not list:
-                logger.error("Nodes must be passed as list or generator.")
-                return False
-            else:
 
-                def gen(nodes):
-                    yield from nodes
+            def gen(nodes):
+                yield from nodes
 
-                return self._write_node_data(gen(nodes), batch_size=batch_size)
+            return self._write_node_data(gen(nodes), batch_size=batch_size)
 
     def _write_single_node_list_to_file(
         self,
@@ -557,11 +532,11 @@ class _BatchWriter(_Writer, ABC):
         prop_dict: dict,
         labels: str,
     ):
-        """
-        This function takes one list of biocypher nodes and writes them
+        """This function takes one list of biocypher nodes and writes them
         to a Neo4j admin import compatible CSV file.
 
         Args:
+        ----
             node_list (list): list of BioCypherNodes to be written
             label (str): the primary label of the node
             prop_dict (dict): properties of node class passed from parsing
@@ -570,7 +545,9 @@ class _BatchWriter(_Writer, ABC):
                 for the node class
 
         Returns:
+        -------
             bool: The return value. True for success, False otherwise.
+
         """
         if not all(isinstance(n, BioCypherNode) for n in node_list):
             logger.error("Nodes must be passed as type BioCypherNode.")
@@ -588,7 +565,7 @@ class _BatchWriter(_Writer, ABC):
             ref_props = list(prop_dict.keys())
 
             # compare lists order invariant
-            if not set(ref_props) == set(n_keys):
+            if set(ref_props) != set(n_keys):
                 onode = n.get_id()
                 oprop1 = set(ref_props).difference(n_keys)
                 oprop2 = set(n_keys).difference(ref_props)
@@ -622,11 +599,10 @@ class _BatchWriter(_Writer, ABC):
                         "boolean",
                     ]:
                         plist.append(str(p))
+                    elif isinstance(p, list):
+                        plist.append(self._write_array_string(p))
                     else:
-                        if isinstance(p, list):
-                            plist.append(self._write_array_string(p))
-                        else:
-                            plist.append(f"{self.quote}{str(p)}{self.quote}")
+                        plist.append(f"{self.quote}{p!s}{self.quote}")
 
                 line.append(self.delim.join(plist))
             line.append(labels)
@@ -640,8 +616,7 @@ class _BatchWriter(_Writer, ABC):
         return True
 
     def _write_edge_data(self, edges, batch_size):
-        """
-        Writes biocypher edges to CSV conforming to the headers created
+        """Writes biocypher edges to CSV conforming to the headers created
         with `_write_edge_headers()`, and is actually required to be run
         before calling `_write_node_headers()` to set the
         :py:attr:`self.edge_property_dict` for passing the edge
@@ -649,17 +624,20 @@ class _BatchWriter(_Writer, ABC):
         from the :py:class:`BioCypherEdge` class.
 
         Args:
+        ----
             edges (BioCypherEdge): a list or generator of edges in
                 :py:class:`BioCypherEdge` format
 
         Returns:
+        -------
             bool: The return value. True for success, False otherwise.
 
         Todo:
+        ----
             - currently works for mixed edges but in practice often is
               called on one iterable containing one type of edge only
-        """
 
+        """
         if isinstance(edges, GeneratorType):
             logger.debug("Writing edge CSV from generator.")
 
@@ -675,14 +653,13 @@ class _BatchWriter(_Writer, ABC):
             for edge in edges:
                 if not (edge.get_source_id() and edge.get_target_id()):
                     logger.error(
-                        "Edge must have source and target node. "
-                        f"Caused by: {edge}",
+                        f"Edge must have source and target node. Caused by: {edge}",
                     )
                     continue
 
                 label = edge.get_label()
 
-                if not label in bins.keys():
+                if label not in bins.keys():
                     # start new list
                     bins[label].append(edge)
                     bin_l[label] = 1
@@ -693,13 +670,8 @@ class _BatchWriter(_Writer, ABC):
                     # (may not be if it is an edge that carries the
                     # "label_as_edge" property)
                     cprops = None
-                    if (
-                        label
-                        in self.translator.ontology.mapping.extended_schema
-                    ):
-                        cprops = self.translator.ontology.mapping.extended_schema.get(
-                            label
-                        ).get(
+                    if label in self.translator.ontology.mapping.extended_schema:
+                        cprops = self.translator.ontology.mapping.extended_schema.get(label).get(
                             "properties",
                         )
                     else:
@@ -707,9 +679,7 @@ class _BatchWriter(_Writer, ABC):
                         for (
                             k,
                             v,
-                        ) in (
-                            self.translator.ontology.mapping.extended_schema.items()
-                        ):
+                        ) in self.translator.ontology.mapping.extended_schema.items():
                             if isinstance(v, dict):
                                 if v.get("label_as_edge") == label:
                                     cprops = v.get("properties")
@@ -779,16 +749,15 @@ class _BatchWriter(_Writer, ABC):
                 self.edge_property_dict[label] = reference_props[label]
 
             return True
+        elif not isinstance(edges, list):
+            logger.error("Edges must be passed as list or generator.")
+            return False
         else:
-            if type(edges) is not list:
-                logger.error("Edges must be passed as list or generator.")
-                return False
-            else:
 
-                def gen(edges):
-                    yield from edges
+            def gen(edges):
+                yield from edges
 
-                return self._write_edge_data(gen(edges), batch_size=batch_size)
+            return self._write_edge_data(gen(edges), batch_size=batch_size)
 
     def _write_single_edge_list_to_file(
         self,
@@ -796,11 +765,11 @@ class _BatchWriter(_Writer, ABC):
         label: str,
         prop_dict: dict,
     ):
-        """
-        This function takes one list of biocypher edges and writes them
+        """This function takes one list of biocypher edges and writes them
         to a Neo4j admin import compatible CSV file.
 
         Args:
+        ----
             edge_list (list): list of BioCypherEdges to be written
 
             label (str): the label (type) of the edge
@@ -809,9 +778,10 @@ class _BatchWriter(_Writer, ABC):
                 function and their types
 
         Returns:
+        -------
             bool: The return value. True for success, False otherwise.
-        """
 
+        """
         if not all(isinstance(n, BioCypherEdge) for n in edge_list):
             logger.error("Edges must be passed as type BioCypherEdge.")
             return False
@@ -826,7 +796,7 @@ class _BatchWriter(_Writer, ABC):
             ref_props = list(prop_dict.keys())
 
             # compare list order invariant
-            if not set(ref_props) == set(e_keys):
+            if set(ref_props) != set(e_keys):
                 oedge = f"{e.get_source_id()}-{e.get_target_id()}"
                 oprop1 = set(ref_props).difference(e_keys)
                 oprop2 = set(e_keys).difference(ref_props)
@@ -857,11 +827,10 @@ class _BatchWriter(_Writer, ABC):
                     "boolean",
                 ]:
                     plist.append(str(p))
+                elif isinstance(p, list):
+                    plist.append(self._write_array_string(p))
                 else:
-                    if isinstance(p, list):
-                        plist.append(self._write_array_string(p))
-                    else:
-                        plist.append(self.quote + str(p) + self.quote)
+                    plist.append(self.quote + str(p) + self.quote)
 
             entries = [e.get_source_id()]
 
@@ -870,9 +839,7 @@ class _BatchWriter(_Writer, ABC):
 
             if label in ["IS_SOURCE_OF", "IS_TARGET_OF", "IS_PART_OF"]:
                 skip_id = True
-            elif not self.translator.ontology.mapping.extended_schema.get(
-                label
-            ):
+            elif not self.translator.ontology.mapping.extended_schema.get(label):
                 # find label in schema by label_as_edge
                 for (
                     k,
@@ -887,9 +854,9 @@ class _BatchWriter(_Writer, ABC):
             if schema_label:
                 if (
                     self.translator.ontology.mapping.extended_schema.get(
-                        schema_label
+                        schema_label,
                     ).get("use_id")
-                    == False
+                    == False  # noqa: E712 (seems to not work with 'not')
                 ):
                     skip_id = True
 
@@ -903,7 +870,7 @@ class _BatchWriter(_Writer, ABC):
             entries.append(
                 self.translator.name_sentence_to_pascal(
                     e.get_label(),
-                )
+                ),
             )
 
             lines.append(
@@ -917,10 +884,10 @@ class _BatchWriter(_Writer, ABC):
         return True
 
     def _write_next_part(self, label: str, lines: list):
-        """
-        This function writes a list of strings to a new part file.
+        """This function writes a list of strings to a new part file.
 
         Args:
+        ----
             label (str): the label (type) of the edge; internal
             representation sentence case -> needs to become PascalCase
             for disk representation
@@ -928,17 +895,15 @@ class _BatchWriter(_Writer, ABC):
             lines (list): list of strings to be written
 
         Returns:
+        -------
             bool: The return value. True for success, False otherwise.
+
         """
         # translate label to PascalCase
-        label_pascal = self.translator.name_sentence_to_pascal(
-            parse_label(label)
-        )
+        label_pascal = self.translator.name_sentence_to_pascal(parse_label(label))
 
         # list files in self.outdir
-        files = glob.glob(
-            os.path.join(self.outdir, f"{label_pascal}-part*.csv")
-        )
+        files = glob.glob(os.path.join(self.outdir, f"{label_pascal}-part*.csv"))
         # find file with highest part number
         if not files:
             next_part = 0
@@ -946,10 +911,7 @@ class _BatchWriter(_Writer, ABC):
         else:
             next_part = (
                 max(
-                    [
-                        int(f.split(".")[-2].split("-")[-1].replace("part", ""))
-                        for f in files
-                    ],
+                    [int(f.split(".")[-2].split("-")[-1].replace("part", "")) for f in files],
                 )
                 + 1
             )
@@ -974,31 +936,29 @@ class _BatchWriter(_Writer, ABC):
             self.parts[label].append(part)
 
     def get_import_call(self) -> str:
-        """
-        Function to return the import call detailing folder and
+        """Function to return the import call detailing folder and
         individual node and edge headers and data files, as well as
         delimiters and database name.
 
-        Returns:
+        Returns
+        -------
             str: a bash command for the database import
-        """
 
+        """
         return self._construct_import_call()
 
     def write_import_call(self) -> str:
-        """
-        Function to write the import call detailing folder and
+        """Function to write the import call detailing folder and
         individual node and edge headers and data files, as well as
         delimiters and database name, to the export folder as txt.
 
-        Returns:
+        Returns
+        -------
             str: The path of the file holding the import call.
-        """
 
+        """
         file_path = os.path.join(self.outdir, self._get_import_script_name())
-        logger.info(
-            f"Writing {self.db_name + ' ' if self.db_name else ''}import call to `{file_path}`."
-        )
+        logger.info(f"Writing {self.db_name + ' ' if self.db_name else ''}import call to `{file_path}`.")
 
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(self._construct_import_call())
@@ -1007,16 +967,16 @@ class _BatchWriter(_Writer, ABC):
 
 
 def parse_label(label: str) -> str:
-    """
-
-    Check if the label is compliant with Neo4j naming conventions,
+    """Check if the label is compliant with Neo4j naming conventions,
     https://neo4j.com/docs/cypher-manual/current/syntax/naming/, and if not,
     remove non-compliant characters.
 
     Args:
+    ----
         label (str): The label to check
     Returns:
         str: The compliant label
+
     """
     # Check if the name contains only alphanumeric characters, underscore, or dollar sign
     # and dot (for class hierarchy of BioCypher)
@@ -1026,7 +986,7 @@ def parse_label(label: str) -> str:
     if non_matches:
         non_matches = list(set(non_matches))
         logger.warning(
-            f"Label is not compliant with Neo4j naming rules. Removed non compliant characters: {non_matches}"
+            f"Label is not compliant with Neo4j naming rules. Removed non compliant characters: {non_matches}",
         )
 
     def first_character_compliant(character: str) -> bool:
@@ -1037,7 +997,5 @@ def parse_label(label: str) -> str:
             if first_character_compliant(c):
                 matches = matches[matches.index(c) :]
                 break
-        logger.warning(
-            "Label does not start with an alphabetic character or with $. Removed non compliant characters."
-        )
+        logger.warning("Label does not start with an alphabetic character or with $. Removed non compliant characters.")
     return "".join(matches).strip()

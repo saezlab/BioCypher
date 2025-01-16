@@ -1,22 +1,19 @@
-import os
 import logging
+import os
 
-from genericpath import isfile
 import pytest
 
+from genericpath import isfile
+
 from biocypher._create import BioCypherEdge, BioCypherNode, BioCypherRelAsNode
-from biocypher.output.write.graph._neo4j import _Neo4jBatchWriter
 from biocypher.output.write._batch_writer import parse_label
+from biocypher.output.write.graph._neo4j import _Neo4jBatchWriter
 
 
 def test_neo4j_writer_and_output_dir(bw):
     tmp_path = bw.outdir
 
-    assert (
-        os.path.isdir(tmp_path)
-        and isinstance(bw, _Neo4jBatchWriter)
-        and bw.delim == ";"
-    )
+    assert os.path.isdir(tmp_path) and isinstance(bw, _Neo4jBatchWriter) and bw.delim == ";"
 
 
 def test_create_import_call(bw):
@@ -24,24 +21,24 @@ def test_create_import_call(bw):
     number_of_items = 4
     for i in range(number_of_items):
         node = BioCypherNode(
-            f"i{i+1}",
+            f"i{i + 1}",
             "post translational interaction",
         )
         edge_1 = BioCypherEdge(
-            source_id=f"i{i+1}",
-            target_id=f"p{i+1}",
+            source_id=f"i{i + 1}",
+            target_id=f"p{i + 1}",
             relationship_label="IS_SOURCE_OF",
         )
         edge_2 = BioCypherEdge(
             source_id=f"i{i}",
-            target_id=f"p{i+2}",
+            target_id=f"p{i + 2}",
             relationship_label="IS_TARGET_OF",
         )
         mixed.append(BioCypherRelAsNode(node, edge_1, edge_2))
 
         edge_3 = BioCypherEdge(
-            source_id=f"p{i+1}",
-            target_id=f"p{i+1}",
+            source_id=f"p{i + 1}",
+            target_id=f"p{i + 1}",
             relationship_label="PERTURBED_IN_DISEASE",
         )
         mixed.append(edge_3)
@@ -61,21 +58,19 @@ def test_create_import_call(bw):
     assert '--delimiter=";"' in call
     assert '--array-delimiter="|" --quote="\'"' in call
     assert (
-        f'--nodes="{tmp_path}{os.sep}PostTranslationalInteraction-header.csv,{tmp_path}{os.sep}PostTranslationalInteraction-part.*" '
-        in call
-    )
+        f'--nodes="{tmp_path}{os.sep}PostTranslationalInteraction-header.csv,'
+        f'{tmp_path}{os.sep}PostTranslationalInteraction-part.*" '
+    ) in call
     assert (
         f'--relationships="{tmp_path}{os.sep}IS_SOURCE_OF-header.csv,{tmp_path}{os.sep}IS_SOURCE_OF-part.*" '
-        in call
-    )
+    ) in call
     assert (
         f'--relationships="{tmp_path}{os.sep}IS_TARGET_OF-header.csv,{tmp_path}{os.sep}IS_TARGET_OF-part.*" '
-        in call
-    )
+    ) in call
     assert (
-        f'--relationships="{tmp_path}{os.sep}PERTURBED_IN_DISEASE-header.csv,{tmp_path}{os.sep}PERTURBED_IN_DISEASE-part.*" '
-        in call
-    )
+        f'--relationships="{tmp_path}{os.sep}PERTURBED_IN_DISEASE-header.csv,'
+        f'{tmp_path}{os.sep}PERTURBED_IN_DISEASE-part.*" '
+    ) in call
 
 
 @pytest.mark.parametrize("length", [4], scope="module")
@@ -102,10 +97,7 @@ def test_neo4j_write_node_data_headers_import_call(bw, _get_nodes):
     with open(import_call_path) as f:
         call = f.read()
 
-    assert (
-        protein_header
-        == ":ID;name;score:double;taxon:long;genes:string[];id;preferred_id;:LABEL"
-    )
+    assert protein_header == ":ID;name;score:double;taxon:long;genes:string[];id;preferred_id;:LABEL"
     assert micro_rna_header == ":ID;name;taxon:long;id;preferred_id;:LABEL"
     assert "neo4j-admin" in call
     assert "import" in call
@@ -154,7 +146,7 @@ def test_write_hybrid_ontology_nodes(bw):
                 node_id=f"agpl:000{i}",
                 node_label="altered gene product level",
                 properties={},
-            )
+            ),
         )
 
     passed = bw.write_nodes(nodes)
@@ -182,7 +174,7 @@ def test_property_types(bw):
     nodes = []
     for i in range(4):
         biocypher_node_protein = BioCypherNode(
-            node_id=f"p{i+1}",
+            node_id=f"p{i + 1}",
             node_label="protein",
             properties={
                 "score": 4 / (i + 1),
@@ -207,10 +199,7 @@ def test_property_types(bw):
         header = f.read()
 
     assert passed
-    assert (
-        header
-        == ":ID;name;score:double;taxon:long;genes:string[];id;preferred_id;:LABEL"
-    )
+    assert header == ":ID;name;score:double;taxon:long;genes:string[];id;preferred_id;:LABEL"
     assert "p1;'StringProperty1';4.0;9606;'gene1|gene2';'p1';'id'" in data
     assert "BiologicalEntity" in data
 
@@ -233,26 +222,20 @@ def test_write_node_data_from_list(bw, _get_nodes):
         micro_rna = f.read()
 
     assert passed
-    assert (
-        "p1;'StringProperty1';4.0;9606;'gene1|gene2';'p1';'uniprot'" in protein
-    )
+    assert "p1;'StringProperty1';4.0;9606;'gene1|gene2';'p1';'uniprot'" in protein
     assert "BiologicalEntity" in protein
     assert "m1;'StringProperty1';9606;'m1';'mirbase'" in micro_rna
     assert "ChemicalEntity" in micro_rna
 
 
 @pytest.mark.parametrize("length", [4], scope="module")
-def test_write_node_data_from_list_not_compliant_names(
-    monkeypatch, caplog, bw, _get_nodes_non_compliant_names
-):
+def test_write_node_data_from_list_not_compliant_names(monkeypatch, caplog, bw, _get_nodes_non_compliant_names):
     nodes = _get_nodes_non_compliant_names
 
     def mock_get_ancestors(self, label):
         return ["First level", label]
 
-    monkeypatch.setattr(
-        "biocypher._ontology.Ontology.get_ancestors", mock_get_ancestors
-    )
+    monkeypatch.setattr("biocypher._ontology.Ontology.get_ancestors", mock_get_ancestors)
 
     with caplog.at_level(logging.INFO):
         passed = bw._write_node_data(nodes, batch_size=1e6)
@@ -264,14 +247,9 @@ def test_write_node_data_from_list_not_compliant_names(
     ]
     for file_name in os.listdir(tmp_path):
         assert file_name in expected_file_names
-        assert any(
-            "Label is not compliant with Neo4j naming rules" in record.message
-            for record in caplog.records
-        )
+        assert any("Label is not compliant with Neo4j naming rules" in record.message for record in caplog.records)
     assert any(
-        "Label does not start with an alphabetic character or with $"
-        in record.message
-        for record in caplog.records
+        "Label does not start with an alphabetic character or with $" in record.message for record in caplog.records
     )
     assert passed
 
@@ -297,9 +275,7 @@ def test_write_node_data_from_gen(bw, _get_nodes):
         micro_rna = f.read()
 
     assert passed
-    assert (
-        "p1;'StringProperty1';4.0;9606;'gene1|gene2';'p1';'uniprot'" in protein
-    )
+    assert "p1;'StringProperty1';4.0;9606;'gene1|gene2';'p1';'uniprot'" in protein
     assert "BiologicalEntity" in protein
     assert "m1;'StringProperty1';9606;'m1';'mirbase'" in micro_rna
     assert "ChemicalEntity" in micro_rna
@@ -310,7 +286,7 @@ def test_write_node_data_from_gen_no_props(bw):
     number_of_items = 4
     for i in range(number_of_items):
         biocypher_node_protein = BioCypherNode(
-            node_id=f"p{i+1}",
+            node_id=f"p{i + 1}",
             node_label="protein",
             properties={
                 "score": 4 / (i + 1),
@@ -321,7 +297,7 @@ def test_write_node_data_from_gen_no_props(bw):
         )
         nodes.append(biocypher_node_protein)
         biocypher_node_micro_rna = BioCypherNode(
-            node_id=f"m{i+1}",
+            node_id=f"m{i + 1}",
             node_label="microRNA",
         )
         nodes.append(biocypher_node_micro_rna)
@@ -374,13 +350,7 @@ def test_write_node_data_from_large_gen(bw, _get_nodes):
     protein_lines1 = sum(1 for _ in open(protein_1_csv))
     micro_rna_lines1 = sum(1 for _ in open(micro_rna_1_csv))
 
-    assert (
-        passed
-        and protein_lines == 1e4
-        and micro_rna_lines == 1e4
-        and protein_lines1 == 4
-        and micro_rna_lines1 == 4
-    )
+    assert passed and protein_lines == 1e4 and micro_rna_lines == 1e4 and protein_lines1 == 4 and micro_rna_lines1 == 4
 
 
 @pytest.mark.parametrize("length", [1], scope="module")
@@ -442,7 +412,7 @@ def test_write_none_type_property_and_order_invariance(bw):
     nodes = []
 
     biocypher_node_protein_1 = BioCypherNode(
-        node_id=f"p1",
+        node_id="p1",
         node_label="protein",
         properties={
             "taxon": 9606,
@@ -452,7 +422,7 @@ def test_write_none_type_property_and_order_invariance(bw):
         },
     )
     biocypher_node_protein_2 = BioCypherNode(
-        node_id=f"p2",
+        node_id="p2",
         node_label="protein",
         properties={
             "name": None,
@@ -462,7 +432,7 @@ def test_write_none_type_property_and_order_invariance(bw):
         },
     )
     biocypher_node_micro_rna = BioCypherNode(
-        node_id=f"m1",
+        node_id="m1",
         node_label="microRNA",
         properties={
             "name": None,
@@ -528,8 +498,7 @@ def test_accidental_exact_batch_size(bw, _get_nodes):
         and micro_rna_lines == 1e4
         and not isfile(protein_1_csv)
         and not isfile(micro_rna_1_csv)
-        and protein
-        == ":ID;name;score:double;taxon:long;genes:string[];id;preferred_id;:LABEL"
+        and protein == ":ID;name;score:double;taxon:long;genes:string[];id;preferred_id;:LABEL"
         and micro_rna == ":ID;name;taxon:long;id;preferred_id;:LABEL"
     )
 
@@ -593,22 +562,14 @@ def test_write_edge_data_from_large_gen(bw, _get_edges):
 
     tmp_path = bw.outdir
 
-    perturbed_in_disease_data_0_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-part000.csv"
-    )
+    perturbed_in_disease_data_0_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-part000.csv")
     is_mutated_in_0_csv = os.path.join(tmp_path, "Is_Mutated_In-part000.csv")
-    perturbed_in_disease_data_1_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-part001.csv"
-    )
+    perturbed_in_disease_data_1_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-part001.csv")
     is_mutated_in_1_csv = os.path.join(tmp_path, "Is_Mutated_In-part001.csv")
 
-    perturbed_in_disease_data_0 = sum(
-        1 for _ in open(perturbed_in_disease_data_0_csv)
-    )
+    perturbed_in_disease_data_0 = sum(1 for _ in open(perturbed_in_disease_data_0_csv))
     is_mutated_in_0 = sum(1 for _ in open(is_mutated_in_0_csv))
-    perturbed_in_disease_data_1 = sum(
-        1 for _ in open(perturbed_in_disease_data_1_csv)
-    )
+    perturbed_in_disease_data_1 = sum(1 for _ in open(perturbed_in_disease_data_1_csv))
     is_mutated_in_1 = sum(1 for _ in open(is_mutated_in_1_csv))
 
     assert (
@@ -628,9 +589,7 @@ def test_write_edge_data_from_list(bw, _get_edges):
 
     tmp_path = bw.outdir
 
-    perturbed_in_disease_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-part000.csv"
-    )
+    perturbed_in_disease_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-part000.csv")
     is_mutated_in_csv = os.path.join(tmp_path, "Is_Mutated_In-part000.csv")
 
     with open(perturbed_in_disease_csv) as f:
@@ -658,17 +617,13 @@ def test_write_edge_data_from_list(bw, _get_edges):
 
 
 @pytest.mark.parametrize("length", [4], scope="module")
-def test_write_edge_data_from_list_non_compliant_names(
-    monkeypatch, caplog, bw, _get_edges_non_compliant_names
-):
+def test_write_edge_data_from_list_non_compliant_names(monkeypatch, caplog, bw, _get_edges_non_compliant_names):
     edges = _get_edges_non_compliant_names
 
     def mock_get_ancestors(self, label):
         return ["First level", label]
 
-    monkeypatch.setattr(
-        "biocypher._ontology.Ontology.get_ancestors", mock_get_ancestors
-    )
+    monkeypatch.setattr("biocypher._ontology.Ontology.get_ancestors", mock_get_ancestors)
 
     with caplog.at_level(logging.INFO):
         passed = bw._write_edge_data(edges, batch_size=int(1e4))
@@ -680,14 +635,9 @@ def test_write_edge_data_from_list_non_compliant_names(
     ]
     for file_name in os.listdir(tmp_path):
         assert file_name in expected_file_names
+    assert any("Label is not compliant with Neo4j naming rules" in record.message for record in caplog.records)
     assert any(
-        "Label is not compliant with Neo4j naming rules" in record.message
-        for record in caplog.records
-    )
-    assert any(
-        "Label does not start with an alphabetic character or with $"
-        in record.message
-        for record in caplog.records
+        "Label does not start with an alphabetic character or with $" in record.message for record in caplog.records
     )
     assert passed
 
@@ -711,9 +661,7 @@ def test_write_edge_id_optional(bw, _get_edges):
 
     tmp_path = bw.outdir
 
-    perturbed_in_disease_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-part000.csv"
-    )
+    perturbed_in_disease_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-part000.csv")
     phosphorylation_csv = os.path.join(tmp_path, "Phosphorylation-part000.csv")
 
     with open(perturbed_in_disease_csv) as f:
@@ -724,12 +672,8 @@ def test_write_edge_id_optional(bw, _get_edges):
     assert "prel0;" in perturbed_in_disease
     assert "phos1;" not in phosphorylation
 
-    perturbed_in_disease_header = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-header.csv"
-    )
-    phosphorylation_header = os.path.join(
-        tmp_path, "Phosphorylation-header.csv"
-    )
+    perturbed_in_disease_header = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-header.csv")
+    phosphorylation_header = os.path.join(tmp_path, "Phosphorylation-header.csv")
 
     with open(perturbed_in_disease_header) as f:
         perturbed_in_disease_header = f.read()
@@ -761,9 +705,7 @@ def test_write_edge_data_from_list_no_props(bw):
 
     tmp_path = bw.outdir
 
-    perturbed_in_disease_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-part000.csv"
-    )
+    perturbed_in_disease_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-part000.csv")
     is_mutated_in_csv = os.path.join(tmp_path, "Is_Mutated_In-part000.csv")
 
     with open(perturbed_in_disease_csv) as f:
@@ -813,9 +755,7 @@ def test_write_edge_data_headers_import_call(bw, _get_nodes, _get_edges):
 
     tmp_path = bw.outdir
 
-    perturbed_in_disease_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-header.csv"
-    )
+    perturbed_in_disease_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-header.csv")
     is_mutated_in_csv = os.path.join(tmp_path, "Is_Mutated_In-header.csv")
     call_csv = os.path.join(tmp_path, "neo4j-admin-import-call.sh")
 
@@ -826,9 +766,7 @@ def test_write_edge_data_headers_import_call(bw, _get_nodes, _get_edges):
     with open(call_csv) as f:
         call = f.read()
 
-    assert (
-        perturbed_in_disease == ":START_ID;id;residue;level:long;:END_ID;:TYPE"
-    )
+    assert perturbed_in_disease == ":START_ID;id;residue;level:long;:END_ID;:TYPE"
     assert is_mutated_in == ":START_ID;id;site;confidence:long;:END_ID;:TYPE"
 
     assert "neo4j-admin" in call
@@ -848,9 +786,7 @@ def test_write_duplicate_edges(bw, _get_edges):
 
     tmp_path = bw.outdir
 
-    perturbed_in_disease_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-part000.csv"
-    )
+    perturbed_in_disease_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-part000.csv")
     is_mutated_in_csv = os.path.join(tmp_path, "Is_Mutated_In-part000.csv")
 
     perturbed_in_disease = sum(1 for _ in open(perturbed_in_disease_csv))
@@ -872,9 +808,7 @@ def test_BioCypherRelAsNode_implementation(bw, _get_rel_as_nodes):
 
     is_source_of_csv = os.path.join(tmp_path, "IS_SOURCE_OF-part000.csv")
     is_target_of_csv = os.path.join(tmp_path, "IS_TARGET_OF-part000.csv")
-    post_translational_interaction_csv = os.path.join(
-        tmp_path, "PostTranslationalInteraction-part000.csv"
-    )
+    post_translational_interaction_csv = os.path.join(tmp_path, "PostTranslationalInteraction-part000.csv")
 
     with open(is_source_of_csv) as f:
         is_source_of = f.read()
@@ -924,24 +858,24 @@ def test_write_mixed_edges(bw):
     number_of_items = 4
     for i in range(number_of_items):
         edge_3 = BioCypherEdge(
-            source_id=f"p{i+1}",
-            target_id=f"p{i+1}",
+            source_id=f"p{i + 1}",
+            target_id=f"p{i + 1}",
             relationship_label="PERTURBED_IN_DISEASE",
         )
         mixed.append(edge_3)
 
         node = BioCypherNode(
-            f"i{i+1}",
+            f"i{i + 1}",
             "post translational interaction",
         )
         edge_1 = BioCypherEdge(
-            source_id=f"i{i+1}",
-            target_id=f"p{i+1}",
+            source_id=f"i{i + 1}",
+            target_id=f"p{i + 1}",
             relationship_label="IS_SOURCE_OF",
         )
         edge_2 = BioCypherEdge(
             source_id=f"i{i}",
-            target_id=f"p{i+2}",
+            target_id=f"p{i + 2}",
             relationship_label="IS_TARGET_OF",
         )
         mixed.append(BioCypherRelAsNode(node, edge_1, edge_2))
@@ -953,14 +887,10 @@ def test_write_mixed_edges(bw):
 
     tmp_path = bw.outdir
 
-    post_translational_interaction_csv = os.path.join(
-        tmp_path, "PostTranslationalInteraction-header.csv"
-    )
+    post_translational_interaction_csv = os.path.join(tmp_path, "PostTranslationalInteraction-header.csv")
     is_source_of_csv = os.path.join(tmp_path, "IS_SOURCE_OF-header.csv")
     is_target_of_csv = os.path.join(tmp_path, "IS_TARGET_OF-header.csv")
-    perturbed_in_disease_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-header.csv"
-    )
+    perturbed_in_disease_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-header.csv")
 
     assert (
         passed
@@ -985,7 +915,7 @@ def test_duplicate_id(bw):
     # four proteins, four miRNAs
     for _ in range(2):
         biocypher_node_protein = BioCypherNode(
-            node_id=f"p1",
+            node_id="p1",
             node_label="protein",
             properties={
                 "name": "StringProperty1",
@@ -1016,7 +946,7 @@ def test_write_synonym(bw):
     # four proteins, four miRNAs
     for _ in range(4):
         biocypher_node_protein = BioCypherNode(
-            node_id=f"p{_+1}",
+            node_id=f"p{_ + 1}",
             node_label="complex",
             properties={
                 "name": "StringProperty1",
@@ -1062,10 +992,7 @@ def test_write_strict(bw_strict):
     with open(csv) as f:
         protein = f.read()
 
-    assert (
-        "p1;'StringProperty1';4.32;9606;'gene1|gene2';'p1';'id';'source1';'version1';'licence1'"
-        in protein
-    )
+    assert "p1;'StringProperty1';4.32;9606;'gene1|gene2';'p1';'id';'source1';'version1';'licence1'" in protein
     assert "BiologicalEntity" in protein
 
 

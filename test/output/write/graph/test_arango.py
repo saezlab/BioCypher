@@ -31,15 +31,9 @@ def test_arango_write_data_headers_import_call(
     micro_rna_header_csv = os.path.join(tmp_path, "MicroRNA-header.csv")
     micro_rna_data_1_csv = os.path.join(tmp_path, "MicroRNA-part000.csv")
     micro_rna_data_2_csv = os.path.join(tmp_path, "MicroRNA-part001.csv")
-    disease_header_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-header.csv"
-    )
-    disease_data_1_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-part000.csv"
-    )
-    disease_data_2_csv = os.path.join(
-        tmp_path, "PERTURBED_IN_DISEASE-part001.csv"
-    )
+    disease_header_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-header.csv")
+    disease_data_1_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-part000.csv")
+    disease_data_2_csv = os.path.join(tmp_path, "PERTURBED_IN_DISEASE-part001.csv")
     mutation_header_csv = os.path.join(tmp_path, "Is_Mutated_In-header.csv")
     mutation_data_1_csv = os.path.join(tmp_path, "Is_Mutated_In-part000.csv")
     mutation_data_2_csv = os.path.join(tmp_path, "Is_Mutated_In-part001.csv")

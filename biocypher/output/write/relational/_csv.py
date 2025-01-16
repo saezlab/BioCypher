@@ -1,13 +1,13 @@
 from more_itertools import peekable
 
 from biocypher._logger import logger
+from biocypher.output.in_memory._pandas import PandasKG
 from biocypher.output.write._writer import _Writer
-from biocypher.output.in_memory._pandas import Pandas
 
 
 class _PandasCSVWriter(_Writer):
     """
-    Class for writing node and edge representations to a CSV file.
+    Class for writing node and edge representations to CSV files.
     """
 
     def __init__(self, *args, write_to_file: bool = True, **kwargs):
@@ -15,8 +15,7 @@ class _PandasCSVWriter(_Writer):
         super().__init__(*args, **kwargs)
         self.in_memory_dfs = {}
         self.stored_dfs = {}
-        self.pandas_in_memory = Pandas(
-            translator=self.translator,
+        self.pandas_in_memory = PandasKG(
             deduplicator=self.deduplicator,
         )
         self.delimiter = kwargs.get("delimiter")
@@ -48,7 +47,7 @@ class _PandasCSVWriter(_Writer):
         return passed
 
     def _write_entities_to_file(self, entities: iter) -> bool:
-        """Function to output.write the entities to a CSV file.
+        """Function to write the entities to a CSV file.
 
         Args:
             entities (iterable): An iterable of BioCypherNode / BioCypherEdge / BioCypherRelAsNode objects.
@@ -56,17 +55,13 @@ class _PandasCSVWriter(_Writer):
         entities = peekable(entities)
         entity_list = self.pandas_in_memory._separate_entity_types(entities)
         for entity_type, entities in entity_list.items():
-            self.in_memory_dfs[
-                entity_type
-            ] = self.pandas_in_memory._add_entity_df(entity_type, entities)
+            self.in_memory_dfs[entity_type] = self.pandas_in_memory._add_entity_df(entity_type, entities)
         for entity_type in self.in_memory_dfs.keys():
             entity_df = self.in_memory_dfs[entity_type]
             if " " in entity_type or "." in entity_type:
                 entity_type = entity_type.replace(" ", "_").replace(".", "_")
             if self.write_to_file:
-                logger.info(
-                    f"Writing {entity_df.shape[0]} entries to {entity_type}.csv."
-                )
+                logger.info(f"Writing {entity_df.shape[0]} entries to {entity_type}.csv.")
                 entity_df.to_csv(
                     f"{self.output_directory}/{entity_type}.csv",
                     sep=self.delimiter,

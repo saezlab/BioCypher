@@ -1,38 +1,27 @@
-#!/usr/bin/env python
-
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 Michael Hartung
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 BioCypher 'offline' module. Handles the writing of node and edge representations
 suitable for import into a DBMS.
 """
 
-from biocypher._logger import logger
-from biocypher.output.write.graph._rdf import _RDFWriter
-from biocypher.output.write.graph._neo4j import _Neo4jBatchWriter
-from biocypher.output.write.graph._arangodb import _ArangoDBBatchWriter
-from biocypher.output.write.graph._networkx import _NetworkXWriter
-from biocypher.output.write.relational._csv import _PandasCSVWriter
-from biocypher.output.write.relational._sqlite import _SQLiteBatchWriter
-from biocypher.output.write.relational._postgresql import _PostgreSQLBatchWriter
-
-logger.debug(f"Loading module {__name__}.")
-
 from typing import TYPE_CHECKING
 
 from biocypher._config import config as _config
+from biocypher._logger import logger
+from biocypher.output.write.graph._arangodb import _ArangoDBBatchWriter
+from biocypher.output.write.graph._neo4j import _Neo4jBatchWriter
+from biocypher.output.write.graph._networkx import _NetworkXWriter
+from biocypher.output.write.graph._rdf import _RDFWriter
+from biocypher.output.write.relational._csv import _PandasCSVWriter
+from biocypher.output.write.relational._postgresql import _PostgreSQLBatchWriter
+from biocypher.output.write.relational._sqlite import _SQLiteBatchWriter
+
+logger.debug(f"Loading module {__name__}.")
 
 __all__ = ["get_writer", "DBMS_TO_CLASS"]
 
 if TYPE_CHECKING:
-    from biocypher._translate import Translator
     from biocypher._deduplicate import Deduplicator
+    from biocypher._translate import Translator
 
 DBMS_TO_CLASS = {
     "neo": _Neo4jBatchWriter,
@@ -52,6 +41,8 @@ DBMS_TO_CLASS = {
     "CSV": _PandasCSVWriter,
     "pandas": _PandasCSVWriter,
     "Pandas": _PandasCSVWriter,
+    "tabular": _PandasCSVWriter,
+    "Tabular": _PandasCSVWriter,
     "networkx": _NetworkXWriter,
     "NetworkX": _NetworkXWriter,
 }
@@ -99,12 +90,8 @@ def get_writer(
             import_call_file_prefix=dbms_config.get("import_call_file_prefix"),
             wipe=dbms_config.get("wipe"),
             strict_mode=strict_mode,
-            skip_bad_relationships=dbms_config.get(
-                "skip_bad_relationships"
-            ),  # neo4j
-            skip_duplicate_nodes=dbms_config.get(
-                "skip_duplicate_nodes"
-            ),  # neo4j
+            skip_bad_relationships=dbms_config.get("skip_bad_relationships"),  # neo4j
+            skip_duplicate_nodes=dbms_config.get("skip_duplicate_nodes"),  # neo4j
             db_user=dbms_config.get("user"),  # psql
             db_password=dbms_config.get("password"),  # psql
             db_port=dbms_config.get("port"),  # psql

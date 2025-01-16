@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-
-#
-# Copyright 2021, Heidelberg University Clinic
-#
-# File author(s): Sebastian Lobentanzer
-#                 ...
-#
-# Distributed under MIT licence, see the file `LICENSE`.
-#
 """
 BioCypher: a unifying framework for biomedical knowledge graphs.
 """
@@ -25,10 +15,10 @@ __all__ = [
     "APIRequest",
 ]
 
-from ._get import APIRequest, FileDownload
-from ._core import BioCypher
 from ._config import config, module_data
-from ._logger import log, logger, logfile
+from ._core import BioCypher
+from ._get import APIRequest, FileDownload
+from ._logger import log, logfile, logger
 from ._metadata import __author__, __version__
 
 

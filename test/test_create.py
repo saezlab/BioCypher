@@ -1,6 +1,9 @@
-from hypothesis import given
-from hypothesis import strategies as st
 import pytest
+
+from hypothesis import (
+    given,
+    strategies as st,
+)
 
 from biocypher._create import BioCypherEdge, BioCypherNode, BioCypherRelAsNode
 
@@ -17,7 +20,7 @@ def test_node(node):
 
 @given(st.builds(BioCypherEdge))
 def test_edge(edge):
-    assert isinstance(edge.get_id(), str) or edge.get_id() == None
+    assert isinstance(edge.get_id(), str) or edge.get_id() is None
     assert isinstance(edge.get_source_id(), str)
     assert isinstance(edge.get_target_id(), str)
     assert isinstance(edge.get_label(), str)

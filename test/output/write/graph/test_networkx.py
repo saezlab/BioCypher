@@ -40,9 +40,7 @@ def test_networkx_writer_nodes(bw_networkx, _get_nodes):
     assert "with open('./networkx_graph.pkl', 'rb') as f:" in import_call
     assert "G_loaded = pickle.load(f)" in import_call
 
-    import_script_path = os.path.join(
-        bw_networkx.output_directory, bw_networkx._get_import_script_name()
-    )
+    import_script_path = os.path.join(bw_networkx.output_directory, bw_networkx._get_import_script_name())
     assert "import_networkx.py" in import_script_path
 
 
@@ -85,7 +83,5 @@ def test_networkx_writer_edges(bw_networkx, _get_edges):
     assert "with open('./networkx_graph.pkl', 'rb') as f:" in import_call
     assert "G_loaded = pickle.load(f)" in import_call
 
-    import_script_path = os.path.join(
-        bw_networkx.output_directory, bw_networkx._get_import_script_name()
-    )
+    import_script_path = os.path.join(bw_networkx.output_directory, bw_networkx._get_import_script_name())
     assert "import_networkx.py" in import_script_path

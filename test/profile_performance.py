@@ -1,9 +1,9 @@
+import cProfile
 import io
 import pickle
 import pstats
 import random
 import timeit
-import cProfile
 
 from neo4j_utils._print import bcolors
 
@@ -104,9 +104,7 @@ def create_network_by_list(num_nodes, num_edges):
 def setup_constraint():
     d = _Neo4jDriver(increment_version=False)
     d.query(
-        "CREATE CONSTRAINT test_id "
-        "IF NOT EXISTS ON (n:test) "
-        "ASSERT n.id IS UNIQUE ",
+        "CREATE CONSTRAINT test_id IF NOT EXISTS ON (n:test) ASSERT n.id IS UNIQUE ",
     )
     d.close()
 

@@ -31,7 +31,7 @@ def test_translate_nodes(translator):
     ]
     translated_nodes = translator.translate_nodes(id_type)
 
-    assert all(type(n) == BioCypherNode for n in translated_nodes)
+    assert all(type(n) is BioCypherNode for n in translated_nodes)
 
     translated_nodes = translator.translate_nodes(id_type)
     assert next(translated_nodes).get_label() == "protein"
@@ -58,9 +58,7 @@ def test_specific_and_generic_ids(translator):
     assert translated_nodes[0].get_properties().get("preferred_id") == "hgnc"
     assert translated_nodes[0].get_properties().get("id") == "CHAT"
     assert translated_nodes[1].get_id() == "REACT:25520"
-    assert (
-        translated_nodes[1].get_properties().get("preferred_id") == "reactome"
-    )
+    assert translated_nodes[1].get_properties().get("preferred_id") == "reactome"
     assert translated_nodes[1].get_properties().get("id") == "REACT:25520"
 
 
@@ -77,7 +75,7 @@ def test_translate_edges(translator):
 
     translated_edges = translator.translate_edges(gen_edges())
 
-    assert type(next(translated_edges)) == BioCypherEdge
+    assert type(next(translated_edges)) is BioCypherEdge
     assert next(translated_edges).get_label() == "PERTURBED_IN_DISEASE"
     assert next(translated_edges).get_label() == "phosphorylation"
 
@@ -120,9 +118,9 @@ def test_translate_edges(translator):
     assert node_2.get_source_edge().get_label() == "IS_PART_OF"
     assert node_3.get_target_edge().get_label() == "IS_TARGET_OF"
     assert (
-        type(node_1.get_node()) == BioCypherNode
-        and type(node_1.get_source_edge()) == BioCypherEdge
-        and type(node_1.get_target_edge()) == BioCypherEdge
+        type(node_1.get_node()) is BioCypherNode
+        and type(node_1.get_source_edge()) is BioCypherEdge
+        and type(node_1.get_target_edge()) is BioCypherEdge
     )
     assert node_3.get_node().get_id() == "G15258_G16347_True_-1"
     assert node_3.get_source_edge().get_source_id() == "G15258"
@@ -198,23 +196,11 @@ def test_merge_multiple_inputs_node(ontology_mapping, translator):
     assert translated_nodes
 
     # check unique node type
-    assert not any(
-        [
-            schema
-            for schema in ontology_mapping.extended_schema.keys()
-            if ".gene" in schema
-        ]
-    )
-    assert any(
-        [
-            schema
-            for schema in ontology_mapping.extended_schema.keys()
-            if ".pathway" in schema
-        ]
-    )
+    assert not any([schema for schema in ontology_mapping.extended_schema.keys() if ".gene" in schema])
+    assert any([schema for schema in ontology_mapping.extended_schema.keys() if ".pathway" in schema])
 
     # check translator.translate_nodes for unique return type
-    assert all([type(node) == BioCypherNode for node in translated_nodes])
+    assert all([type(node) is BioCypherNode for node in translated_nodes])
     assert all([node.get_label() == "gene" for node in translated_nodes])
 
 
@@ -234,7 +220,7 @@ def test_implicit_inheritance_node(translator):
 
     translated_nodes = list(translator.translate_nodes(id_type))
 
-    assert all([type(n) == BioCypherNode for n in translated_nodes])
+    assert all([type(n) is BioCypherNode for n in translated_nodes])
     assert translated_nodes[0].get_label() == "intact.snRNA sequence"
     assert translated_nodes[1].get_label() == "rnacentral.snRNA sequence"
 
@@ -268,28 +254,15 @@ def test_merge_multiple_inputs_edge(ontology_mapping, translator):
 
     # check unique edge type
     assert not any(
-        [
-            schema
-            for schema in ontology_mapping.extended_schema.keys()
-            if ".gene to disease association" in schema
-        ],
+        [schema for schema in ontology_mapping.extended_schema.keys() if ".gene to disease association" in schema],
     )
     assert any(
-        [
-            schema
-            for schema in ontology_mapping.extended_schema.keys()
-            if ".sequence variant" in schema
-        ],
+        [schema for schema in ontology_mapping.extended_schema.keys() if ".sequence variant" in schema],
     )
 
     # check translator.translate_nodes for unique return type
-    assert all([type(edge) == BioCypherEdge for edge in translated_edges])
-    assert all(
-        [
-            edge.get_label() == "PERTURBED_IN_DISEASE"
-            for edge in translated_edges
-        ]
-    )
+    assert all([type(edge) is BioCypherEdge for edge in translated_edges])
+    assert all([edge.get_label() == "PERTURBED_IN_DISEASE" for edge in translated_edges])
 
 
 def test_implicit_inheritance_edge(translator):
@@ -311,15 +284,9 @@ def test_implicit_inheritance_edge(translator):
     ]
     translated_edges = list(translator.translate_edges(src_tar_type))
 
-    assert all([type(edge) == BioCypherEdge for edge in translated_edges])
-    assert (
-        translated_edges[0].get_label()
-        == "known.sequence variant.variant to gene association"
-    )
-    assert (
-        translated_edges[1].get_label()
-        == "somatic.sequence variant.variant to gene association"
-    )
+    assert all([type(edge) is BioCypherEdge for edge in translated_edges])
+    assert translated_edges[0].get_label() == "known.sequence variant.variant to gene association"
+    assert translated_edges[1].get_label() == "somatic.sequence variant.variant to gene association"
 
 
 def test_virtual_leaves_inherit_is_a(ontology_mapping):
@@ -451,8 +418,7 @@ def test_exclude_properties(translator):
     assert (
         "taxon" in translated_nodes_as_list[0].get_properties().keys()
         and "taxon" in translated_nodes_as_list[1].get_properties().keys()
-        and "accession"
-        not in translated_nodes_as_list[0].get_properties().keys()
+        and "accession" not in translated_nodes_as_list[0].get_properties().keys()
     )
 
     src_tar_type = [
@@ -485,8 +451,7 @@ def test_exclude_properties(translator):
         and "directional" in translated_nodes_as_list[1].get_properties().keys()
         and "score" in translated_nodes_as_list[0].get_properties().keys()
         and "score" in translated_nodes_as_list[1].get_properties().keys()
-        and "accession"
-        not in translated_nodes_as_list[1].get_properties().keys()
+        and "accession" not in translated_nodes_as_list[1].get_properties().keys()
     )
 
 
@@ -494,9 +459,7 @@ def test_exclude_properties(translator):
 # to the translator
 def test_translate_term(translator):
     assert translator.translate_term("hgnc") == "Gene"
-    assert (
-        translator.translate_term("protein_disease") == "PERTURBED_IN_DISEASE"
-    )
+    assert translator.translate_term("protein_disease") == "PERTURBED_IN_DISEASE"
 
 
 def test_reverse_translate_term(translator):
@@ -510,10 +473,7 @@ def test_translate_query(translator):
     # we translate to PascalCase for cypher queries, not to internal
     # sentence case
     query = "MATCH (n:hgnc)-[r:gene_disease]->(d:Disease) RETURN n"
-    assert (
-        translator.translate(query)
-        == "MATCH (n:Gene)-[r:PERTURBED_IN_DISEASE]->(d:Disease) RETURN n"
-    )
+    assert translator.translate(query) == "MATCH (n:Gene)-[r:PERTURBED_IN_DISEASE]->(d:Disease) RETURN n"
 
 
 def test_reverse_translate_query(translator):

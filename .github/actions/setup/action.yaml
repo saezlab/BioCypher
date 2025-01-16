@@ -3,7 +3,7 @@ description: "Setup Python and Poetry"
 inputs:
   PYTHON_VERSION:
     description: "Python version"
-    default: 3.9
+    default: "3.11"
   POETRY_VERSION:
     description: "Poetry version"
     default: 1.5.1

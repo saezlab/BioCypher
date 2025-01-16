@@ -1,5 +1,5 @@
-import rdflib
 import networkx as nx
+import rdflib
 
 
 def ontology_to_tree(ontology_path, root_label, switch_id_and_label=True):
