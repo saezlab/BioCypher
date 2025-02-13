@@ -1,15 +1,18 @@
-"""
-BioCypher 'offline' module. Handles the writing of node and edge representations
-suitable for import into a DBMS.
+"""Module to provide one of the available writer classes.
+
+The writer classes are responsible for writing the node and edge representations
+to disk in a format suitable for import into a DBMS.
 """
 
 from typing import TYPE_CHECKING
 
 from biocypher._config import config as _config
 from biocypher._logger import logger
+from biocypher.output.write._batch_writer import _BatchWriter
 from biocypher.output.write.graph._arangodb import _ArangoDBBatchWriter
 from biocypher.output.write.graph._neo4j import _Neo4jBatchWriter
 from biocypher.output.write.graph._networkx import _NetworkXWriter
+from biocypher.output.write.graph._owl import _OWLWriter
 from biocypher.output.write.graph._rdf import _RDFWriter
 from biocypher.output.write.relational._csv import _PandasCSVWriter
 from biocypher.output.write.relational._postgresql import _PostgreSQLBatchWriter
@@ -37,6 +40,8 @@ DBMS_TO_CLASS = {
     "sqlite3": _SQLiteBatchWriter,
     "rdf": _RDFWriter,
     "RDF": _RDFWriter,
+    "owl": _OWLWriter,
+    "OWL": _OWLWriter,
     "csv": _PandasCSVWriter,
     "CSV": _PandasCSVWriter,
     "pandas": _PandasCSVWriter,
@@ -54,12 +59,11 @@ def get_writer(
     deduplicator: "Deduplicator",
     output_directory: str,
     strict_mode: bool,
-):
-    """
-    Function to return the writer class based on the selection in the config
-    file.
+) -> _BatchWriter | None:
+    """Return the writer class based on the selection in the config file.
 
     Args:
+    ----
         dbms: the database management system; for options, see DBMS_TO_CLASS.
         translator: the Translator object.
         deduplicator: the Deduplicator object.
@@ -67,15 +71,17 @@ def get_writer(
         strict_mode: whether to use strict mode.
 
     Returns:
+    -------
         instance: an instance of the selected writer class.
-    """
 
+    """
     dbms_config = _config(dbms)
 
     writer = DBMS_TO_CLASS[dbms]
 
     if not writer:
-        raise ValueError(f"Unknown dbms: {dbms}")
+        msg = f"Unknown dbms: {dbms}"
+        raise ValueError(msg)
 
     if writer is not None:
         return writer(
@@ -97,4 +103,6 @@ def get_writer(
             db_port=dbms_config.get("port"),  # psql
             rdf_format=dbms_config.get("rdf_format"),  # rdf
             rdf_namespaces=dbms_config.get("rdf_namespaces"),  # rdf
+            edge_model=dbms_config.get("edge_model"),  # owl
         )
+    return None

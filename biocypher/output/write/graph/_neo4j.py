@@ -1,3 +1,5 @@
+"""Module to provide the Neo4j writer class."""
+
 import os
 
 from biocypher._logger import logger
@@ -45,10 +47,7 @@ class _Neo4jBatchWriter(_BatchWriter):
         return "bin/"
 
     def _quote_string(self, value: str) -> str:
-        """
-        Quote a string. Quote character is escaped by doubling it.
-        """
-
+        """Quote a string. Quote character is escaped by doubling it."""
         return f"{self.quote}{value.replace(self.quote, self.quote * 2)}{self.quote}"
 
     def _write_array_string(self, string_list):

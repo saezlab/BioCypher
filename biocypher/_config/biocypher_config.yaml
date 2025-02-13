@@ -130,6 +130,12 @@ rdf:
   ### RDF configuration ###
   rdf_format: turtle
 
+owl:
+  ### OWL configuration ###
+  rdf_format: turtle
+  edge_model: Association # or: ObjectProperty
+  file_stem: biocypher # without the extension
+
 sqlite:
   ### SQLite configuration ###
   # SQLite connection credentials

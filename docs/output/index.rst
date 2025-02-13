@@ -14,6 +14,7 @@ Currently supported are:
 * ``neo4j``
 * ``arangodb``
 * ``rdf``
+* ``owl``
 * ``postgres``
 * ``sqlite``
 * ``tabular``
@@ -52,6 +53,7 @@ supported output formats are described on the following pages:
     arangodb.md
     csv.md
     rdf.md
+    owl.md
     postgres.md
     sqlite.md
     networkx.md

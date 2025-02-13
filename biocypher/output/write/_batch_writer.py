@@ -1,3 +1,5 @@
+"""Abstract base class for all batch writers."""
+
 import glob
 import os
 import re
@@ -16,30 +18,37 @@ from biocypher.output.write._writer import _Writer
 
 
 class _BatchWriter(_Writer, ABC):
-    """Abstract batch writer class"""
+    """Abstract batch writer class."""
 
     @abstractmethod
     def _quote_string(self, value: str) -> str:
-        """Abstract method to quote a string. Escaping is handled by the database-specific writer."""
-        raise NotImplementedError(
-            "Database writer must override '_quote_string'",
-        )
+        """Quote a string.
+
+        Escaping is handled by the database-specific writer.
+        """
+        msg = "Database writer must override '_quote_string'"
+        logger.error(msg)
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def _get_default_import_call_bin_prefix(self):
-        """Abstract method to provide the default string for the import call bin prefix.
+        """Provide the default string for the import call bin prefix.
 
         Returns
         -------
             str: The database-specific string for the path to the import call bin prefix
 
         """
-        raise NotImplementedError("Database writer must override '_get_default_import_call_bin_prefix'")
+        msg = "Database writer must override '_get_default_import_call_bin_prefix'"
+        logger.error(msg)
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def _write_array_string(self, string_list):
-        """Abstract method to write the string representation of an array into a .csv file.
-        Different databases require different formats of array to optimize import speed.
+        """Write the string representation of an array into a .csv file.
+
+        Different databases require different formats of array to optimize
+        import speed.
 
         Args:
         ----
@@ -50,50 +59,65 @@ class _BatchWriter(_Writer, ABC):
             str: The database-specific string representation of an array
 
         """
-        raise NotImplementedError("Database writer must override '_write_array_string'")
+        msg = "Database writer must override '_write_array_string'"
+        logger.error(msg)
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def _write_node_headers(self):
-        """Abstract method that takes care of importing properties of a graph entity that is represented
-        as a node as per the definition in the `schema_config.yaml`
+        """Write header files for nodes.
+
+        Write header files (node properties) for nodes as per the
+        definition in the `schema_config.yaml`.
 
         Returns
         -------
             bool: The return value. True for success, False otherwise.
 
         """
-        raise NotImplementedError("Database writer must override '_write_node_headers'")
+        msg = "Database writer must override '_write_node_headers'"
+        logger.error(msg)
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def _write_edge_headers(self):
-        """Abstract method to write a database import-file for a graph entity that is represented
-        as an edge as per the definition in the `schema_config.yaml`,
-        containing only the header for this type of edge.
+        """Write a database import-file for an edge.
+
+        Write a database import-file for an edge as per the definition in
+        the `schema_config.yaml`, containing only the header for this type
+        of edge.
 
         Returns
         -------
             bool: The return value. True for success, False otherwise.
 
         """
-        raise NotImplementedError("Database writer must override '_write_edge_headers'")
+        msg = "Database writer must override '_write_edge_headers'"
+        logger.error(msg)
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def _construct_import_call(self) -> str:
-        """Function to construct the import call detailing folder and
-        individual node and edge headers and data files, as well as
-        delimiters and database name. Built after all data has been
-        processed to ensure that nodes are called before any edges.
+        """Construct the import call.
+
+        Construct the import call detailing folder and individual node and
+        edge headers and data files, as well as delimiters and database name.
+        Built after all data has been processed to ensure that nodes are
+        called before any edges.
 
         Returns
         -------
             str: A bash command for csv import.
 
         """
-        raise NotImplementedError("Database writer must override '_construct_import_call'")
+        msg = "Database writer must override '_construct_import_call'"
+        logger.error(msg)
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def _get_import_script_name(self) -> str:
-        """Returns the name of the import script.
+        """Return the name of the import script.
+
         The name will be chosen based on the used database.
 
         Returns
@@ -101,7 +125,9 @@ class _BatchWriter(_Writer, ABC):
             str: The name of the import script (ending in .sh)
 
         """
-        raise NotImplementedError("Database writer must override '_get_import_script_name'")
+        msg = "Database writer must override '_get_import_script_name'"
+        logger.error(msg)
+        raise NotImplementedError(msg)
 
     def __init__(
         self,
@@ -125,8 +151,11 @@ class _BatchWriter(_Writer, ABC):
         rdf_format: str = None,
         rdf_namespaces: dict = {},
         labels_order: str = "Ascending",
+        **kwargs,
     ):
-        """Abtract parent class for writing node and edge representations to disk
+        """Write node and edge representations to disk.
+
+        Abstract parent class for writing node and edge representations to disk
         using the format specified by each database type. The database-specific
         functions are implemented by the respective child-classes. This abstract
         class contains all methods expected by a bach writer instance, some of
@@ -180,7 +209,8 @@ class _BatchWriter(_Writer, ABC):
                 call.
 
             wipe:
-                Whether to force import (removing existing DB content). (Specific to Neo4j.)
+                Whether to force import (removing existing DB content).
+                    (Specific to Neo4j.)
 
             strict_mode:
                 Whether to enforce source, version, and license properties.
@@ -277,8 +307,16 @@ class _BatchWriter(_Writer, ABC):
             return self._import_call_file_prefix
 
     def _process_delimiter(self, delimiter: str) -> str:
-        """Return escaped characters in case of receiving their string
-        representation (e.g. tab for '\t').
+        """Process a delimited to escape correctly.
+
+        Args:
+        ----
+            delimiter (str): The delimiter to process.
+
+        Returns:
+        -------
+            tuple: The delimiter and its escaped representation.
+
         """
         if delimiter == "\\t":
             return "\t", "\\t"
@@ -287,7 +325,7 @@ class _BatchWriter(_Writer, ABC):
             return delimiter, delimiter
 
     def write_nodes(self, nodes, batch_size: int = int(1e6), force: bool = False):
-        """Wrapper for writing nodes and their headers.
+        """Write nodes and their headers.
 
         Args:
         ----
@@ -325,7 +363,7 @@ class _BatchWriter(_Writer, ABC):
         edges: list | GeneratorType,
         batch_size: int = int(1e6),
     ) -> bool:
-        """Wrapper for writing edges and their headers.
+        """Write edges and their headers.
 
         Args:
         ----
@@ -387,12 +425,13 @@ class _BatchWriter(_Writer, ABC):
         return True
 
     def _write_node_data(self, nodes, batch_size, force: bool = False):
-        """Writes biocypher nodes to CSV conforming to the headers created
-        with `_write_node_headers()`, and is actually required to be run
-        before calling `_write_node_headers()` to set the
-        :py:attr:`self.node_property_dict` for passing the node properties
-        to the instance. Expects list or generator of nodes from the
-        :py:class:`BioCypherNode` class.
+        """Write biocypher nodes to CSV.
+
+        Conforms to the headers created with `_write_node_headers()`, and
+        is actually required to be run before calling `_write_node_headers()`
+        to set the :py:attr:`self.node_property_dict` for passing the node
+        properties to the instance. Expects list or generator of nodes from
+        the :py:class:`BioCypherNode` class.
 
         Args:
         ----
@@ -571,7 +610,9 @@ class _BatchWriter(_Writer, ABC):
         prop_dict: dict,
         labels: str,
     ):
-        """This function takes one list of biocypher nodes and writes them
+        """Write a list of biocypher nodes to a CSV file.
+
+        This function takes one list of biocypher nodes and writes them
         to a Neo4j admin import compatible CSV file.
 
         Args:
@@ -655,7 +696,9 @@ class _BatchWriter(_Writer, ABC):
         return True
 
     def _write_edge_data(self, edges, batch_size):
-        """Writes biocypher edges to CSV conforming to the headers created
+        """Write biocypher edges to CSV.
+
+        Writes biocypher edges to CSV conforming to the headers created
         with `_write_edge_headers()`, and is actually required to be run
         before calling `_write_node_headers()` to set the
         :py:attr:`self.edge_property_dict` for passing the edge
@@ -804,7 +847,9 @@ class _BatchWriter(_Writer, ABC):
         label: str,
         prop_dict: dict,
     ):
-        """This function takes one list of biocypher edges and writes them
+        """Write a list of biocypher edges to a CSV file.
+
+        This function takes one list of biocypher edges and writes them
         to a Neo4j admin import compatible CSV file.
 
         Args:
@@ -923,7 +968,7 @@ class _BatchWriter(_Writer, ABC):
         return True
 
     def _write_next_part(self, label: str, lines: list):
-        """This function writes a list of strings to a new part file.
+        """Write a list of strings to a new part file.
 
         Args:
         ----
@@ -975,9 +1020,10 @@ class _BatchWriter(_Writer, ABC):
             self.parts[label].append(part)
 
     def get_import_call(self) -> str:
-        """Function to return the import call detailing folder and
-        individual node and edge headers and data files, as well as
-        delimiters and database name.
+        """Eeturn the import call.
+
+        Return the import call detailing folder and individual node and
+        edge headers and data files, as well as delimiters and database name.
 
         Returns
         -------
@@ -987,7 +1033,9 @@ class _BatchWriter(_Writer, ABC):
         return self._construct_import_call()
 
     def write_import_call(self) -> str:
-        """Function to write the import call detailing folder and
+        """Write the import call.
+
+        Function to write the import call detailing folder and
         individual node and edge headers and data files, as well as
         delimiters and database name, to the export folder as txt.
 
@@ -1006,9 +1054,10 @@ class _BatchWriter(_Writer, ABC):
 
 
 def parse_label(label: str) -> str:
-    """Check if the label is compliant with Neo4j naming conventions,
-    https://neo4j.com/docs/cypher-manual/current/syntax/naming/, and if not,
-    remove non-compliant characters.
+    """Check if the label is compliant with Neo4j naming conventions.
+
+    Check against https://neo4j.com/docs/cypher-manual/current/syntax/naming/,
+    and if not compliant, remove non-compliant characters.
 
     Args:
     ----

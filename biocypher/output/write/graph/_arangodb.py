@@ -1,3 +1,5 @@
+"""Module to provide the ArangoDB writer class."""
+
 import os
 
 from biocypher._logger import logger
@@ -5,38 +7,43 @@ from biocypher.output.write.graph._neo4j import _Neo4jBatchWriter
 
 
 class _ArangoDBBatchWriter(_Neo4jBatchWriter):
-    """
-    Class for writing node and edge representations to disk using the format
-    specified by ArangoDB for the use of "arangoimport". Output files are
-    similar to Neo4j, but with a different header format.
+    """Class for writing node and edge representations to disk.
+
+    Uses the format specified by ArangoDB for the use of "arangoimport".
+    Output files are similar to Neo4j, but with a different header format.
     """
 
     def _get_default_import_call_bin_prefix(self):
-        """
-        Method to provide the default string for the import call bin prefix.
+        """Provide the default string for the import call bin prefix.
 
-        Returns:
+        Returns
+        -------
             str: The default location for the neo4j admin import location
+
         """
         return ""
 
     def _get_import_script_name(self) -> str:
-        """
-        Returns the name of the neo4j admin import script
+        """Return the name of the neo4j admin import script.
 
-        Returns:
+        Returns
+        -------
             str: The name of the import script (ending in .sh)
+
         """
         return "arangodb-import-call.sh"
 
     def _write_node_headers(self):
-        """
-        Writes single CSV file for a graph entity that is represented
-        as a node as per the definition in the `schema_config.yaml`,
-        containing only the header for this type of node.
+        """Write single CSV file for a graph entity.
 
-        Returns:
+        The graph entity is represented as a node as per the definition
+        in the `schema_config.yaml`, containing only the header for this type
+        of node.
+
+        Returns
+        -------
             bool: The return value. True for success, False otherwise.
+
         """
         # load headers from data parse
         if not self.node_property_dict:
@@ -86,9 +93,9 @@ class _ArangoDBBatchWriter(_Neo4jBatchWriter):
             parts = self.parts.get(label, [])
 
             if not parts:
-                raise ValueError(
-                    f"No parts found for node label {label}. " f"Check that the data was parsed first.",
-                )
+                msg = f"No parts found for node label {label}. Check that the data was parsed first."
+                logger.error(msg)
+                raise ValueError(msg)
 
             for part in parts:
                 import_call_header_path = os.path.join(
@@ -105,19 +112,22 @@ class _ArangoDBBatchWriter(_Neo4jBatchWriter):
                         import_call_header_path,
                         import_call_parts_path,
                         collection,
-                    )
+                    ),
                 )
 
         return True
 
     def _write_edge_headers(self):
-        """
-        Writes single CSV file for a graph entity that is represented
-        as an edge as per the definition in the `schema_config.yaml`,
-        containing only the header for this type of edge.
+        """Write single CSV file for a graph entity.
 
-        Returns:
+        The graph entity is represented as an edge as per the definition
+        in the `schema_config.yaml`, containing only the header for this type
+        of edge.
+
+        Returns
+        -------
             bool: The return value. True for success, False otherwise.
+
         """
         # load headers from data parse
         if not self.edge_property_dict:
@@ -182,22 +192,24 @@ class _ArangoDBBatchWriter(_Neo4jBatchWriter):
                     header_import_call_path,
                     parts_import_call_path,
                     collection,
-                )
+                ),
             )
 
         return True
 
     def _construct_import_call(self) -> str:
-        """
-        Function to construct the import call detailing folder and
-        individual node and edge headers and data files, as well as
-        delimiters and database name. Built after all data has been
+        """Construct the import call.
+
+        Details folder and individual node and edge headers and data files,
+        as well as delimiters and database name. Built after all data has been
         processed to ensure that nodes are called before any edges.
 
-        Returns:
-            str: a bash command for neo4j-admin import
+        Returns
+        -------
+            str: a bash command for arangoimport
+
         """
-        import_call = f"{self.import_call_bin_prefix}arangoimp " f"--type csv " f'--separator="{self.escaped_delim}" '
+        import_call = f"{self.import_call_bin_prefix}arangoimp --type csv " f'--separator="{self.escaped_delim}" '
 
         if self.quote == "'":
             import_call += f'--quote="{self.quote}" '
